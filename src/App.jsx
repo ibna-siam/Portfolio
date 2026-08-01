@@ -9,17 +9,7 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import Loader from "./components/Loader";
 import { useTheme } from "./hooks";
-
-import { SpeedInsights } from '@vercel/speed-insights/react';
- 
-export default function App() {
-  return (
-    <div>
-      {/* ... */}
-      <SpeedInsights />
-    </div>
-  );
-}
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 export default function App() {
   const [dark, setDark] = useTheme();
@@ -47,6 +37,7 @@ export default function App() {
           <Footer />
         </div>
       )}
+      <SpeedInsights />
     </div>
   );
 }
