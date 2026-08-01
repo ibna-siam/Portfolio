@@ -1,4 +1,3 @@
-import { SpeedInsights } from "@vercel/speed-insights/react"
 import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
@@ -10,11 +9,17 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 import Loader from "./components/Loader";
 import { useTheme } from "./hooks";
+
 import { SpeedInsights } from '@vercel/speed-insights/react';
-
-
-
-
+ 
+export default function App() {
+  return (
+    <div>
+      {/* ... */}
+      <SpeedInsights />
+    </div>
+  );
+}
 
 export default function App() {
   const [dark, setDark] = useTheme();
