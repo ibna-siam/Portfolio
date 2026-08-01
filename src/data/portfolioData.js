@@ -10,7 +10,7 @@ export const personal = {
     "Accounting Student",
     "Finance Enthusiast",
     "Future CPA",
-    "DIU Student",
+    "DIU",
     "Problem Solver",
   ],
   bio: "Passionate accounting student at Daffodil International University, driven by numbers, financial analysis, and a vision to build a meaningful career in finance and business.",
