@@ -1,21 +1,36 @@
-import { useRef, useState } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import {
   FiX,
   FiCheckCircle,
   FiTag,
   FiAward,
-  FiChevronRight,
   FiTarget,
   FiBookOpen,
   FiBarChart2,
   FiArrowRight,
-  FiArrowLeft,
+  FiAlertTriangle,
+  FiLayers,
+  FiFileText,
+  FiInfo,
+  FiShield,
+  FiDatabase,
 } from "react-icons/fi";
 import { projects } from "../data/portfolioData";
+import {
+  CASE_STUDY_METADATA,
+  INTEGRITY_STATUS,
+} from "../data/caseStudyIntegrity";
 import { SectionHeading } from "./SectionHeading";
 
-const CATEGORIES = [
+// Group and category taxonomy
+const GROUP_FILTERS = [
+  { id: "all", label: "All Studies", count: 8 },
+  { id: "accounting", label: "Applied Accounting", count: 5 },
+  { id: "macroeconomics", label: "Macroeconomic Research", count: 3 },
+];
+
+const DISCIPLINE_CATEGORIES = [
   "All",
   "Financial Analysis",
   "Budgeting & Planning",
@@ -26,157 +41,213 @@ const CATEGORIES = [
   "Macroeconomics",
 ];
 
-const categoryColors = {
-  "Financial Analysis":
-    "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  "Budgeting & Planning":
-    "bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400",
-  Taxation:
-    "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
-  "Cost Accounting":
-    "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-  Auditing: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-  "Economic Research":
-    "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-  Macroeconomics:
-    "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
-};
+// Helper to retrieve status icon
+function StatusIcon({ statusKey, className = "shrink-0", size = 13 }) {
+  switch (statusKey) {
+    case "reconciliation_req":
+      return <FiAlertTriangle className={className} size={size} />;
+    case "hypothetical":
+      return <FiLayers className={className} size={size} />;
+    case "source_limitation":
+      return <FiInfo className={className} size={size} />;
+    case "academic_calc":
+      return <FiFileText className={className} size={size} />;
+    case "verified":
+    default:
+      return <FiCheckCircle className={className} size={size} />;
+  }
+}
 
-// ── Full Report Modal ──────────────────────────────────────────
-function ReportModal({ project, onClose, onBack }) {
-  const r = project.fullReport;
-  const [tab, setTab] = useState("overview");
+// ── Interactive Case Study Viewer (Modal) ──────────────────────────
+function CaseStudyViewer({ project, meta, onClose }) {
+  const [activeTab, setActiveTab] = useState("overview");
+  const modalRef = useRef(null);
+  const report = project.fullReport;
 
+  // Tabs structure aligned with PRD and Phase 6 instructions
   const tabs = [
     { id: "overview", label: "Overview", icon: FiBookOpen },
-    { id: "methodology", label: "Methodology", icon: FiTarget },
-    { id: "findings", label: "Findings", icon: FiBarChart2 },
-    { id: "conclusion", label: "Conclusion", icon: FiCheckCircle },
+    { id: "methodology", label: "Methodology & Framework", icon: FiTarget },
+    { id: "data", label: "Financial Data & Schedules", icon: FiDatabase },
+    { id: "findings", label: "Findings & Observations", icon: FiBarChart2 },
+    { id: "integrity", label: "Integrity & Audit Notes", icon: FiShield },
   ];
 
+  const status = meta.integrityStatus;
+  const isFlagged = status.key === "reconciliation_req";
+
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-ink-900/80 backdrop-blur-sm"
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="case-study-title"
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-ink-950/80 backdrop-blur-sm"
       onClick={onClose}
     >
       <motion.div
-        initial={{ opacity: 0, y: 40, scale: 0.95 }}
+        ref={modalRef}
+        tabIndex={-1}
+        initial={{ opacity: 0, y: 30, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 40, scale: 0.95 }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="bg-white dark:bg-ink-900 rounded-3xl shadow-2xl w-full max-w-3xl max-h-[95vh] flex flex-col overflow-hidden"
+        exit={{ opacity: 0, y: 20, scale: 0.96 }}
+        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+        className="bg-white dark:bg-ink-900 rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden border border-ink-200 dark:border-ink-800 focus:outline-none"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header image */}
-        <div className="relative h-36 sm:h-44 shrink-0">
-          <img
-            src={project.image}
-            alt={project.title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink-900/90 via-ink-900/40 to-transparent" />
+        {/* Header Bar */}
+        <div className="relative px-5 py-4 sm:px-6 sm:py-5 border-b border-ink-100 dark:border-ink-800 bg-ink-50/50 dark:bg-ink-950/40 shrink-0">
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Group Badge */}
+                <span className="px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider bg-ink-100 dark:bg-ink-800 text-ink-700 dark:text-ink-300 border border-ink-200 dark:border-ink-700">
+                  {meta.group}
+                </span>
 
-          {/* Back button */}
-          <button
-            onClick={onBack}
-            className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm transition-all text-xs font-medium"
-          >
-            <FiArrowLeft size={13} /> Back
-          </button>
+                {/* Category Badge */}
+                <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                  {project.category}
+                </span>
 
-          {/* Close button */}
-          <button
-            onClick={onClose}
-            className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm transition-all"
-          >
-            <FiX size={16} />
-          </button>
+                {/* Integrity Status Badge */}
+                <span
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border ${status.badge}`}
+                >
+                  <StatusIcon statusKey={status.key} size={12} />
+                  <span>{status.label}</span>
+                </span>
+              </div>
 
-          <div className="absolute bottom-3 left-4 right-4">
-            <div className="flex gap-2 mb-1.5 flex-wrap">
-              <span
-                className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${categoryColors[project.category]}`}
+              <h2
+                id="case-study-title"
+                className="font-display text-lg sm:text-2xl font-bold text-ink-900 dark:text-ink-50 leading-snug"
               >
-                {project.category}
-              </span>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 text-white">
-                {project.type}
-              </span>
+                {project.title}
+              </h2>
+
+              <p className="text-xs text-ink-500 dark:text-ink-400 font-mono">
+                {meta.academicScope} · Framework: {meta.framework}
+              </p>
             </div>
-            <h2 className="font-display font-bold text-white text-base sm:text-lg leading-snug line-clamp-2">
-              {project.title}
-            </h2>
+
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close Case Study Viewer"
+              className="w-9 h-9 flex items-center justify-center rounded-xl bg-ink-100 dark:bg-ink-800 hover:bg-ink-200 dark:hover:bg-ink-700 text-ink-700 dark:text-ink-300 transition-colors shrink-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500"
+            >
+              <FiX size={18} />
+            </button>
           </div>
+
+          {/* Persistent Discrepancy Alert Banner if Flagged */}
+          {isFlagged && meta.discrepancyNotice && (
+            <div className="mt-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 flex items-start gap-2.5 text-xs">
+              <FiAlertTriangle className="text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" size={15} />
+              <div className="space-y-1">
+                <span className="font-bold block">{meta.discrepancyNotice.headline}</span>
+                <p className="text-amber-800 dark:text-amber-300 leading-relaxed">
+                  {meta.discrepancyNotice.summary} Source values are preserved under review in accordance with financial precision standards.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Tabs */}
-        <div className="flex border-b border-ink-100 dark:border-ink-800 px-2 shrink-0 overflow-x-auto">
+        {/* Tab Navigation */}
+        <div className="flex border-b border-ink-100 dark:border-ink-800 px-3 sm:px-6 bg-white dark:bg-ink-900 shrink-0 overflow-x-auto">
           {tabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
-              onClick={() => setTab(id)}
-              className={`flex items-center gap-1.5 px-3 sm:px-4 py-3 text-xs font-semibold border-b-2 transition-all whitespace-nowrap ${
-                tab === id
-                  ? "border-teal-500 text-teal-600 dark:text-teal-400"
-                  : "border-transparent text-ink-500 dark:text-ink-400 hover:text-ink-800 dark:hover:text-ink-200"
+              type="button"
+              onClick={() => setActiveTab(id)}
+              className={`flex items-center gap-2 px-3 sm:px-4 py-3 text-xs font-semibold border-b-2 transition-all whitespace-nowrap cursor-pointer ${
+                activeTab === id
+                  ? "border-teal-600 text-teal-700 dark:border-teal-400 dark:text-teal-300"
+                  : "border-transparent text-ink-500 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-200"
               }`}
             >
-              <Icon size={12} /> {label}
+              <Icon size={13} /> {label}
+              {id === "integrity" && isFlagged && (
+                <span className="w-2 h-2 rounded-full bg-amber-500" title="Review Required" />
+              )}
             </button>
           ))}
         </div>
 
-        {/* Tab content */}
-        <div className="overflow-y-auto flex-1 p-5 sm:p-6">
+        {/* Modal Scrollable Body */}
+        <div className="overflow-y-auto flex-1 p-5 sm:p-7 space-y-6">
           <AnimatePresence mode="wait">
-            {/* OVERVIEW */}
-            {tab === "overview" && (
+            {/* 1. OVERVIEW TAB */}
+            {activeTab === "overview" && (
               <motion.div
                 key="overview"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="space-y-5"
+                className="space-y-6"
               >
                 <div>
                   <h3 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-2">
-                    Project Overview
+                    Academic Scope & Problem Context
                   </h3>
                   <p className="text-sm text-ink-700 dark:text-ink-300 leading-relaxed">
-                    {r.overview}
+                    {report?.overview || project.description}
                   </p>
                 </div>
-                <div>
-                  <h3 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-3">
-                    Objectives
-                  </h3>
-                  <ul className="space-y-2">
-                    {r.objectives.map((obj, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <span className="w-5 h-5 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                          {i + 1}
-                        </span>
-                        <span className="text-sm text-ink-600 dark:text-ink-400 leading-relaxed">
-                          {obj}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+
+                {report?.objectives && (
+                  <div>
+                    <h3 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-3">
+                      Academic Objectives
+                    </h3>
+                    <ul className="space-y-2">
+                      {report.objectives.map((obj, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <span className="w-5 h-5 rounded-full bg-teal-500/10 text-teal-700 dark:text-teal-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                            {i + 1}
+                          </span>
+                          <span className="text-sm text-ink-600 dark:text-ink-300 leading-relaxed">
+                            {obj}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="grid sm:grid-cols-2 gap-4 pt-2">
+                  <div className="p-4 rounded-xl bg-ink-50 dark:bg-ink-800/40 border border-ink-100 dark:border-ink-800 space-y-1">
+                    <span className="text-xs font-mono text-ink-400 uppercase tracking-wider block">
+                      Analytical Framework
+                    </span>
+                    <p className="text-xs sm:text-sm font-semibold text-ink-800 dark:text-ink-200">
+                      {meta.framework}
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-ink-50 dark:bg-ink-800/40 border border-ink-100 dark:border-ink-800 space-y-1">
+                    <span className="text-xs font-mono text-ink-400 uppercase tracking-wider block">
+                      Evidence & Data Basis
+                    </span>
+                    <p className="text-xs sm:text-sm font-semibold text-ink-800 dark:text-ink-200">
+                      {meta.evidenceType}
+                    </p>
+                  </div>
                 </div>
+
                 <div>
                   <h3 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-                    <FiTag size={12} /> Tools & Methods Used
+                    <FiTag size={12} /> Tools & Analytical Methods
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {project.tools.map((t) => (
+                    {project.tools.map((tool) => (
                       <span
-                        key={t}
-                        className="px-3 py-1.5 bg-ink-100 dark:bg-ink-800 text-ink-700 dark:text-ink-300 text-xs rounded-xl font-medium border border-ink-200 dark:border-ink-700"
+                        key={tool}
+                        className="px-3 py-1.5 bg-ink-100 dark:bg-ink-800 text-ink-700 dark:text-ink-300 text-xs rounded-lg font-medium border border-ink-200 dark:border-ink-700"
                       >
-                        {t}
+                        {tool}
                       </span>
                     ))}
                   </div>
@@ -184,549 +255,691 @@ function ReportModal({ project, onClose, onBack }) {
               </motion.div>
             )}
 
-            {/* METHODOLOGY */}
-            {tab === "methodology" && (
+            {/* 2. METHODOLOGY TAB */}
+            {activeTab === "methodology" && (
               <motion.div
                 key="methodology"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="space-y-4"
-              >
-                <h3 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-1">
-                  Research Methodology
-                </h3>
-                {r.methodology.map((step, i) => (
-                  <div key={i} className="flex gap-4">
-                    <div className="flex flex-col items-center">
-                      <div className="w-8 h-8 rounded-xl bg-teal-500 text-white flex items-center justify-center text-xs font-bold shrink-0">
-                        {i + 1}
-                      </div>
-                      {i < r.methodology.length - 1 && (
-                        <div className="w-px flex-1 bg-ink-200 dark:bg-ink-700 mt-2" />
-                      )}
-                    </div>
-                    <div className="pb-4">
-                      <h4 className="font-semibold text-sm text-ink-900 dark:text-ink-100 mb-1">
-                        {step.heading}
-                      </h4>
-                      <p className="text-sm text-ink-600 dark:text-ink-400 leading-relaxed">
-                        {step.body}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </motion.div>
-            )}
-
-            {/* FINDINGS */}
-            {tab === "findings" && (
-              <motion.div
-                key="findings"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="space-y-5"
+                className="space-y-6"
               >
                 <div>
                   <h3 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-3">
-                    Key Findings
+                    Analytical Steps & Procedures
                   </h3>
-                  <ul className="space-y-2.5">
-                    {r.keyFindings.map((f, i) => (
-                      <li
-                        key={i}
-                        className="flex items-start gap-3 p-3 rounded-xl bg-ink-50 dark:bg-ink-800/60 border border-ink-100 dark:border-ink-700"
-                      >
-                        <FiCheckCircle
-                          className="text-teal-500 mt-0.5 shrink-0"
-                          size={14}
-                        />
-                        <span className="text-sm text-ink-700 dark:text-ink-300 leading-relaxed">
-                          {f}
-                        </span>
-                      </li>
+                  <div className="space-y-4">
+                    {report?.methodology?.map((step, i) => (
+                      <div key={i} className="flex gap-4">
+                        <div className="flex flex-col items-center">
+                          <div className="w-7 h-7 rounded-lg bg-teal-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                            {i + 1}
+                          </div>
+                          {i < report.methodology.length - 1 && (
+                            <div className="w-px flex-1 bg-ink-200 dark:bg-ink-700 mt-2" />
+                          )}
+                        </div>
+                        <div className="pb-3">
+                          <h4 className="font-semibold text-sm text-ink-900 dark:text-ink-100 mb-1">
+                            {step.heading}
+                          </h4>
+                          <p className="text-xs sm:text-sm text-ink-600 dark:text-ink-400 leading-relaxed">
+                            {step.body}
+                          </p>
+                        </div>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
 
-                {r.tables &&
-                  r.tables.map((table, ti) => (
-                    <div key={ti}>
-                      <h3 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-3">
-                        {table.title}
-                      </h3>
-                      <div className="overflow-x-auto rounded-2xl border border-ink-100 dark:border-ink-800">
+                {meta.formulas && meta.formulas.length > 0 && (
+                  <div className="pt-2">
+                    <h3 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-3">
+                      Accounting Formulas & Calculation Specifications
+                    </h3>
+                    <div className="grid gap-2.5 sm:grid-cols-2">
+                      {meta.formulas.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="p-3.5 rounded-xl bg-ink-50 dark:bg-ink-800/40 border border-ink-100 dark:border-ink-800 space-y-1"
+                        >
+                          <span className="text-xs font-bold text-ink-700 dark:text-ink-200">
+                            {item.name}
+                          </span>
+                          <p className="text-xs font-mono text-teal-700 dark:text-teal-400 bg-white dark:bg-ink-900 p-2 rounded-lg border border-ink-200 dark:border-ink-700">
+                            {item.formula}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* 3. FINANCIAL DATA & SCHEDULES TAB */}
+            {activeTab === "data" && (
+              <motion.div
+                key="data"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="space-y-6"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2 pb-1">
+                  <div>
+                    <h3 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest">
+                      Financial Calculation Schedules & Tables
+                    </h3>
+                    <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">
+                      Currency: {meta.currencyUnit} · Classification: {meta.inputsClassification}
+                    </p>
+                  </div>
+                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-md bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300">
+                    Precision: Source Preserved
+                  </span>
+                </div>
+
+                {report?.tables && report.tables.length > 0 ? (
+                  report.tables.map((table, tIdx) => (
+                    <div key={tIdx} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-xs font-bold text-ink-800 dark:text-ink-200">
+                          {table.title}
+                        </h4>
+                        <span className="text-[11px] text-ink-400 font-mono">
+                          Table {tIdx + 1}
+                        </span>
+                      </div>
+                      <div className="overflow-x-auto rounded-xl border border-ink-200 dark:border-ink-800 shadow-sm">
                         <table className="w-full text-xs">
                           <thead>
-                            <tr className="bg-teal-500/10 dark:bg-teal-500/5">
-                              {table.headers.map((h, i) => (
+                            <tr className="bg-ink-100/70 dark:bg-ink-800/80 border-b border-ink-200 dark:border-ink-700">
+                              {table.headers.map((header, hIdx) => (
                                 <th
-                                  key={i}
-                                  className="px-3 py-2.5 text-left font-semibold text-teal-700 dark:text-teal-400 whitespace-nowrap"
+                                  key={hIdx}
+                                  className={`px-3.5 py-2.5 font-bold text-ink-700 dark:text-ink-300 whitespace-nowrap ${
+                                    hIdx === 0 ? "text-left" : "text-right"
+                                  }`}
                                 >
-                                  {h}
+                                  {header}
                                 </th>
                               ))}
                             </tr>
                           </thead>
-                          <tbody>
-                            {table.rows.map((row, ri) => (
-                              <tr
-                                key={ri}
-                                className={`border-t border-ink-100 dark:border-ink-800 ${ri % 2 === 0 ? "bg-white dark:bg-ink-900" : "bg-ink-50/50 dark:bg-ink-800/30"}`}
-                              >
-                                {row.map((cell, ci) => (
-                                  <td
-                                    key={ci}
-                                    className={`px-3 py-2.5 text-ink-700 dark:text-ink-300 whitespace-nowrap ${ci === 0 ? "font-medium" : ""}`}
-                                  >
-                                    {cell}
-                                  </td>
-                                ))}
-                              </tr>
-                            ))}
+                          <tbody className="divide-y divide-ink-100 dark:divide-ink-800 font-mono">
+                            {table.rows.map((row, rIdx) => {
+                              const isTotalRow =
+                                row[0]?.toLowerCase().includes("total") ||
+                                row[0]?.toLowerCase().includes("net refund") ||
+                                row[0]?.toLowerCase().includes("net profit after tax") ||
+                                row[0]?.toLowerCase().includes("contribution margin");
+
+                              return (
+                                <tr
+                                  key={rIdx}
+                                  className={`${
+                                    isTotalRow
+                                      ? "bg-teal-500/10 dark:bg-teal-500/15 font-semibold text-ink-900 dark:text-ink-50"
+                                      : rIdx % 2 === 0
+                                      ? "bg-white dark:bg-ink-900 text-ink-700 dark:text-ink-300"
+                                      : "bg-ink-50/50 dark:bg-ink-800/30 text-ink-700 dark:text-ink-300"
+                                  }`}
+                                >
+                                  {row.map((cell, cIdx) => (
+                                    <td
+                                      key={cIdx}
+                                      className={`px-3.5 py-2.5 whitespace-nowrap tabular-nums ${
+                                        cIdx === 0
+                                          ? "text-left font-sans font-medium text-ink-800 dark:text-ink-200"
+                                          : "text-right"
+                                      }`}
+                                    >
+                                      {cell}
+                                    </td>
+                                  ))}
+                                </tr>
+                              );
+                            })}
                           </tbody>
                         </table>
                       </div>
                     </div>
-                  ))}
-
-                <div className="p-4 rounded-2xl bg-teal-500/5 border border-teal-500/20">
-                  <div className="flex items-start gap-3">
-                    <FiAward
-                      className="text-teal-600 dark:text-teal-400 mt-0.5 shrink-0"
-                      size={16}
-                    />
-                    <div>
-                      <p className="text-xs font-bold text-teal-700 dark:text-teal-400 uppercase tracking-wider mb-1">
-                        Overall Outcome
-                      </p>
-                      <p className="text-sm text-ink-700 dark:text-ink-300 font-medium">
-                        {project.outcome}
-                      </p>
-                    </div>
+                  ))
+                ) : (
+                  <div className="p-6 rounded-xl bg-ink-50 dark:bg-ink-800 text-center text-xs text-ink-500">
+                    No raw tables cataloged for this case study. See methodology and findings.
                   </div>
+                )}
+
+                <div className="p-4 rounded-xl bg-ink-50 dark:bg-ink-800/40 border border-ink-100 dark:border-ink-800 text-xs text-ink-600 dark:text-ink-400 space-y-1">
+                  <span className="font-bold text-ink-800 dark:text-ink-200 block">
+                    Table Formatting & Unit Standards
+                  </span>
+                  <p>
+                    All monetary figures are presented in BDT unless stated otherwise. Values use tabular numerals (`.tabular-nums`) to preserve column alignment. Disclosed source precision is retained without rounding truncation.
+                  </p>
                 </div>
               </motion.div>
             )}
 
-            {/* CONCLUSION */}
-            {tab === "conclusion" && (
+            {/* 4. FINDINGS & OBSERVATIONS TAB */}
+            {activeTab === "findings" && (
               <motion.div
-                key="conclusion"
-                initial={{ opacity: 0, y: 10 }}
+                key="findings"
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="space-y-5"
+                className="space-y-6"
               >
                 <div>
-                  <h3 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-2">
-                    Conclusion
-                  </h3>
-                  <p className="text-sm text-ink-700 dark:text-ink-300 leading-relaxed">
-                    {r.conclusion}
-                  </p>
-                </div>
-                <div>
                   <h3 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-3">
-                    Recommendations
+                    Defensible Key Findings & Analytical Insights
                   </h3>
-                  <ul className="space-y-3">
-                    {r.recommendations.map((rec, i) => (
-                      <li key={i} className="flex items-start gap-3">
-                        <FiArrowRight
-                          className="text-teal-500 mt-1 shrink-0"
-                          size={13}
+                  <ul className="space-y-2.5">
+                    {report?.keyFindings?.map((finding, i) => (
+                      <li
+                        key={i}
+                        className="flex items-start gap-3 p-3.5 rounded-xl bg-ink-50 dark:bg-ink-800/50 border border-ink-100 dark:border-ink-800"
+                      >
+                        <FiCheckCircle
+                          className="text-teal-600 dark:text-teal-400 mt-0.5 shrink-0"
+                          size={14}
                         />
-                        <span className="text-sm text-ink-600 dark:text-ink-400 leading-relaxed">
-                          {rec}
+                        <span className="text-xs sm:text-sm text-ink-700 dark:text-ink-300 leading-relaxed">
+                          {finding}
                         </span>
                       </li>
                     ))}
                   </ul>
                 </div>
-                <div className="pt-4 border-t border-ink-100 dark:border-ink-800">
-                  <p className="text-xs text-ink-400 dark:text-ink-600 text-center">
-                    Academic project · Md Ibna Siam · Daffodil International
-                    University · Department of Accounting
+
+                {project.outcome && (
+                  <div className="p-4 rounded-xl bg-teal-500/10 border border-teal-500/20">
+                    <div className="flex items-start gap-3">
+                      <FiAward
+                        className="text-teal-600 dark:text-teal-400 mt-0.5 shrink-0"
+                        size={16}
+                      />
+                      <div>
+                        <span className="text-xs font-bold text-teal-800 dark:text-teal-300 uppercase tracking-wider block mb-1">
+                          Academic Study Conclusion
+                        </span>
+                        <p className="text-xs sm:text-sm text-ink-800 dark:text-ink-200 font-medium">
+                          {project.outcome}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {report?.recommendations && report.recommendations.length > 0 && (
+                  <div>
+                    <h3 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-3">
+                      Academic Recommendations & Managerial Insights
+                    </h3>
+                    <ul className="space-y-2.5">
+                      {report.recommendations.map((rec, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <FiArrowRight
+                            className="text-teal-500 mt-0.5 shrink-0"
+                            size={13}
+                          />
+                          <span className="text-xs sm:text-sm text-ink-600 dark:text-ink-300 leading-relaxed">
+                            {rec}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* 5. INTEGRITY & AUDIT NOTES TAB */}
+            {activeTab === "integrity" && (
+              <motion.div
+                key="integrity"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="space-y-6"
+              >
+                {/* Discrepancy Breakdown if Flagged */}
+                {meta.discrepancyNotice ? (
+                  <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-950 dark:text-amber-100 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <FiAlertTriangle className="text-amber-600 dark:text-amber-400" size={17} />
+                      <h4 className="font-bold text-sm text-amber-900 dark:text-amber-200">
+                        {meta.discrepancyNotice.headline}
+                      </h4>
+                    </div>
+
+                    <div className="space-y-2 text-xs leading-relaxed text-amber-800 dark:text-amber-300">
+                      {meta.discrepancyNotice.details.map((paragraph, pIdx) => (
+                        <p key={pIdx}>{paragraph}</p>
+                      ))}
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-white/60 dark:bg-ink-900/60 border border-amber-500/20 text-xs space-y-1 font-mono">
+                      <div className="text-ink-600 dark:text-ink-400">
+                        <strong className="text-ink-900 dark:text-ink-100 font-sans">Formula Tested:</strong>{" "}
+                        {meta.discrepancyNotice.formulaTested}
+                      </div>
+                      <div className="text-ink-600 dark:text-ink-400">
+                        <strong className="text-ink-900 dark:text-ink-100 font-sans">Values Examined:</strong>{" "}
+                        {meta.discrepancyNotice.originalValues}
+                      </div>
+                      <div className="text-amber-700 dark:text-amber-300 font-bold">
+                        <strong className="font-sans">Current Audit Status:</strong>{" "}
+                        {meta.discrepancyNotice.statusText}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-900 dark:text-emerald-200 flex items-start gap-3">
+                    <FiCheckCircle className="text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" size={16} />
+                    <div className="space-y-1 text-xs">
+                      <h4 className="font-bold text-emerald-900 dark:text-emerald-200">
+                        No Mathematical Discrepancies Flagged
+                      </h4>
+                      <p className="text-emerald-800 dark:text-emerald-300">
+                        The figures and internal calculation schedules of this study reproduce consistently from stated inputs.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Audit Findings Register for this Study */}
+                <div>
+                  <h3 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-3">
+                    Financial Integrity Audit Register
+                  </h3>
+                  <div className="space-y-3">
+                    {meta.auditNotes.map((note, nIdx) => (
+                      <div
+                        key={nIdx}
+                        className="p-4 rounded-xl bg-ink-50 dark:bg-ink-800/40 border border-ink-100 dark:border-ink-800 space-y-2"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="text-xs font-bold text-ink-800 dark:text-ink-200">
+                            {note.topic}
+                          </span>
+                          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-ink-200/70 dark:bg-ink-700 text-ink-700 dark:text-ink-300">
+                            {note.status}
+                          </span>
+                        </div>
+                        <p className="text-xs text-ink-600 dark:text-ink-400 leading-relaxed">
+                          {note.finding}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Academic Provenance Disclaimer */}
+                <div className="p-4 rounded-xl bg-ink-100/60 dark:bg-ink-800/40 border border-ink-200 dark:border-ink-700 text-xs text-ink-600 dark:text-ink-400 space-y-1">
+                  <span className="font-bold text-ink-800 dark:text-ink-200 block">
+                    Academic Analysis Disclaimer
+                  </span>
+                  <p>
+                    This project was completed strictly as academic analysis within the BBA curriculum at Daffodil International University. It does not constitute professional audit certification, commercial consulting services, or verified corporate employment.
                   </p>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-      </motion.div>
-    </motion.div>
-  );
-}
 
-// ── Summary Modal ──────────────────────────────────────────────
-function SummaryModal({ project, onClose, onViewReport }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-ink-900/70 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.92, y: 30 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.92, y: 30 }}
-        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-        className="bg-white dark:bg-ink-900 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[92vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Image */}
-        <div className="relative h-44 sm:h-52 rounded-t-3xl overflow-hidden">
-          <img
-            src={project.image}
-            alt={project.title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink-900/80 via-ink-900/30 to-transparent" />
+        {/* Modal Footer */}
+        <div className="px-5 py-3.5 sm:px-6 bg-ink-50/70 dark:bg-ink-950/50 border-t border-ink-100 dark:border-ink-800 flex flex-wrap items-center justify-between gap-3 text-xs text-ink-500 dark:text-ink-400 shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-teal-500" />
+            <span>Md Ibna Siam · DIU Accounting · Student Portfolio</span>
+          </div>
+
           <button
+            type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm transition-all"
+            className="px-4 py-2 bg-ink-200 dark:bg-ink-800 hover:bg-ink-300 dark:hover:bg-ink-700 text-ink-800 dark:text-ink-200 rounded-lg font-medium transition-colors cursor-pointer"
           >
-            <FiX size={18} />
+            Close Viewer
           </button>
-          <div className="absolute bottom-4 left-5 flex gap-2 flex-wrap">
-            <span
-              className={`px-3 py-1 rounded-full text-xs font-semibold ${categoryColors[project.category]}`}
-            >
-              {project.category}
-            </span>
-            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white">
-              {project.type}
-            </span>
-          </div>
-        </div>
-
-        <div className="p-6 sm:p-8">
-          <h3 className="font-display text-xl sm:text-2xl font-bold text-ink-900 dark:text-ink-50 mb-3 leading-snug">
-            {project.title}
-          </h3>
-          <p className="text-sm text-ink-600 dark:text-ink-400 leading-relaxed mb-6">
-            {project.description}
-          </p>
-
-          {/* Key tasks */}
-          <div className="mb-6">
-            <h4 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-              <FiChevronRight className="text-teal-500" size={14} /> Key Tasks &
-              Deliverables
-            </h4>
-            <ul className="space-y-2.5">
-              {project.details.map((point, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <FiCheckCircle
-                    className="text-teal-500 dark:text-teal-400 mt-0.5 shrink-0"
-                    size={15}
-                  />
-                  <span className="text-sm text-ink-600 dark:text-ink-400 leading-relaxed">
-                    {point}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Outcome */}
-          <div className="mb-6 p-4 rounded-2xl bg-teal-500/5 border border-teal-500/20">
-            <div className="flex items-start gap-3">
-              <FiAward
-                className="text-teal-600 dark:text-teal-400 mt-0.5 shrink-0"
-                size={18}
-              />
-              <div>
-                <p className="text-xs font-bold text-teal-700 dark:text-teal-400 uppercase tracking-wider mb-1">
-                  Outcome / Result
-                </p>
-                <p className="text-sm text-ink-700 dark:text-ink-300 font-medium">
-                  {project.outcome}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Tools */}
-          <div className="mb-6">
-            <h4 className="text-xs font-bold text-ink-400 dark:text-ink-500 uppercase tracking-widest mb-3 flex items-center gap-1.5">
-              <FiTag size={12} /> Tools & Methods
-            </h4>
-            <div className="flex flex-wrap gap-2">
-              {project.tools.map((t) => (
-                <span
-                  key={t}
-                  className="px-3 py-1.5 bg-ink-100 dark:bg-ink-800 text-ink-700 dark:text-ink-300 text-xs rounded-xl font-medium border border-ink-200 dark:border-ink-700"
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Action buttons — pure buttons, no href, no navigation */}
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onViewReport}
-              className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white rounded-xl font-medium text-sm transition-all shadow-lg shadow-teal-500/20 cursor-pointer"
-            >
-              <FiBookOpen size={15} /> View Full Report
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex items-center justify-center gap-2 px-5 py-3 bg-ink-100 dark:bg-ink-800 hover:bg-ink-200 dark:hover:bg-ink-700 text-ink-700 dark:text-ink-300 rounded-xl font-medium text-sm transition-all border border-ink-200 dark:border-ink-700 cursor-pointer"
-            >
-              Close
-            </button>
-          </div>
         </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
 
-// ── Project Card ───────────────────────────────────────────────
-function ProjectCard({ project, onClick }) {
+// ── Case Study Card ────────────────────────────────────────────────
+function CaseStudyCard({ project, onSelect }) {
+  const meta = CASE_STUDY_METADATA[project.id] || {
+    group: "Academic Study",
+    groupId: "accounting",
+    academicScope: "DIU Coursework",
+    framework: "Analytical Framework",
+    integrityStatus: INTEGRITY_STATUS.ACADEMIC_CALC,
+    currencyUnit: "BDT",
+    auditNotes: [],
+  };
+
+  const status = meta.integrityStatus;
+  const isAccounting = meta.groupId === "accounting";
+
   return (
-    <motion.article
-      layout
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.4 }}
-      onClick={() => onClick(project)}
-      className="group cursor-pointer bg-white dark:bg-ink-900 rounded-2xl overflow-hidden border border-ink-100 dark:border-ink-800 hover:border-teal-400/40 dark:hover:border-teal-500/30 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300"
+    <article
+      tabIndex={0}
+      role="button"
+      onClick={() => onSelect(project)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect(project);
+        }
+      }}
+      className="group text-left bg-white dark:bg-ink-900 rounded-2xl overflow-hidden border border-ink-200 dark:border-ink-800 hover:border-teal-500/50 dark:hover:border-teal-400/40 shadow-sm hover:shadow-lg transition-all duration-200 flex flex-col focus:outline-none focus:ring-2 focus:ring-teal-500 cursor-pointer"
     >
-      <div className="relative overflow-hidden h-44">
+      {/* Visual Header / Cover Image */}
+      <div className="relative h-40 overflow-hidden shrink-0 bg-ink-100 dark:bg-ink-800">
         <img
           src={project.image}
           alt={project.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink-900/70 via-ink-900/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink-950/85 via-ink-950/35 to-transparent" />
 
-        <div className="absolute top-3 left-3">
+        {/* Top Badges */}
+        <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2">
+          {/* Group Tag */}
           <span
-            className={`px-2.5 py-1 rounded-full text-xs font-semibold ${categoryColors[project.category]}`}
+            className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm ${
+              isAccounting
+                ? "bg-teal-600/90 text-white"
+                : "bg-blue-600/90 text-white"
+            }`}
           >
-            {project.category}
+            {isAccounting ? "Applied Accounting" : "Macro Research"}
+          </span>
+
+          {/* Integrity Status Pill */}
+          <span
+            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[11px] font-semibold border backdrop-blur-md shadow-sm ${status.badge}`}
+          >
+            <StatusIcon statusKey={status.key} size={11} />
+            <span>{status.shortLabel}</span>
           </span>
         </div>
 
-        {project.featured && (
-          <div className="absolute top-3 right-3">
-            <span className="px-2.5 py-1 bg-teal-500 text-white text-xs font-semibold rounded-full">
-              ⭐ Featured
-            </span>
-          </div>
-        )}
-
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-          <span className="px-5 py-2 bg-white/95 text-ink-900 rounded-xl text-xs font-semibold shadow-lg">
-            Click to view details →
-          </span>
-        </div>
-
-        <div className="absolute bottom-3 left-3">
-          <span className="text-xs text-white/70 font-mono">
-            {project.type}
+        {/* Bottom Title / Framework overlay */}
+        <div className="absolute bottom-2.5 left-3 right-3">
+          <span className="text-[11px] text-white/80 font-mono block truncate">
+            {meta.framework}
           </span>
         </div>
       </div>
 
-      <div className="p-5">
-        <h3 className="font-display font-semibold text-base text-ink-900 dark:text-ink-100 mb-2 leading-snug group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors line-clamp-2">
-          {project.title}
-        </h3>
-        <p className="text-sm text-ink-500 dark:text-ink-400 leading-relaxed mb-3 line-clamp-2">
-          {project.description}
-        </p>
-        <div className="flex items-start gap-2 mb-4 p-2.5 rounded-xl bg-teal-500/5 border border-teal-500/15">
-          <FiAward className="text-teal-500 mt-0.5 shrink-0" size={12} />
+      {/* Card Content */}
+      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-xs text-ink-500 dark:text-ink-400">
+            <span className="font-semibold text-teal-700 dark:text-teal-400">
+              {project.category}
+            </span>
+            <span className="font-mono text-[11px]">{project.type}</span>
+          </div>
+
+          <h3 className="font-display font-bold text-base text-ink-900 dark:text-ink-50 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors leading-snug line-clamp-2">
+            {project.title}
+          </h3>
+
           <p className="text-xs text-ink-600 dark:text-ink-400 leading-relaxed line-clamp-2">
-            {project.outcome}
+            {project.description}
           </p>
         </div>
-        <div className="flex flex-wrap gap-1.5">
-          {(project.tools || []).slice(0, 3).map((t) => (
-            <span
-              key={t}
-              className="px-2 py-1 bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-400 text-xs rounded-lg font-medium"
-            >
-              {t}
+
+        {/* Outcome Box */}
+        <div className="p-2.5 rounded-xl bg-ink-50 dark:bg-ink-800/60 border border-ink-100 dark:border-ink-800 text-xs">
+          <div className="flex items-start gap-2">
+            <FiAward className="text-teal-600 dark:text-teal-400 mt-0.5 shrink-0" size={13} />
+            <span className="text-ink-700 dark:text-ink-300 font-medium line-clamp-2">
+              {project.outcome}
             </span>
-          ))}
-          {(project.tools || []).length > 3 && (
-            <span className="px-2 py-1 bg-ink-100 dark:bg-ink-800 text-ink-500 text-xs rounded-lg font-medium">
-              +{(project.tools || []).length - 3}
-            </span>
-          )}
+          </div>
+        </div>
+
+        {/* Card Footer: Tools & CTA */}
+        <div className="pt-2 border-t border-ink-100 dark:border-ink-800 flex items-center justify-between gap-2">
+          <div className="flex flex-wrap gap-1">
+            {(project.tools || []).slice(0, 2).map((tool) => (
+              <span
+                key={tool}
+                className="px-2 py-0.5 bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-400 text-[10px] rounded font-medium"
+              >
+                {tool}
+              </span>
+            ))}
+            {(project.tools || []).length > 2 && (
+              <span className="text-[10px] text-ink-400 px-1 py-0.5">
+                +{(project.tools || []).length - 2}
+              </span>
+            )}
+          </div>
+
+          <span className="inline-flex items-center gap-1 text-xs font-semibold text-teal-600 dark:text-teal-400 group-hover:translate-x-0.5 transition-transform">
+            Inspect Case Study <FiArrowRight size={12} />
+          </span>
         </div>
       </div>
-    </motion.article>
+    </article>
   );
 }
 
-// ── Main Section ───────────────────────────────────────────────
+// ── Main Projects Component ────────────────────────────────────────
 export default function Projects() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const sectionRef = useRef(null);
+  const inView = useInView(sectionRef, { once: true, margin: "-80px" });
+
+  const [activeGroup, setActiveGroup] = useState("all");
   const [activeCategory, setActiveCategory] = useState("All");
-  const [summaryProject, setSummaryProject] = useState(null);
-  const [reportProject, setReportProject] = useState(null);
-  const [showAll, setShowAll] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const activeTriggerRef = useRef(null);
 
-  const filtered =
-    activeCategory === "All"
-      ? projects
-      : projects.filter((p) => p.category === activeCategory);
-
-  const displayed = showAll ? filtered : filtered.slice(0, 6);
-
-  const openSummary = (project) => {
-    setSummaryProject(project);
-    setReportProject(null);
+  const handleCloseViewer = () => {
+    setSelectedProject(null);
+    setTimeout(() => {
+      activeTriggerRef.current?.focus?.();
+    }, 50);
   };
 
-  const openReport = () => {
-    setReportProject(summaryProject);
-    setSummaryProject(null);
+  const handleOpenViewer = (project, event) => {
+    activeTriggerRef.current = event?.currentTarget || document.activeElement;
+    setSelectedProject(project);
   };
 
-  const backToSummary = () => {
-    setSummaryProject(reportProject);
-    setReportProject(null);
-  };
+  // Keyboard Escape listener & focus restoration
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && selectedProject) {
+        handleCloseViewer();
+      }
+    };
+    if (selectedProject) {
+      window.addEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "unset";
+    };
+  }, [selectedProject]);
 
-  const closeAll = () => {
-    setSummaryProject(null);
-    setReportProject(null);
-  };
+  // Filter projects by Group (Accounting vs Macroeconomics) and Discipline Category
+  const filteredProjects = projects.filter((project) => {
+    const meta = CASE_STUDY_METADATA[project.id];
+    const matchesGroup =
+      activeGroup === "all" ||
+      (activeGroup === "accounting" && meta?.groupId === "accounting") ||
+      (activeGroup === "macroeconomics" && meta?.groupId === "macroeconomics");
+
+    const matchesCategory =
+      activeCategory === "All" || project.category === activeCategory;
+
+    return matchesGroup && matchesCategory;
+  });
 
   return (
-    <section id="projects" className="py-24">
-      <div ref={ref} className="max-w-6xl mx-auto px-5 sm:px-8">
+    <section id="projects" className="py-24 bg-ink-50/30 dark:bg-ink-950/30">
+      <div ref={sectionRef} className="max-w-6xl mx-auto px-5 sm:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
         >
+          {/* Canonical Section Heading */}
           <SectionHeading
-            label="Academic work"
-            title="Projects & Case Studies"
-            subtitle="Click any project card to see full details, methodology, data tables, and recommendations."
+            label="Applied Accounting & Analytical Research"
+            title="Case Study Showcase & Research Viewer"
+            subtitle="Academic case studies, financial statement analyses, and macroeconomic research completed during BBA studies at Daffodil International University. Presented with documented methodologies, financial schedules, and transparent integrity notes."
           />
 
-          {/* Stats bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.2 }}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10"
-          >
-            {[
-              { value: projects.length, label: "Total Projects" },
-              {
-                value: projects.filter((p) => p.featured).length,
-                label: "Featured",
-              },
-              {
-                value: [...new Set(projects.map((p) => p.category))].length,
-                label: "Categories",
-              },
-              { value: "DIU", label: "Institution" },
-            ].map(({ value, label }) => (
-              <div
-                key={label}
-                className="bg-white dark:bg-ink-900 rounded-2xl p-4 border border-ink-100 dark:border-ink-800 text-center shadow-sm"
-              >
-                <div className="font-display text-2xl font-bold text-teal-600 dark:text-teal-400">
-                  {value}
-                </div>
-                <div className="text-xs text-ink-500 dark:text-ink-400 mt-1">
-                  {label}
-                </div>
+          {/* Academic Grounding / Standards Banner */}
+          <div className="mb-10 p-4 rounded-2xl bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 shadow-sm flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-700 dark:text-teal-400 flex items-center justify-center font-bold text-sm shrink-0">
+                DIU
+              </span>
+              <div>
+                <h3 className="text-xs sm:text-sm font-bold text-ink-900 dark:text-ink-50">
+                  Academic Precision & Evidence-Conscious Standards
+                </h3>
+                <p className="text-xs text-ink-500 dark:text-ink-400">
+                  All work presented reflects undergraduate coursework analyses. Calculations, assumptions, and audit statuses are transparently documented.
+                </p>
               </div>
-            ))}
-          </motion.div>
+            </div>
 
-          {/* Category filter */}
-          <div className="flex flex-wrap justify-center gap-2 mb-10">
-            {CATEGORIES.map((cat) => (
+            <div className="flex items-center gap-4 text-xs font-mono">
+              <div className="text-center px-3 py-1.5 rounded-lg bg-ink-50 dark:bg-ink-800">
+                <span className="text-teal-600 dark:text-teal-400 font-bold block">5</span>
+                <span className="text-[11px] text-ink-500">Accounting Studies</span>
+              </div>
+              <div className="text-center px-3 py-1.5 rounded-lg bg-ink-50 dark:bg-ink-800">
+                <span className="text-blue-600 dark:text-blue-400 font-bold block">3</span>
+                <span className="text-[11px] text-ink-500">Macro Papers</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Primary Group Switcher: Segmented Control */}
+          <div className="flex flex-col items-center gap-4 mb-8">
+            <div
+              role="tablist"
+              aria-label="Filter case studies by discipline group"
+              className="inline-flex p-1.5 rounded-2xl bg-ink-100 dark:bg-ink-800 border border-ink-200 dark:border-ink-700"
+            >
+              {GROUP_FILTERS.map((group) => {
+                const isSelected = activeGroup === group.id;
+                return (
+                  <button
+                    key={group.id}
+                    role="tab"
+                    aria-selected={isSelected}
+                    type="button"
+                    onClick={() => {
+                      setActiveGroup(group.id);
+                      setActiveCategory("All");
+                    }}
+                    className={`flex items-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                      isSelected
+                        ? "bg-white dark:bg-ink-900 text-teal-700 dark:text-teal-300 shadow-sm"
+                        : "text-ink-600 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-200"
+                    }`}
+                  >
+                    <span>{group.label}</span>
+                    <span
+                      className={`text-[11px] px-2 py-0.5 rounded-full font-mono ${
+                        isSelected
+                          ? "bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400"
+                          : "bg-ink-200/70 dark:bg-ink-700 text-ink-600 dark:text-ink-400"
+                      }`}
+                    >
+                      {group.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Sub-discipline Categories Pills */}
+            <div className="flex flex-wrap justify-center gap-1.5 max-w-3xl">
+              {DISCIPLINE_CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                    activeCategory === cat
+                      ? "bg-teal-600 text-white shadow-sm"
+                      : "bg-white dark:bg-ink-900 text-ink-600 dark:text-ink-400 hover:bg-ink-100 dark:hover:bg-ink-800 border border-ink-200 dark:border-ink-800"
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Case Studies Grid */}
+          {filteredProjects.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <AnimatePresence>
+                {filteredProjects.map((project) => (
+                  <CaseStudyCard
+                    key={project.id}
+                    project={project}
+                    onSelect={(p) => handleOpenViewer(p)}
+                  />
+                ))}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-white dark:bg-ink-900 rounded-2xl border border-ink-200 dark:border-ink-800 p-8 space-y-3">
+              <p className="text-sm font-semibold text-ink-700 dark:text-ink-300">
+                No case studies match the selected combination of group and discipline.
+              </p>
               <button
-                key={cat}
                 type="button"
                 onClick={() => {
-                  setActiveCategory(cat);
-                  setShowAll(false);
+                  setActiveGroup("all");
+                  setActiveCategory("All");
                 }}
-                className={`px-4 py-2 rounded-full text-xs font-medium transition-all duration-200 ${
-                  activeCategory === cat
-                    ? "bg-teal-600 dark:bg-teal-500 text-white shadow-md"
-                    : "bg-white dark:bg-ink-800 text-ink-600 dark:text-ink-400 hover:bg-ink-200 dark:hover:bg-ink-700 border border-ink-200 dark:border-ink-700"
-                }`}
+                className="px-4 py-2 rounded-lg bg-teal-600 text-white text-xs font-semibold"
               >
-                {cat}
-              </button>
-            ))}
-          </div>
-
-          {/* Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <AnimatePresence>
-              {displayed.map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  onClick={openSummary}
-                />
-              ))}
-            </AnimatePresence>
-          </div>
-
-          {/* Show more */}
-          {filtered.length > 6 && (
-            <div className="text-center mt-10">
-              <button
-                type="button"
-                onClick={() => setShowAll((v) => !v)}
-                className="px-8 py-3 rounded-xl border-2 border-teal-500/40 dark:border-teal-400/30 text-teal-600 dark:text-teal-400 hover:bg-teal-500/10 font-medium text-sm transition-all"
-              >
-                {showAll ? "Show Less" : `View All ${filtered.length} Projects`}
+                Reset Filters
               </button>
             </div>
           )}
 
-          <p className="text-center text-xs text-ink-400 dark:text-ink-600 mt-8">
-            All projects are academic work completed as part of BBA studies at
-            Daffodil International University.
-          </p>
+          {/* Academic Integrity Notice Footnote */}
+          <div className="mt-12 text-center text-xs text-ink-500 dark:text-ink-400 space-y-1">
+            <p>
+              Academic case studies completed at Daffodil International University (DIU), Department of Accounting.
+            </p>
+            <p className="font-mono text-[11px] text-ink-400">
+              Integrity Statuses: Verified · Academic Calculation · Requires Reconciliation · Illustrative / Hypothetical
+            </p>
+          </div>
         </motion.div>
       </div>
 
-      {/* Modals — rendered outside the section, no href links */}
+      {/* Case Study Viewer Modal */}
       <AnimatePresence>
-        {summaryProject && (
-          <SummaryModal
-            key="summary"
-            project={summaryProject}
-            onClose={closeAll}
-            onViewReport={openReport}
-          />
-        )}
-        {reportProject && (
-          <ReportModal
-            key="report"
-            project={reportProject}
-            onClose={closeAll}
-            onBack={backToSummary}
+        {selectedProject && (
+          <CaseStudyViewer
+            project={selectedProject}
+            meta={CASE_STUDY_METADATA[selectedProject.id]}
+            onClose={handleCloseViewer}
           />
         )}
       </AnimatePresence>
