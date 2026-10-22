@@ -20,7 +20,7 @@ export const users = pgTable("users", {
   name: varchar("name", { length: 255 }),
   emailVerified: timestamp("email_verified", { withTimezone: true }),
   image: text("image"),
-  role: varchar("role", { length: 50 }).default("admin").notNull(),
+  role: varchar("role", { length: 50 }).default("user").notNull(),
   passwordHash: text("password_hash"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
