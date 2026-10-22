@@ -62,6 +62,20 @@ export default {
           "50%": { opacity: "0" },
         },
       },
+      boxShadow: {
+        "clay-card":
+          "6px 10px 20px -3px rgba(15, 23, 42, 0.06), -3px -3px 8px 0px rgba(255, 255, 255, 0.8), inset 1px 1px 2px 0px rgba(255, 255, 255, 0.9)",
+        "clay-card-dark":
+          "8px 12px 24px -4px rgba(0, 0, 0, 0.45), -2px -2px 6px 0px rgba(30, 41, 59, 0.25), inset 1px 1px 1px 0px rgba(255, 255, 255, 0.08)",
+        "clay-btn":
+          "4px 6px 14px -2px rgba(5, 150, 105, 0.3), inset 1px 1px 2px 0px rgba(255, 255, 255, 0.4)",
+        "clay-btn-dark":
+          "4px 6px 14px -2px rgba(0, 0, 0, 0.5), inset 1px 1px 1px 0px rgba(255, 255, 255, 0.2)",
+        "clay-inset":
+          "inset 2px 2px 6px 0px rgba(15, 23, 42, 0.08), inset -2px -2px 6px 0px rgba(255, 255, 255, 0.7)",
+        "clay-inset-dark":
+          "inset 2px 2px 6px 0px rgba(0, 0, 0, 0.4), inset -1px -1px 3px 0px rgba(255, 255, 255, 0.04)",
+      },
     },
   },
   plugins: [],
