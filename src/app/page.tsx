@@ -18,6 +18,8 @@ import { PublicContact } from "@/components/public/public-contact";
 import { PublicFooter } from "@/components/public/public-footer";
 import { DraftPreviewBanner } from "@/components/public/draft-preview-banner";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Md Ibna Siam — Accounting & Finance Portfolio | ACCA Pathway",
   description:

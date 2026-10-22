@@ -8,6 +8,8 @@ import { PublicCaseStudies } from "@/components/public/public-case-studies";
 import { DraftPreviewBanner } from "@/components/public/draft-preview-banner";
 import { FiChevronRight, FiHome } from "react-icons/fi";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Academic Financial Case Studies — Md Ibna Siam",
   description:
