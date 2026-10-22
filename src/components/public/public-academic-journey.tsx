@@ -38,7 +38,7 @@ export function PublicAcademicJourney({
       <div className="max-w-5xl mx-auto px-5 sm:px-8">
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
-          <span className="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
+          <span className="text-xs font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
             Academic Progression
           </span>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink-900 dark:text-ink-50 tracking-tight">
@@ -99,7 +99,7 @@ export function PublicAcademicJourney({
 
                         <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
                           {milestone.institution}{" "}
-                          <span className="text-xs font-normal text-ink-400 font-mono">
+                          <span className="text-xs font-normal text-ink-600 dark:text-ink-400 font-mono">
                             ({milestone.campus})
                           </span>
                         </p>
@@ -138,11 +138,11 @@ export function PublicAcademicJourney({
         <div className="rounded-3xl p-6 sm:p-8 bg-white dark:bg-ink-900 border-2 border-emerald-500/20 shadow-clay-card dark:shadow-clay-card-dark space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0">
                 <FiCompass size={20} aria-hidden="true" />
               </div>
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-bold block">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-bold block">
                   {accaTrajectory.trajectoryType}
                 </span>
                 <h3 className="font-display font-bold text-xl text-ink-900 dark:text-ink-50">
@@ -156,13 +156,13 @@ export function PublicAcademicJourney({
             </span>
           </div>
 
-          <div className="text-xs font-mono text-ink-500 dark:text-ink-400">
+          <div className="text-xs font-mono text-ink-600 dark:text-ink-400">
             Credential Body: <strong>{accaTrajectory.credentialBody}</strong>
           </div>
 
           {/* Strategic Focus Papers */}
           <div>
-            <span className="text-xs font-mono font-semibold uppercase text-ink-400 block mb-2">
+            <span className="text-xs font-mono font-semibold uppercase text-ink-600 dark:text-ink-400 block mb-2">
               Strategic Exam & Applied Learning Focus:
             </span>
             <div className="grid sm:grid-cols-2 gap-2 text-xs">
@@ -171,7 +171,7 @@ export function PublicAcademicJourney({
                   key={paper}
                   className="p-2.5 rounded-xl bg-ink-50 dark:bg-ink-950/70 border border-ink-200 dark:border-ink-800 text-ink-700 dark:text-ink-300 flex items-center gap-2 font-mono text-[11px]"
                 >
-                  <FiTarget size={13} className="text-emerald-500 shrink-0" />
+                  <FiTarget size={13} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span>{paper}</span>
                 </div>
               ))}
@@ -179,8 +179,8 @@ export function PublicAcademicJourney({
           </div>
 
           {/* Integrity Guardrail Notice */}
-          <div className="p-3.5 rounded-xl bg-ink-50 dark:bg-ink-950/90 border border-ink-200 dark:border-ink-800/80 flex items-start gap-2.5 text-xs text-ink-500 dark:text-ink-400">
-            <FiShield size={14} className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-xl bg-ink-50 dark:bg-ink-950/90 border border-ink-200 dark:border-ink-800/80 flex items-start gap-2.5 text-xs text-ink-600 dark:text-ink-400">
+            <FiShield size={14} className="text-emerald-700 dark:text-emerald-400 shrink-0 mt-0.5" />
             <p className="leading-relaxed text-[11px] font-mono">
               <strong>Academic Integrity Policy:</strong> {accaTrajectory.integrityNotice}
             </p>

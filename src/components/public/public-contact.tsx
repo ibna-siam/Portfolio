@@ -126,7 +126,7 @@ export function PublicContact({
       <div className="max-w-6xl mx-auto px-5 sm:px-8">
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
-          <span className="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
+          <span className="text-xs font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
             Professional Communication
           </span>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink-900 dark:text-ink-50 tracking-tight">
@@ -147,13 +147,13 @@ export function PublicContact({
 
               {/* Email Card with Copy Action */}
               <div className="p-4 rounded-2xl bg-white dark:bg-ink-950 border border-ink-200/80 dark:border-ink-800/80 space-y-2">
-                <span className="text-[11px] font-mono text-ink-400 uppercase font-semibold block">
+                <span className="text-[11px] font-mono text-ink-600 dark:text-ink-400 uppercase font-semibold block">
                   Official Academic Email
                 </span>
                 <div className="flex items-center justify-between gap-2">
                   <a
                     href={`mailto:${email}`}
-                    className="text-xs sm:text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline break-all"
+                    className="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-400 hover:underline break-all"
                   >
                     {email}
                   </a>
@@ -168,7 +168,7 @@ export function PublicContact({
                   </button>
                 </div>
                 {copiedEmail && (
-                  <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 block">
+                  <span className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 block">
                     Copied to clipboard
                   </span>
                 )}
@@ -176,11 +176,11 @@ export function PublicContact({
 
               {/* Location Card */}
               <div className="p-4 rounded-2xl bg-white dark:bg-ink-950 border border-ink-200/80 dark:border-ink-800/80 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-ink-100 dark:bg-ink-800 flex items-center justify-center text-ink-500 shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-ink-100 dark:bg-ink-800 flex items-center justify-center text-ink-600 dark:text-ink-400 shrink-0">
                   <FiMapPin size={16} />
                 </div>
                 <div>
-                  <span className="text-[10px] font-mono text-ink-400 uppercase block font-semibold">
+                  <span className="text-[10px] font-mono text-ink-600 dark:text-ink-400 uppercase block font-semibold">
                     Geographic Base
                   </span>
                   <span className="text-xs sm:text-sm font-medium text-ink-800 dark:text-ink-200">
@@ -199,10 +199,10 @@ export function PublicContact({
                     className="p-3 rounded-xl bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 flex items-center justify-between text-xs text-ink-700 dark:text-ink-300 hover:border-emerald-500/30 transition-colors"
                   >
                     <span className="flex items-center gap-2 font-medium">
-                      <FiLinkedin size={15} className="text-emerald-600 dark:text-emerald-400" />
+                      <FiLinkedin size={15} className="text-emerald-700 dark:text-emerald-400" />
                       LinkedIn Professional Profile
                     </span>
-                    <span className="text-[10px] font-mono text-ink-400">Verified</span>
+                    <span className="text-[10px] font-mono text-ink-600 dark:text-ink-400">Verified</span>
                   </a>
                 )}
                 {githubUrl && (
@@ -213,10 +213,10 @@ export function PublicContact({
                     className="p-3 rounded-xl bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 flex items-center justify-between text-xs text-ink-700 dark:text-ink-300 hover:border-emerald-500/30 transition-colors"
                   >
                     <span className="flex items-center gap-2 font-medium">
-                      <FiGithub size={15} className="text-emerald-600 dark:text-emerald-400" />
+                      <FiGithub size={15} className="text-emerald-700 dark:text-emerald-400" />
                       GitHub Project Repository
                     </span>
-                    <span className="text-[10px] font-mono text-ink-400">Public Code</span>
+                    <span className="text-[10px] font-mono text-ink-600 dark:text-ink-400">Public Code</span>
                   </a>
                 )}
               </div>
@@ -278,7 +278,7 @@ export function PublicContact({
                           setForm({ ...form, name: e.target.value });
                           if (errors.name) setErrors({ ...errors, name: "" });
                         }}
-                        className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-ink-50 dark:bg-ink-950 border text-ink-900 dark:text-ink-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                        className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-ink-50 dark:bg-ink-950 border text-ink-900 dark:text-ink-100 placeholder:text-ink-600 dark:placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
                           errors.name
                             ? "border-red-500"
                             : "border-ink-200 dark:border-ink-800"
@@ -308,7 +308,7 @@ export function PublicContact({
                           setForm({ ...form, email: e.target.value });
                           if (errors.email) setErrors({ ...errors, email: "" });
                         }}
-                        className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-ink-50 dark:bg-ink-950 border text-ink-900 dark:text-ink-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                        className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-ink-50 dark:bg-ink-950 border text-ink-900 dark:text-ink-100 placeholder:text-ink-600 dark:placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
                           errors.email
                             ? "border-red-500"
                             : "border-ink-200 dark:border-ink-800"
@@ -363,7 +363,7 @@ export function PublicContact({
                         setForm({ ...form, message: e.target.value });
                         if (errors.message) setErrors({ ...errors, message: "" });
                       }}
-                      className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-ink-50 dark:bg-ink-950 border text-ink-900 dark:text-ink-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                      className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-ink-50 dark:bg-ink-950 border text-ink-900 dark:text-ink-100 placeholder:text-ink-600 dark:placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
                         errors.message
                           ? "border-red-500"
                           : "border-ink-200 dark:border-ink-800"

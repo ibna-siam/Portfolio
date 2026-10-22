@@ -4,7 +4,7 @@ import { desc } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth";
 import { getDb, schema } from "@/lib/db";
 import { getCloudinaryStatus } from "@/lib/cloudinary";
-import { AdminNav } from "@/components/admin/admin-nav";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { MediaClient } from "./media-client";
 
 export const metadata: Metadata = {
@@ -46,11 +46,17 @@ export default async function AdminMediaPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-ink-950 text-ink-100 font-body">
-      <AdminNav userEmail={session.user?.email} userName={session.user?.name} />
-      <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-up">
-        <MediaClient initialAssets={assets} configStatus={configStatus} />
-      </main>
-    </div>
+    <AdminShell
+      userEmail={session.user?.email}
+      userName={session.user?.name}
+      title="Media Library"
+      description="Cloudinary asset storage, document figures, and verified credential attachments."
+      breadcrumbs={[
+        { label: "Overview", href: "/admin" },
+        { label: "Media Library" },
+      ]}
+    >
+      <MediaClient initialAssets={assets} configStatus={configStatus} />
+    </AdminShell>
   );
 }

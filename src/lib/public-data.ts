@@ -172,10 +172,12 @@ export async function getPublicCaseStudies(options?: {
     query = query.where(eq(caseStudies.status, "published")) as typeof query;
   }
 
-  const rows = await query;
+  // Parallelize case study query and discrepancy lookup to eliminate sequential roundtrips
+  const [rows, discrepancies] = await Promise.all([
+    query,
+    db.select().from(caseStudyDiscrepancies),
+  ]);
 
-  // Retrieve discrepancies to attach indicators
-  const discrepancies = await db.select().from(caseStudyDiscrepancies);
   const discrepancyMap = new Map<string, typeof discrepancies[0]>();
   for (const disc of discrepancies) {
     discrepancyMap.set(disc.caseStudyId, disc);
@@ -221,35 +223,35 @@ export async function getCaseStudyBySlug(
     return null;
   }
 
-  // Fetch associated financial schedules ordered by sortOrder
-  const schedules = await db
-    .select({
-      id: financialSchedules.id,
-      title: financialSchedules.title,
-      headers: financialSchedules.headers,
-      rows: financialSchedules.rows,
-      notes: financialSchedules.notes,
-      sortOrder: financialSchedules.sortOrder,
-    })
-    .from(financialSchedules)
-    .where(eq(financialSchedules.caseStudyId, study.id))
-    .orderBy(asc(financialSchedules.sortOrder));
-
-  // Fetch associated discrepancy disclosure if any
-  const [discrepancyRow] = await db
-    .select({
-      id: caseStudyDiscrepancies.id,
-      headline: caseStudyDiscrepancies.headline,
-      summary: caseStudyDiscrepancies.summary,
-      details: caseStudyDiscrepancies.details,
-      originalValues: caseStudyDiscrepancies.originalValues,
-      formulaTested: caseStudyDiscrepancies.formulaTested,
-      statusText: caseStudyDiscrepancies.statusText,
-      preservationPolicy: caseStudyDiscrepancies.preservationPolicy,
-    })
-    .from(caseStudyDiscrepancies)
-    .where(eq(caseStudyDiscrepancies.caseStudyId, study.id))
-    .limit(1);
+  // Fetch associated financial schedules and discrepancy disclosure in parallel
+  const [schedules, [discrepancyRow]] = await Promise.all([
+    db
+      .select({
+        id: financialSchedules.id,
+        title: financialSchedules.title,
+        headers: financialSchedules.headers,
+        rows: financialSchedules.rows,
+        notes: financialSchedules.notes,
+        sortOrder: financialSchedules.sortOrder,
+      })
+      .from(financialSchedules)
+      .where(eq(financialSchedules.caseStudyId, study.id))
+      .orderBy(asc(financialSchedules.sortOrder)),
+    db
+      .select({
+        id: caseStudyDiscrepancies.id,
+        headline: caseStudyDiscrepancies.headline,
+        summary: caseStudyDiscrepancies.summary,
+        details: caseStudyDiscrepancies.details,
+        originalValues: caseStudyDiscrepancies.originalValues,
+        formulaTested: caseStudyDiscrepancies.formulaTested,
+        statusText: caseStudyDiscrepancies.statusText,
+        preservationPolicy: caseStudyDiscrepancies.preservationPolicy,
+      })
+      .from(caseStudyDiscrepancies)
+      .where(eq(caseStudyDiscrepancies.caseStudyId, study.id))
+      .limit(1),
+  ]);
 
   return {
     id: study.id,

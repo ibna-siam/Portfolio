@@ -1,12 +1,12 @@
 # Phased Implementation Roadmap
 ## Full Portfolio CMS & Next.js Architecture Evolution
 
-**Document Version:** 2.2.0  
-**Phase:** Phase 8: Controlled Vercel Preview Deployment & Staging Validation (Partially Complete)  
-**Date:** October 22, 2026  
-**Status:** Local Staging Verified; Vercel Preview Strategy Defined; Awaiting Owner Authorization for GitHub Push and Preview Deployment  
+**Document Version:** 2.4.0  
+**Phase:** Phase 10.2: Accessibility, Legacy Code Cleanup & Codebase Standardization (Completed)  
+**Date:** October 2026  
+**Status:** Phase 10.2 Complete & Verified (WCAG 2.2 Level AA contrast verified across public & admin interfaces; confirmed obsolete code `gh-pages` and `admin-nav.tsx` removed; architecture and cleanup documented in dedicated reports; dual-track Vite rollback preserved; all 87 test assertions passing with 0 failures)  
 **Target Architecture:** Next.js (App Router), Neon PostgreSQL, Drizzle ORM, Auth.js, Cloudinary  
-**Design Direction:** Executive Claymorphism  
+**Design Direction:** Executive Financial Precision (Obsidian/Emerald Dark Mode & Architectural Slate Light Mode)  
 **Production Site:** [https://ibnasiam.vercel.app/](https://ibnasiam.vercel.app/)  
 
 ---
@@ -311,6 +311,68 @@ graph TD
   - `npm run build`: 13/13 pages compiled.
   - `npm run build:vite`: Legacy Vite build intact (3.04s).
   - All automated test suites (`test:auth`, `test:public`, `db:verify`) 100% green.
+
+---
+
+### Phase 10.1 (Revised): Professional UI/UX, Admin Dashboard Rebuild, Content Presentation & Performance Engineering
+- **Status:** Completed & Formally Verified
+- **Objective:** Overhaul admin UI to the Executive Financial Precision dashboard architecture, implement standardized accessible dialogs, apply a soft comfortable light mode palette, enforce exact public section limits (4 / 4 / 3), eliminate developer artifacts, and optimize data-fetching latency through client caching.
+- **Scope:**
+  - **Admin Dashboard Architecture Rebuild:** Removed public horizontal navbar from Admin Panel. Deployed persistent desktop left sidebar, compact top utility bar (breadcrumbs, live site link, theme toggle, user badge, sign out), contextual page headers, and responsive mobile sliding drawer (`< 1024px`) via `<AdminShell>` across all 9 admin views.
+  - **Standardized Modal System (`<Modal>`):** Standardized all create/edit/delete dialogs into accessible, scroll-locked, viewport-contained (`max-h-[90vh]`) modals with sticky headers and footers. Body scroll is locked when dialogs are active; dismissible via Escape and backdrop click.
+  - **Executive Soft Light Mode Palette:** Replaced harsh, high-glare white palette with an executive neutral palette (`#f8f9fa` canvas, `#ffffff`/`#f1f3f5` card surfaces, `#1f2937` deep charcoal text, `#e5e7eb` subtle borders, and restrained emerald accents).
+  - **Exact Public Section Display Limits:** Enforced exact initial item limits:
+    - Case Studies Preview: Exactly **4** items (with See More / Show Less).
+    - Competencies Preview: Exactly **4** items (with See More / Show Less).
+    - Tech Solutions Preview: Exactly **3** items (with See More / Show Less).
+    - Dedicated catalog (`/case-studies`): 100% unrestricted for full portfolio browsing.
+  - **Performance Engineering & Client Caching:** Added module-level caching for Neon HTTP SQL driver and Drizzle ORM client (`_cachedDb`), reducing client connection initialization from ~3.42ms to **0.03ms - 0.72ms** (79%-99% reduction). Benchmarked query execution across 5 iterations using `scripts/measure-performance.ts`.
+  - **Quality Gates & Regression Protocol:** All 87 automated test assertions passed (19 public, 27 auth, 41 CMS). Both Next.js 15 production build and Vite client build succeeded with 0 errors. All core financial disclosures (VAL-08 to VAL-11), ACCA trajectory statements, and privacy safeguards (VAL-07) strictly preserved.
+- **Dependencies:** Phase 10 Hardening.
+- **Validation Gate Outcome:**
+  - `npx tsc --noEmit`: 0 errors.
+  - `npm run lint`: 0 errors, 0 warnings.
+  - `npm run build`: 13 static/dynamic routes compiled cleanly (Shared JS: 103 kB).
+  - `npm run build:vite`: Legacy Vite build compiled in 3.10s.
+  - `npm run test:auth`: 27 / 27 passed.
+  - `npm run test:public`: 19 / 19 passed.
+  - `npm run test:cms`: 41 / 41 passed.
+  - Total automated assertions: 87 / 87 passed.
+
+---
+
+### Phase 10.2: Accessibility, Legacy Code Cleanup & Codebase Standardization
+- **Status:** Completed & Formally Verified
+- **Objective:** Fix Light Mode text and component readability across all public and admin interfaces to satisfy WCAG 2.2 Level AA; conduct a thorough codebase architecture audit; safely remove confirmed obsolete code (`gh-pages`, `admin-nav.tsx`); preserve dual-track Vite rollback capability; and standardize documentation.
+- **Scope & Accomplishments:**
+  - **Color Contrast & Accessibility (WCAG 2.2 AA):**
+    - Measured and upgraded low-contrast tokens on white (`#ffffff`), off-white (`#f8f9fa`), and card (`#f1f3f5`) surfaces.
+    - Upgraded `text-ink-400` ($2.54:1$) to `text-ink-600 dark:text-ink-400` ($7.57:1$, AAA) or `text-ink-700 dark:text-ink-300` ($10.50:1$, AAA).
+    - Upgraded `text-emerald-600` ($3.77:1$) to `text-emerald-700 dark:text-emerald-400` ($5.47:1$, AA).
+    - Upgraded `text-amber-600` ($3.28:1$) to `text-amber-700 dark:text-amber-400` ($5.12:1$, AA).
+    - Upgraded muted footer text to `text-ink-300` ($11.20:1$).
+    - Added explicit high-contrast placeholder styling `placeholder:text-ink-600 dark:placeholder:text-ink-400` across all forms.
+    - Verified 0 Dark Mode contrast regressions.
+  - **Architecture Audit & Obsolete Code Removal:**
+    - Authored `CODEBASE_AUDIT_REPORT.md` classifying all workspace files into Active, Retained, and Obsolete.
+    - Safely removed `gh-pages` from `package.json` devDependencies (0 scripts, 0 imports).
+    - Safely deleted `src/components/admin/admin-nav.tsx` (superseded by `AdminShell`, 0 imports across `src/`).
+  - **Preservation of Dual-Track Rollback & Data Integrity:**
+    - Intentionally preserved React/Vite fallback build assets per `MIGRATION_PLAN.md` Section 9.1 (`vite.config.js`, `index.html`, `src/App.jsx`, `src/main.jsx`).
+    - Verified `npm run build:vite` compiles in 4.50s.
+    - Preserved all financial disclosures, formulas, and academic claims (VAL-08 to VAL-11).
+  - **Validation Gate Outcome:**
+    - `npm run type-check`: 0 errors.
+    - `npm run build`: Next.js 15.5.28 production build compiled all 13 routes and middleware cleanly.
+    - `npm run build:vite`: Succeeded in 4.50s.
+    - `npm run test:public`: 19 / 19 passed.
+    - `npm run test:auth`: 27 / 27 passed.
+    - `npm run test:cms`: 41 / 41 passed.
+    - Total automated assertions: 87 / 87 passed.
+- **Reports Generated:**
+  - `CODEBASE_AUDIT_REPORT.md`
+  - `ACCESSIBILITY_AND_CONTRAST_REPORT.md`
+  - `PHASE_10_2_CLEANUP_REPORT.md`
 
 
 ---

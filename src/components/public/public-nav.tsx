@@ -119,12 +119,12 @@ export function PublicNav() {
             <Link
               href="/admin"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-mono py-1"
+              className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-mono py-1"
             >
               <FiShield size={13} />
               <span>Admin Portal</span>
             </Link>
-            <span className="text-[11px] font-mono text-ink-400">DIU ID: 252-58-083</span>
+            <span className="text-[11px] font-mono text-ink-600 dark:text-ink-400">DIU ID: 252-58-083</span>
           </div>
         </div>
       )}

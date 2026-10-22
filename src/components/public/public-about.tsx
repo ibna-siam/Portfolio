@@ -22,7 +22,7 @@ export function PublicAbout({ settings }: PublicAboutProps) {
       <div className="max-w-6xl mx-auto px-5 sm:px-8">
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
-          <span className="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
+          <span className="text-xs font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
             Background & Focus
           </span>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink-900 dark:text-ink-50 tracking-tight">
@@ -50,7 +50,7 @@ export function PublicAbout({ settings }: PublicAboutProps) {
 
             {/* Factual Academic Identity Details */}
             <div className="pt-4 border-t border-ink-200 dark:border-ink-800/80">
-              <h3 className="text-xs font-mono uppercase tracking-widest text-ink-500 dark:text-ink-400 mb-3 font-semibold">
+              <h3 className="text-xs font-mono uppercase tracking-widest text-ink-600 dark:text-ink-400 mb-3 font-semibold">
                 Key Academic Attributes
               </h3>
               <div className="grid sm:grid-cols-2 gap-3">
@@ -65,7 +65,7 @@ export function PublicAbout({ settings }: PublicAboutProps) {
                     {isEmail ? (
                       <a
                         href={`mailto:${value}`}
-                        className="text-xs sm:text-sm font-semibold text-emerald-600 dark:text-emerald-400 hover:underline break-all"
+                        className="text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-400 hover:underline break-all"
                       >
                         {value}
                       </a>
@@ -88,7 +88,7 @@ export function PublicAbout({ settings }: PublicAboutProps) {
                 className="p-5 rounded-2xl bg-white dark:bg-ink-900 border border-ink-200/80 dark:border-ink-800/80 shadow-clay-card dark:shadow-clay-card-dark space-y-1.5"
               >
                 <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold uppercase tracking-wider text-[11px]">
+                  <span className="text-emerald-700 dark:text-emerald-400 font-semibold uppercase tracking-wider text-[11px]">
                     Academic Highlight
                   </span>
                   <span className="text-ink-600 dark:text-ink-300 font-medium">Verified</span>

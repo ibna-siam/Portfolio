@@ -1,4 +1,7 @@
-import { FiTool, FiExternalLink, FiCheckCircle } from "react-icons/fi";
+"use client";
+
+import { useState } from "react";
+import { FiTool, FiExternalLink, FiCheckCircle, FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 interface TechSolutionItem {
   id: string;
@@ -22,13 +25,19 @@ interface PublicTechSolutionsProps {
 }
 
 export function PublicTechSolutions({ solutions }: PublicTechSolutionsProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const INITIAL_LIMIT = 3;
+  const visibleSolutions = isExpanded ? solutions : solutions.slice(0, INITIAL_LIMIT);
+  const hasMore = solutions.length > INITIAL_LIMIT;
+  const remainingCount = solutions.length - INITIAL_LIMIT;
+
   return (
     <section id="tech-solutions" className="py-20 sm:py-24 bg-ink-100/30 dark:bg-ink-950/40 border-t border-ink-200/60 dark:border-ink-800/60 scroll-mt-20">
       <div id="solutions" className="scroll-mt-20" />
       <div className="max-w-6xl mx-auto px-5 sm:px-8">
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
-          <span className="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
+          <span className="text-xs font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
             Supporting Capability · 25% Weight
           </span>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink-900 dark:text-ink-50 tracking-tight">
@@ -63,8 +72,8 @@ export function PublicTechSolutions({ solutions }: PublicTechSolutionsProps) {
         </div>
 
         {/* Solutions Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {solutions.map((solution) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {visibleSolutions.map((solution) => (
             <article
               key={solution.id}
               className="bg-white dark:bg-ink-900 rounded-3xl p-6 border border-ink-200/80 dark:border-ink-800/80 hover:border-emerald-500/30 shadow-clay-card dark:shadow-clay-card-dark transition-all flex flex-col justify-between space-y-5"
@@ -76,7 +85,7 @@ export function PublicTechSolutions({ solutions }: PublicTechSolutionsProps) {
                     <FiCheckCircle size={12} className="shrink-0" />
                     <span>{solution.status}</span>
                   </span>
-                  <span className="text-[11px] font-mono text-ink-400">
+                  <span className="text-[11px] font-mono text-ink-600 dark:text-ink-400">
                     {solution.category}
                   </span>
                 </div>
@@ -120,7 +129,7 @@ export function PublicTechSolutions({ solutions }: PublicTechSolutionsProps) {
                     href={solution.verifiedRepo}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors"
                   >
                     <span>{solution.linkText || "View Repository"}</span>
                     <FiExternalLink size={13} />
@@ -130,6 +139,31 @@ export function PublicTechSolutions({ solutions }: PublicTechSolutionsProps) {
             </article>
           ))}
         </div>
+
+        {/* Progressive Disclosure Action */}
+        {hasMore && (
+          <div className="mt-10 text-center">
+            <button
+              type="button"
+              onClick={() => setIsExpanded(!isExpanded)}
+              aria-expanded={isExpanded}
+              aria-controls="tech-solutions"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-semibold tracking-wide transition-all shadow-sm bg-white dark:bg-ink-900 text-ink-800 dark:text-ink-200 border border-ink-200 dark:border-ink-700 hover:bg-ink-50 dark:hover:bg-ink-800 hover:border-ink-300 dark:hover:border-ink-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+            >
+              {isExpanded ? (
+                <>
+                  <FiChevronUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <span>Show Less Solutions</span>
+                </>
+              ) : (
+                <>
+                  <FiChevronDown className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <span>See More Solutions ({remainingCount} more)</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { desc } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth";
 import { getDb, schema } from "@/lib/db";
-import { AdminNav } from "@/components/admin/admin-nav";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { CaseStudyEditor } from "@/components/admin/case-study-editor";
 
 export const metadata: Metadata = {
@@ -34,11 +34,18 @@ export default async function NewCaseStudyPage() {
     .orderBy(desc(schema.mediaAssets.createdAt));
 
   return (
-    <div className="min-h-screen bg-ink-950 text-ink-100 font-body">
-      <AdminNav userEmail={session.user?.email} userName={session.user?.name} />
-      <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-up">
-        <CaseStudyEditor availableMediaAssets={rawMedia} />
-      </main>
-    </div>
+    <AdminShell
+      userEmail={session.user?.email}
+      userName={session.user?.name}
+      title="Create Academic Case Study"
+      description="Draft a research paper, tabular financial schedule, and discrepancy disclosure."
+      breadcrumbs={[
+        { label: "Overview", href: "/admin" },
+        { label: "Case Studies", href: "/admin/case-studies" },
+        { label: "New Study" },
+      ]}
+    >
+      <CaseStudyEditor availableMediaAssets={rawMedia} />
+    </AdminShell>
   );
 }

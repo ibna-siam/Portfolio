@@ -88,8 +88,8 @@ export function FinancialScheduleTable({
 
       {/* Schedule Notes */}
       {schedule.notes && (
-        <div className="px-5 py-3 border-t border-ink-200 dark:border-ink-800 bg-ink-50/40 dark:bg-ink-950/40 flex items-start gap-2 text-xs text-ink-500 dark:text-ink-400">
-          <FiInfo size={13} className="shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" />
+        <div className="px-5 py-3 border-t border-ink-200 dark:border-ink-800 bg-ink-50/40 dark:bg-ink-950/40 flex items-start gap-2 text-xs text-ink-600 dark:text-ink-400">
+          <FiInfo size={13} className="shrink-0 mt-0.5 text-emerald-700 dark:text-emerald-400" />
           <p className="leading-relaxed font-mono text-[11px]">{schedule.notes}</p>
         </div>
       )}

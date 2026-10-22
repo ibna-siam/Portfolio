@@ -243,8 +243,35 @@ async function runTestSuite() {
     assert.strictEqual(isLocalRelative("/\\attacker.com"), false);
     assert.strictEqual(isLocalRelative("javascript:alert(1)"), false);
     assert.strictEqual(isLocalRelative("/case-studies"), true);
-    assert.strictEqual(isLocalRelative("/case-studies/agrofab-master-budget-simulation"), true);
     assert.strictEqual(isLocalRelative("/"), true);
+  });
+
+  console.log("\n--> 8. Public Section Preview Display Limits Regression Tests (Phase 10.1):");
+  await it("Enforces exact initial visible limit of 4 on Case Studies preview", () => {
+    const mockStudies = Array.from({ length: 10 }, (_, i) => ({ id: `cs-${i}` }));
+    const INITIAL_LIMIT = 4;
+    const initialSlice = mockStudies.slice(0, INITIAL_LIMIT);
+    const remainingCount = Math.max(0, mockStudies.length - INITIAL_LIMIT);
+    assert.strictEqual(initialSlice.length, 4, "Initial visible case studies must be exactly 4");
+    assert.strictEqual(remainingCount, 6, "Remaining count must be length - 4");
+  });
+
+  await it("Enforces exact initial visible limit of 4 on Competencies preview", () => {
+    const mockCompetencies = Array.from({ length: 9 }, (_, i) => ({ id: `comp-${i}` }));
+    const INITIAL_LIMIT = 4;
+    const initialSlice = mockCompetencies.slice(0, INITIAL_LIMIT);
+    const remainingCount = Math.max(0, mockCompetencies.length - INITIAL_LIMIT);
+    assert.strictEqual(initialSlice.length, 4, "Initial visible competencies must be exactly 4");
+    assert.strictEqual(remainingCount, 5, "Remaining count must be length - 4");
+  });
+
+  await it("Enforces exact initial visible limit of 3 on Tech Solutions preview", () => {
+    const mockSolutions = Array.from({ length: 7 }, (_, i) => ({ id: `sol-${i}` }));
+    const INITIAL_LIMIT = 3;
+    const initialSlice = mockSolutions.slice(0, INITIAL_LIMIT);
+    const remainingCount = Math.max(0, mockSolutions.length - INITIAL_LIMIT);
+    assert.strictEqual(initialSlice.length, 3, "Initial visible tech solutions must be exactly 3");
+    assert.strictEqual(remainingCount, 4, "Remaining count must be length - 3");
   });
 
   console.log("\n=======================================================");

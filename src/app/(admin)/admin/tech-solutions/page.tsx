@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { requireAdmin } from "@/lib/auth";
 import { getDb, schema } from "@/lib/db";
-import { AdminNav } from "@/components/admin/admin-nav";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { SolutionsClient, TechSolutionItem } from "./solutions-client";
 
 export const metadata: Metadata = {
@@ -41,11 +41,17 @@ export default async function AdminTechSolutionsPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-ink-950 text-ink-100 font-body">
-      <AdminNav userEmail={session.user?.email} userName={session.user?.name} />
-      <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-up">
-        <SolutionsClient initialSolutions={solutions} />
-      </main>
-    </div>
+    <AdminShell
+      userEmail={session.user?.email}
+      userName={session.user?.name}
+      title="Tech Solutions"
+      description="Practical software systems, calculation engines, and digital workflows supporting financial operations."
+      breadcrumbs={[
+        { label: "Overview", href: "/admin" },
+        { label: "Tech Solutions" },
+      ]}
+    >
+      <SolutionsClient initialSolutions={solutions} />
+    </AdminShell>
   );
 }

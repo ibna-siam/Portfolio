@@ -104,10 +104,10 @@ export default async function CaseStudyDetailPage({
               <span className="font-mono font-semibold px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20">
                 {study.category}
               </span>
-              <span className="font-mono text-ink-500 dark:text-ink-400 px-2.5 py-0.5 rounded-md bg-ink-100 dark:bg-ink-900 border border-ink-200 dark:border-ink-800">
+              <span className="font-mono text-ink-600 dark:text-ink-400 px-2.5 py-0.5 rounded-md bg-ink-100 dark:bg-ink-900 border border-ink-200 dark:border-ink-800">
                 {study.group}
               </span>
-              <span className="font-mono text-ink-500 dark:text-ink-400 px-2.5 py-0.5 rounded-md bg-ink-100 dark:bg-ink-900 border border-ink-200 dark:border-ink-800">
+              <span className="font-mono text-ink-600 dark:text-ink-400 px-2.5 py-0.5 rounded-md bg-ink-100 dark:bg-ink-900 border border-ink-200 dark:border-ink-800">
                 Currency: {study.currencyUnit}
               </span>
             </div>
@@ -122,7 +122,7 @@ export default async function CaseStudyDetailPage({
 
             <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div className="p-3 rounded-xl bg-white dark:bg-ink-900 border border-ink-200/80 dark:border-ink-800/80">
-                <span className="font-mono uppercase text-[10px] text-ink-400 block font-semibold">
+                <span className="font-mono uppercase text-[10px] text-ink-600 dark:text-ink-400 block font-semibold">
                   Academic Framework
                 </span>
                 <span className="text-ink-900 dark:text-ink-100 font-medium text-xs">
@@ -130,7 +130,7 @@ export default async function CaseStudyDetailPage({
                 </span>
               </div>
               <div className="p-3 rounded-xl bg-white dark:bg-ink-900 border border-ink-200/80 dark:border-ink-800/80">
-                <span className="font-mono uppercase text-[10px] text-ink-400 block font-semibold">
+                <span className="font-mono uppercase text-[10px] text-ink-600 dark:text-ink-400 block font-semibold">
                   Calculation Basis & Inputs
                 </span>
                 <span className="text-ink-900 dark:text-ink-100 font-medium text-xs">
@@ -157,7 +157,7 @@ export default async function CaseStudyDetailPage({
 
             {study.objectives && study.objectives.length > 0 && (
               <div className="p-5 rounded-2xl bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 shadow-xs space-y-2">
-                <h3 className="font-mono text-xs uppercase font-semibold text-ink-500 dark:text-ink-400 tracking-wider">
+                <h3 className="font-mono text-xs uppercase font-semibold text-ink-600 dark:text-ink-400 tracking-wider">
                   Core Analytical Objectives
                 </h3>
                 <ul className="space-y-2 text-xs sm:text-sm text-ink-700 dark:text-ink-300">
@@ -257,7 +257,7 @@ export default async function CaseStudyDetailPage({
 
             {study.keyFindings && study.keyFindings.length > 0 && (
               <div className="p-5 rounded-2xl bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 shadow-xs space-y-2">
-                <h3 className="font-mono text-xs uppercase font-semibold text-ink-500 dark:text-ink-400 tracking-wider">
+                <h3 className="font-mono text-xs uppercase font-semibold text-ink-600 dark:text-ink-400 tracking-wider">
                   Observed Findings
                 </h3>
                 <ul className="space-y-2 text-xs sm:text-sm text-ink-700 dark:text-ink-300">
@@ -273,7 +273,7 @@ export default async function CaseStudyDetailPage({
 
             {study.recommendations && study.recommendations.length > 0 && (
               <div className="p-5 rounded-2xl bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 shadow-xs space-y-2">
-                <h3 className="font-mono text-xs uppercase font-semibold text-ink-500 dark:text-ink-400 tracking-wider">
+                <h3 className="font-mono text-xs uppercase font-semibold text-ink-600 dark:text-ink-400 tracking-wider">
                   Recommendations & Management Takeaways
                 </h3>
                 <ul className="space-y-2 text-xs sm:text-sm text-ink-700 dark:text-ink-300">
@@ -337,13 +337,13 @@ export default async function CaseStudyDetailPage({
           <div className="pt-8 border-t border-ink-200 dark:border-ink-800 flex justify-between items-center">
             <Link
               href="/case-studies"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline"
             >
               <FiArrowLeft size={14} />
               <span>Back to All Case Studies</span>
             </Link>
 
-            <span className="text-xs font-mono text-ink-400">
+            <span className="text-xs font-mono text-ink-600 dark:text-ink-400">
               Last Updated: {new Date(study.updatedAt).toLocaleDateString()}
             </span>
           </div>

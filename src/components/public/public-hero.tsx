@@ -161,7 +161,7 @@ export function PublicHero({ settings }: PublicHeroProps) {
                   <span className="font-display font-bold text-ink-900 dark:text-ink-100 block">
                     {settings.ownerName || "Md Ibna Siam"}
                   </span>
-                  <span className="text-[11px] font-mono text-ink-500 dark:text-ink-400">
+                  <span className="text-[11px] font-mono text-ink-600 dark:text-ink-400">
                     DIU Accounting Candidate
                   </span>
                 </div>
@@ -187,7 +187,7 @@ export function PublicHero({ settings }: PublicHeroProps) {
                 <span className="text-xs font-bold text-ink-900 dark:text-ink-100 block font-display">
                   {topic}
                 </span>
-                <span className="text-[11px] text-ink-500 dark:text-ink-400 leading-tight block mt-0.5">
+                <span className="text-[11px] text-ink-600 dark:text-ink-400 leading-tight block mt-0.5">
                   {description}
                 </span>
               </div>

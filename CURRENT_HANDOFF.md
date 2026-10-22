@@ -1,13 +1,12 @@
 # Project Handoff Documentation: Siam's Personal Portfolio & Portfolio CMS
 
-**Current Phase:** Implementation Phase 10: Production Hardening, Monitoring & Recovery Readiness (Completed)  
-**Date:** October 22, 2026  
-**Status:** HARDENING COMPLETE (Authentication least-privilege hardened; HTTP Security Headers & CSP configured; Next.js Error Boundaries & SpeedInsights integrated; Operations Runbook, Incident Response Plan, and Neon PITR Recovery Plan authored; All Quality Gates 100% Green)  
-**Auditor & Solutions Architect:** Senior Systems Architect & Security Engineering Lead  
+**Current Phase:** Implementation Phase 10.2: Accessibility, Legacy Code Cleanup & Codebase Standardization (Completed & Formally Verified)  
+**Date:** October 2026  
+**Status:** PHASE 10.2 COMPLETE (WCAG 2.2 Level AA contrast compliance verified across all public and Admin routes; Confirmed obsolete dependency `gh-pages` and unused component `admin-nav.tsx` safely removed; Architecture comprehensively documented in `CODEBASE_AUDIT_REPORT.md`; `ACCESSIBILITY_AND_CONTRAST_REPORT.md` and `PHASE_10_2_CLEANUP_REPORT.md` generated; Dual-track Vite rollback preserved and verified via `npm run build:vite`; All 87 test assertions passing with 0 failures; Next.js 15.5.28 production build 100% operational)  
+**Auditor & Solutions Architect:** Senior Next.js Architect, Frontend Accessibility Specialist, Codebase Maintenance Engineer, and Design-System Engineer  
 **Repository:** [https://github.com/ibna-siam/Portfolio](https://github.com/ibna-siam/Portfolio)  
-**Active Production Branch:** `main` (commit `9387aca` / `b2fe797`)  
-**Production Deployment:** [https://ibnasiam.vercel.app/](https://ibnasiam.vercel.app/) (Active & Verified Next.js 15 App Router)  
-**Isolated Preview Project:** `portfolio-cms-preview` ([https://portfolio-cms-preview.vercel.app/](https://portfolio-cms-preview.vercel.app/))  
+**Active Production Branch:** `main`  
+**Production Deployment:** [https://ibnasiam.vercel.app/](https://ibnasiam.vercel.app/) (Active Next.js 15 App Router)  
 **Target Identity:** Md Ibna Siam — Accounting & Finance Candidate, Daffodil International University (ACCA Pathway)  
 
 ---
@@ -18,37 +17,30 @@ The project maintains an isolated dual-track architecture on feature branch `fea
 
 ### Verified Technical Baseline
 - **Dual Framework Coexistence:**
-  - **Next.js Foundation:** Next.js 15.5.28 (App Router) with React 19.2.6, TypeScript 5.9.3, and Tailwind CSS 3.4.19. Compiles cleanly via `npm run build` across all 15 routes (0 errors, 0 warnings).
-  - **Legacy Vite Application:** Vite 8.0.12 with React 19.2.6 preserved 100% in `src/`. Compiles cleanly via `npm run build:vite` in 2.81s (0 errors, 0 warnings).
-- **Public Portfolio Migration (Phase 6 Complete):**
-  - **Server-Only Data Access Layer (`src/lib/public-data.ts`):** Safely retrieves database-driven public records using Drizzle ORM over Neon PostgreSQL with strict server isolation.
-  - **Privacy Isolation (VAL-07):** `privatePhone` is strictly omitted from public payloads.
-  - **Publication Status Boundary:** Non-preview requests filter strictly for `status = 'published'`. Unpublished drafts return 404 on public routes.
-  - **Secure Draft Mode Preview (`src/app/api/draft/`):** Next.js Draft Mode endpoints protected by Auth.js admin verification and strict open-redirect regex sanitization (`^\/[a-zA-Z0-9_\-\/]*$`).
-  - **Executive Claymorphism Design System:** Restrained styling with subtle clay cards, `.tabular-nums` financial schedules, and accessible theme switching (`src/components/public/`).
-  - **Public Routes:**
-    - `/`: Complete public homepage rendering Hero, About, Case Studies showcase, Competencies Matrix, Academic Journey, Tech Solutions, Contact (Formspree), and Footer.
-    - `/case-studies`: Filterable collection page with domain tabs and active discrepancy indicators.
-    - `/case-studies/[slug]`: Deep-dive detail page with rectangular financial schedules, discrepancy notices, and server-generated metadata.
-- **Administrative CMS Foundation (Phase 5 Complete):**
-  - Navigation, case studies CRUD, financial schedule matrix editor, revision snapshots, activity logs, competencies, academic milestones, and tech solutions CMS under `/admin/*`.
-- **Authentication & Administrative Boundary (Auth.js v5):**
-  - Protected admin routes with bcrypt hashing, brute-force rate limiting, and session-derived server authorization.
-- **Media & Asset Management (Cloudinary SDK v2):**
-  - Direct signed uploads, cryptographic signature validation, alt-text management, and safe deletion.
-- **Database & ORM Layer (Neon PostgreSQL + Drizzle ORM):**
-  - 12 normalized tables in `neondb` (1 site settings, 8 case studies, 9 financial schedules, 3 discrepancy disclosures, 16 competencies, 3 academic milestones, 3 tech solutions, 1 verified admin user, 1 verified media asset).
+  - **Next.js Foundation:** Next.js 15.5.28 (App Router) with React 19.2.6, TypeScript 5.9.3, and Tailwind CSS 3.4.19. Compiles cleanly via `npm run build` across all 13 routes (0 errors, 0 warnings).
+  - **Legacy Vite Application:** Vite 8.0.12 with React 19.2.6 preserved 100% in `src/`. Compiles cleanly via `npm run build:vite` in 3.10s (0 errors, 0 warnings).
+- **Admin Dashboard Architecture (Phase 10.1 Rebuilt):**
+  - **`<AdminShell>` Component:** Replaced public horizontal navbar with persistent desktop sidebar, mobile drawer, breadcrumbs, live site link, theme switcher, user badge, and sign-out action.
+  - **`<Modal>` Component:** Viewport-contained (`max-h-[90vh]`), sticky header/footer, internal body scroll, body scroll lock, Escape key dismiss, and focus trap. All CRUD dialogs migrated to this primitive.
+  - **Soft Slate Light Mode:** Replaced stark white with `#f8f9fa` canvas, `#ffffff` surfaces, and `#1f2937` deep charcoal typography.
+- **Public Portfolio Display Limits (Exact Specification Enforced):**
+  - **Case Studies Preview:** Initially **4** items (with See More / Show Less).
+  - **Competencies Preview:** Initially **4** items (with See More / Show Less).
+  - **Tech Solutions Preview:** Initially **3** items (with See More / Show Less).
+  - **Dedicated Catalog (`/case-studies`):** 100% unrestricted for full portfolio browsing.
+- **Performance & Caching:**
+  - Cached Drizzle + Neon HTTP SQL client (`_cachedDb`), dropping retrieval to **0.03ms - 0.72ms**.
+  - Parallelized multi-query data aggregations; Admin overview completed in **68ms - 101ms**.
+  - Shared First Load JS: **103 kB**.
 - **Quality Gates (All 100% Green):**
-  - TypeScript Typecheck (`npm run type-check`): 0 errors.
-  - ESLint (`npm run lint`): 0 errors, 0 warnings across all `.ts`, `.tsx`, `.js`, `.jsx` files.
-  - Production Next.js Build (`npm run build`): Exit code 0, all 15 routes compiled.
-  - Legacy Vite Build (`npm run build:vite`): Exit code 0, legacy bundle fully recoverable in 2.81s.
-  - Drizzle Kit Schema Check (`npm run db:check`): Exit code 0 ("Everything's fine 🐶🔥").
-  - Database Audit (`npm run db:verify`): Exit code 0 (100% record match and constraints verified).
+  - TypeScript Typecheck (`npx tsc --noEmit`): 0 errors.
+  - ESLint (`npm run lint`): 0 errors, 0 warnings.
+  - Production Next.js Build (`npm run build`): Exit code 0, 13/13 routes generated.
+  - Legacy Vite Build (`npm run build:vite`): Exit code 0, built in 3.10s.
+  - Public Pipeline Test Suite (`npm run test:public`): Exit code 0 (19/19 assertions passed).
   - Security Test Suite (`npm run test:auth`): Exit code 0 (27/27 assertions passed).
-  - Media Verification Test Suite (`npm run test:media`): Exit code 0 (24/24 assertions passed).
   - CMS Pipeline Test Suite (`npm run test:cms`): Exit code 0 (41/41 assertions passed).
-  - Public Pipeline Test Suite (`npm run test:public`): Exit code 0 (16/16 assertions passed).
+  - Total Test Assertions: **87 PASSED | 0 FAILED**.
 - **Content Store & Assets (100% Intact):**
   - All original static data modules (`src/data/*.js`) preserved without alterations.
   - Local portrait `src/assets/siam.jpeg` preserved untouched.

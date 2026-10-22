@@ -47,12 +47,12 @@ export function LoginForm({ initialCallbackUrl, initialError }: LoginFormProps) 
       <div>
         <label
           htmlFor="admin-email"
-          className="block text-xs font-semibold text-ink-300 uppercase tracking-wider mb-2 font-mono"
+          className="block text-xs font-semibold text-ink-700 dark:text-ink-300 uppercase tracking-wider mb-2 font-mono"
         >
           Administrator Email
         </label>
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-ink-500">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-ink-500 dark:text-ink-400">
             <FiMail className="w-4 h-4" />
           </div>
           <input
@@ -63,7 +63,7 @@ export function LoginForm({ initialCallbackUrl, initialError }: LoginFormProps) 
             required
             disabled={isPending}
             placeholder="admin@domain.com"
-            className="w-full bg-ink-950 border border-ink-800 text-ink-100 placeholder:text-ink-600 shadow-clay-inset-dark rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/50 transition-all font-body disabled:opacity-50"
+            className="w-full bg-ink-50 dark:bg-ink-950 border border-ink-300 dark:border-ink-800 text-ink-900 dark:text-ink-100 placeholder:text-ink-500 dark:placeholder:text-ink-500 shadow-xs dark:shadow-clay-inset-dark rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/50 transition-all font-body disabled:opacity-50"
           />
         </div>
       </div>
@@ -73,13 +73,13 @@ export function LoginForm({ initialCallbackUrl, initialError }: LoginFormProps) 
         <div className="flex items-center justify-between mb-2">
           <label
             htmlFor="admin-password"
-            className="block text-xs font-semibold text-ink-300 uppercase tracking-wider font-mono"
+            className="block text-xs font-semibold text-ink-700 dark:text-ink-300 uppercase tracking-wider font-mono"
           >
             Passphrase
           </label>
         </div>
         <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-ink-500">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-ink-500 dark:text-ink-400">
             <FiLock className="w-4 h-4" />
           </div>
           <input
@@ -90,14 +90,14 @@ export function LoginForm({ initialCallbackUrl, initialError }: LoginFormProps) 
             required
             disabled={isPending}
             placeholder="••••••••••••"
-            className="w-full bg-ink-950 border border-ink-800 text-ink-100 placeholder:text-ink-600 shadow-clay-inset-dark rounded-xl pl-10 pr-11 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/50 transition-all font-mono tracking-wider disabled:opacity-50"
+            className="w-full bg-ink-50 dark:bg-ink-950 border border-ink-300 dark:border-ink-800 text-ink-900 dark:text-ink-100 placeholder:text-ink-500 dark:placeholder:text-ink-500 shadow-xs dark:shadow-clay-inset-dark rounded-xl pl-10 pr-11 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500/50 transition-all font-mono tracking-wider disabled:opacity-50"
           />
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
             disabled={isPending}
             aria-label={showPassword ? "Hide password" : "Show password"}
-            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-ink-500 hover:text-ink-300 focus:outline-none focus:text-emerald-400 transition-colors cursor-pointer"
+            className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-ink-500 dark:text-ink-400 hover:text-ink-800 dark:hover:text-ink-200 focus:outline-none focus:text-emerald-500 transition-colors cursor-pointer"
           >
             {showPassword ? (
               <FiEyeOff className="w-4 h-4" />

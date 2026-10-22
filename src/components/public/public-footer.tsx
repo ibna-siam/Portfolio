@@ -44,19 +44,19 @@ export function PublicFooter({ email, linkedinUrl, githubUrl }: PublicFooterProp
                 Accounting & Finance
               </span>
             </div>
-            <p className="text-xs text-ink-400 max-w-md leading-relaxed">
+            <p className="text-xs text-ink-300 max-w-md leading-relaxed">
               Undergraduate student at Daffodil International University preparing
               for professional qualification (ACCA trajectory). Focused on financial
               reporting precision, managerial analysis, and technology-driven accounting systems.
             </p>
-            <div className="text-[11px] text-ink-400 font-mono">
+            <div className="text-[11px] text-ink-300 font-mono">
               Academic ID: 252-58-083 • Department of Accounting • Dhaka, Bangladesh
             </div>
           </div>
 
           {/* Navigation Links (3 cols) */}
           <div className="md:col-span-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-200 mb-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-100 mb-3">
               Navigation
             </h3>
             <ul className="space-y-2 text-xs">
@@ -64,7 +64,7 @@ export function PublicFooter({ email, linkedinUrl, githubUrl }: PublicFooterProp
                 <li key={label}>
                   <Link
                     href={href}
-                    className="text-ink-400 hover:text-emerald-400 transition-colors py-0.5 inline-block"
+                    className="text-ink-300 hover:text-emerald-300 transition-colors py-0.5 inline-block"
                   >
                     {label}
                   </Link>
@@ -75,7 +75,7 @@ export function PublicFooter({ email, linkedinUrl, githubUrl }: PublicFooterProp
 
           {/* Verified Channels (3 cols) */}
           <div className="md:col-span-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-200 mb-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-100 mb-3">
               Verified Dossier
             </h3>
             <div className="flex flex-col space-y-2.5 text-xs">
@@ -120,7 +120,7 @@ export function PublicFooter({ email, linkedinUrl, githubUrl }: PublicFooterProp
         </div>
 
         {/* Bottom Bar with Back to Top */}
-        <div className="pt-6 flex flex-wrap items-center justify-between gap-4 text-xs text-ink-400">
+        <div className="pt-6 flex flex-wrap items-center justify-between gap-4 text-xs text-ink-300">
           <p>© {new Date().getFullYear()} Md Ibna Siam. All rights reserved.</p>
 
           <button

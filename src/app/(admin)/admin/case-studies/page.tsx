@@ -1,7 +1,9 @@
 import { Metadata } from "next";
 import { requireAdmin } from "@/lib/auth";
 import { getDb, schema } from "@/lib/db";
-import { AdminNav } from "@/components/admin/admin-nav";
+import Link from "next/link";
+import { FiPlus } from "react-icons/fi";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { CaseStudiesClient, CaseStudyListItem } from "./case-studies-client";
 
 export const metadata: Metadata = {
@@ -17,31 +19,29 @@ export default async function AdminCaseStudiesPage() {
   const session = await requireAdmin();
   const db = getDb();
 
-  // Retrieve all case studies ordered by sourceId asc
-  const rawStudies = await db
-    .select()
-    .from(schema.caseStudies)
-    .orderBy(schema.caseStudies.sourceId);
-
-  // Retrieve financial schedule counts per case study
-  const rawSchedules = await db
-    .select({
-      caseStudyId: schema.financialSchedules.caseStudyId,
-    })
-    .from(schema.financialSchedules);
+  // Retrieve case studies, schedules, and discrepancies in parallel
+  const [rawStudies, rawSchedules, rawDiscrepancies] = await Promise.all([
+    db
+      .select()
+      .from(schema.caseStudies)
+      .orderBy(schema.caseStudies.sourceId),
+    db
+      .select({
+        caseStudyId: schema.financialSchedules.caseStudyId,
+      })
+      .from(schema.financialSchedules),
+    db
+      .select({
+        caseStudyId: schema.caseStudyDiscrepancies.caseStudyId,
+        headline: schema.caseStudyDiscrepancies.headline,
+      })
+      .from(schema.caseStudyDiscrepancies),
+  ]);
 
   const scheduleCountMap = new Map<string, number>();
   for (const s of rawSchedules) {
     scheduleCountMap.set(s.caseStudyId, (scheduleCountMap.get(s.caseStudyId) || 0) + 1);
   }
-
-  // Retrieve discrepancy records to display disclosure warnings
-  const rawDiscrepancies = await db
-    .select({
-      caseStudyId: schema.caseStudyDiscrepancies.caseStudyId,
-      headline: schema.caseStudyDiscrepancies.headline,
-    })
-    .from(schema.caseStudyDiscrepancies);
 
   const discrepancyMap = new Map<string, string>();
   for (const d of rawDiscrepancies) {
@@ -63,11 +63,26 @@ export default async function AdminCaseStudiesPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-ink-950 text-ink-100 font-body">
-      <AdminNav userEmail={session.user?.email} userName={session.user?.name} />
-      <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-up">
-        <CaseStudiesClient initialStudies={studies} />
-      </main>
-    </div>
+    <AdminShell
+      userEmail={session.user?.email}
+      userName={session.user?.name}
+      title="Academic Case Studies"
+      description="Manage research papers, financial schedules, CVP models, and mandatory integrity disclosures."
+      breadcrumbs={[
+        { label: "Overview", href: "/admin" },
+        { label: "Case Studies" },
+      ]}
+      actions={
+        <Link
+          href="/admin/case-studies/new"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-mono font-medium text-white bg-emerald-600 hover:bg-emerald-700 dark:text-ink-950 dark:bg-emerald-400 dark:hover:bg-emerald-300 shadow-sm active:translate-y-0.5 transition-all self-start sm:self-auto cursor-pointer"
+        >
+          <FiPlus className="w-4 h-4 stroke-[2.5]" />
+          <span>New Case Study</span>
+        </Link>
+      }
+    >
+      <CaseStudiesClient initialStudies={studies} />
+    </AdminShell>
   );
 }

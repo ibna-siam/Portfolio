@@ -56,7 +56,7 @@ export default async function CaseStudiesCollectionPage() {
 
           {/* Collection Header */}
           <div className="max-w-3xl mb-12 space-y-3">
-            <span className="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
+            <span className="text-xs font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
               Accounting & Macroeconomic Dossier
             </span>
             <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-ink-900 dark:text-ink-50 tracking-tight">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FiCheckCircle, FiTag } from "react-icons/fi";
+import { FiCheckCircle, FiTag, FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 interface CompetencyItem {
   id: string;
@@ -29,6 +29,7 @@ const CATEGORIES = [
 
 export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const filtered =
     activeCategory === "All"
@@ -36,6 +37,14 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
       : competencies.filter(
           (c) => c.category === activeCategory || c.domain === activeCategory
         );
+
+  const displayedCompetencies = isExpanded ? filtered : filtered.slice(0, 4);
+  const remainingCount = Math.max(0, filtered.length - 4);
+
+  const handleCategoryChange = (catId: string) => {
+    setActiveCategory(catId);
+    setIsExpanded(false); // Reset to 4 items on category switch
+  };
 
   return (
     <section
@@ -45,7 +54,7 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
       <div className="max-w-6xl mx-auto px-5 sm:px-8">
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
-          <span className="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
+          <span className="text-xs font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
             Domain Capabilities
           </span>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink-900 dark:text-ink-50 tracking-tight">
@@ -77,7 +86,7 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
                 type="button"
                 role="tab"
                 aria-selected={isSelected}
-                onClick={() => setActiveCategory(cat.id)}
+                onClick={() => handleCategoryChange(cat.id)}
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer ${
                   isSelected
                     ? "bg-emerald-700 text-white font-semibold shadow-xs"
@@ -99,9 +108,9 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
           })}
         </div>
 
-        {/* Competencies Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-5">
-          {filtered.map((item) => (
+        {/* Competencies Grid (Initially Max 2 Items) */}
+        <div id="competencies-grid" className="grid sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-5">
+          {displayedCompetencies.map((item) => (
             <div
               key={item.id}
               className="bg-white dark:bg-ink-900 rounded-2xl p-5 sm:p-6 border border-ink-200/80 dark:border-ink-800/80 hover:border-emerald-500/40 dark:hover:border-emerald-500/30 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between"
@@ -109,7 +118,7 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
               <div className="space-y-3">
                 {/* Meta Header */}
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-mono text-ink-500 dark:text-ink-400 uppercase font-semibold">
+                  <span className="text-[11px] font-mono text-ink-600 dark:text-ink-400 uppercase font-semibold">
                     {item.domain}
                   </span>
                   <span className="inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 font-medium">
@@ -144,7 +153,7 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
               </div>
 
               {/* Related Study Anchor */}
-              <div className="pt-4 mt-4 border-t border-ink-100 dark:border-ink-800/80 flex items-center justify-between text-xs font-mono text-ink-500 dark:text-ink-400">
+              <div className="pt-4 mt-4 border-t border-ink-100 dark:border-ink-800/80 flex items-center justify-between text-xs font-mono text-ink-600 dark:text-ink-400">
                 <span className="text-[11px] flex items-center gap-1">
                   <FiTag size={11} />
                   Applied in:
@@ -156,6 +165,31 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
             </div>
           ))}
         </div>
+
+        {/* Progressive Disclosure Control */}
+        {filtered.length > 2 && (
+          <div className="mt-10 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setIsExpanded((prev) => !prev)}
+              aria-expanded={isExpanded}
+              aria-controls="competencies-grid"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/25 shadow-xs hover:bg-emerald-100 dark:hover:bg-emerald-500/20 active:translate-y-0.5 transition-all cursor-pointer"
+            >
+              {isExpanded ? (
+                <>
+                  <FiChevronUp size={16} />
+                  <span>Show Less (Collapse to 2)</span>
+                </>
+              ) : (
+                <>
+                  <FiChevronDown size={16} />
+                  <span>See More Competencies ({remainingCount} remaining)</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

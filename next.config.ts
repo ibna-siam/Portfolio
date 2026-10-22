@@ -27,7 +27,7 @@ const securityHeaders = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "img-src 'self' blob: data: https://res.cloudinary.com",
+      "img-src 'self' blob: data: https://res.cloudinary.com https://images.unsplash.com https:",
       "font-src 'self' data: https://fonts.gstatic.com",
       "connect-src 'self' https://formspree.io https://res.cloudinary.com https://api.cloudinary.com https://*.vercel-insights.com https://va.vercel-scripts.com",
       "frame-ancestors 'none'",
@@ -45,6 +45,22 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.googleusercontent.com",
       },
     ],
   },

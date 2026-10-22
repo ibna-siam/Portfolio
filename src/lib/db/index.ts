@@ -18,19 +18,25 @@ if (typeof window !== "undefined") {
 
 const connectionString = process.env.DATABASE_URL;
 
+let _cachedDb: ReturnType<typeof drizzle<typeof schema>> | null = null;
+
 /**
  * Database client singleton.
- * Evaluates connection lazily to ensure build steps and offline checks do not fail when
- * DATABASE_URL has not yet been provisioned.
+ * Evaluates connection lazily and reuses the cached Drizzle client instance
+ * across warm serverless executions to benefit from HTTP keep-alive.
  */
 export function getDb() {
-  if (!connectionString) {
+  const conn = process.env.DATABASE_URL || connectionString;
+  if (!conn) {
     throw new Error(
       "DATABASE_URL is not set. Please configure DATABASE_URL in your server environment."
     );
   }
-  const sql = neon(connectionString);
-  return drizzle(sql, { schema });
+  if (!_cachedDb) {
+    const sql = neon(conn);
+    _cachedDb = drizzle(sql, { schema });
+  }
+  return _cachedDb;
 }
 
 // Export pre-initialized client when connectionString is present

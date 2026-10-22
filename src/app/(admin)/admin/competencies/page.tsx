@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { requireAdmin } from "@/lib/auth";
 import { getDb, schema } from "@/lib/db";
-import { AdminNav } from "@/components/admin/admin-nav";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { CompetenciesClient, CompetencyItem } from "./competencies-client";
 
 export const metadata: Metadata = {
@@ -36,11 +36,17 @@ export default async function AdminCompetenciesPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-ink-950 text-ink-100 font-body">
-      <AdminNav userEmail={session.user?.email} userName={session.user?.name} />
-      <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-up">
-        <CompetenciesClient initialCompetencies={competencies} />
-      </main>
-    </div>
+    <AdminShell
+      userEmail={session.user?.email}
+      userName={session.user?.name}
+      title="Competencies Matrix"
+      description="Accounting, audit, taxation, and financial technology capabilities across 4 core domains."
+      breadcrumbs={[
+        { label: "Overview", href: "/admin" },
+        { label: "Competencies" },
+      ]}
+    >
+      <CompetenciesClient initialCompetencies={competencies} />
+    </AdminShell>
   );
 }

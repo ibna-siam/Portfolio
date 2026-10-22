@@ -15,11 +15,11 @@ export function DiscrepancyNotice({ discrepancy }: DiscrepancyNoticeProps) {
       {/* Top Header Badge */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0">
             <FiAlertTriangle size={18} aria-hidden="true" />
           </div>
           <div>
-            <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-amber-700 dark:text-amber-400 block">
+            <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-amber-800 dark:text-amber-300 block">
               Academic Financial Integrity Disclosure
             </span>
             <h3 className="font-display font-bold text-base sm:text-lg text-ink-900 dark:text-white leading-snug">
@@ -35,15 +35,15 @@ export function DiscrepancyNotice({ discrepancy }: DiscrepancyNoticeProps) {
       </div>
 
       {/* Summary Narrative */}
-      <p className="text-sm text-ink-700 dark:text-ink-300 leading-relaxed font-medium">
+      <p className="text-sm text-ink-800 dark:text-ink-200 leading-relaxed font-medium">
         {discrepancy.summary}
       </p>
 
       {/* Technical Reconciliation Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-2 border-t border-amber-500/20 text-xs">
         <div className="p-3.5 rounded-xl bg-white/70 dark:bg-ink-950/60 border border-amber-500/20 space-y-1">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-500 dark:text-ink-400 font-semibold flex items-center gap-1.5">
-            <FiFileText size={12} className="text-amber-600 dark:text-amber-400" />
+          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-600 dark:text-ink-400 font-semibold flex items-center gap-1.5">
+            <FiFileText size={12} className="text-amber-700 dark:text-amber-400" />
             Formula / Relationship Tested
           </span>
           <p className="font-mono text-xs text-ink-900 dark:text-ink-100 font-semibold break-words">
@@ -52,7 +52,7 @@ export function DiscrepancyNotice({ discrepancy }: DiscrepancyNoticeProps) {
         </div>
 
         <div className="p-3.5 rounded-xl bg-white/70 dark:bg-ink-950/60 border border-amber-500/20 space-y-1">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-500 dark:text-ink-400 font-semibold">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-ink-600 dark:text-ink-400 font-semibold">
             Raw Source Values Preserved
           </span>
           <p className="font-mono text-xs text-ink-800 dark:text-ink-200">
@@ -62,7 +62,7 @@ export function DiscrepancyNotice({ discrepancy }: DiscrepancyNoticeProps) {
       </div>
 
       {/* Preservation Policy */}
-      <div className="text-xs text-ink-600 dark:text-ink-400 italic pt-1">
+      <div className="text-xs text-ink-700 dark:text-ink-300 italic pt-1">
         <strong>Preservation Policy:</strong> {discrepancy.preservationPolicy}
       </div>
     </aside>

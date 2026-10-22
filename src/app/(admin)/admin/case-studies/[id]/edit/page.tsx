@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { eq, desc, and } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth";
 import { getDb, schema } from "@/lib/db";
-import { AdminNav } from "@/components/admin/admin-nav";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { CaseStudyEditor } from "@/components/admin/case-study-editor";
 
 interface EditCaseStudyPageProps {
@@ -24,62 +24,71 @@ export default async function EditCaseStudyPage({ params }: EditCaseStudyPagePro
   const { id } = await params;
   const db = getDb();
 
-  // Retrieve case study
-  const [study] = await db
-    .select()
-    .from(schema.caseStudies)
-    .where(eq(schema.caseStudies.id, id))
-    .limit(1);
+  // Parallelize database queries for optimum response time
+  const [
+    [study],
+    rawSchedules,
+    [discrepancy],
+    rawRevisions,
+    rawMedia,
+  ] = await Promise.all([
+    // Retrieve case study
+    db
+      .select()
+      .from(schema.caseStudies)
+      .where(eq(schema.caseStudies.id, id))
+      .limit(1),
+
+    // Retrieve financial schedules
+    db
+      .select()
+      .from(schema.financialSchedules)
+      .where(eq(schema.financialSchedules.caseStudyId, id))
+      .orderBy(schema.financialSchedules.sortOrder),
+
+    // Retrieve discrepancy disclosure if one is attached
+    db
+      .select()
+      .from(schema.caseStudyDiscrepancies)
+      .where(eq(schema.caseStudyDiscrepancies.caseStudyId, id))
+      .limit(1),
+
+    // Retrieve revision history
+    db
+      .select({
+        revisionNumber: schema.contentRevisions.revisionNumber,
+        changeSummary: schema.contentRevisions.changeSummary,
+        createdAt: schema.contentRevisions.createdAt,
+      })
+      .from(schema.contentRevisions)
+      .where(
+        and(
+          eq(schema.contentRevisions.entityType, "case_study"),
+          eq(schema.contentRevisions.entityId, id)
+        )
+      )
+      .orderBy(desc(schema.contentRevisions.revisionNumber))
+      .limit(10),
+
+    // Retrieve available media assets for picker
+    db
+      .select({
+        id: schema.mediaAssets.id,
+        publicId: schema.mediaAssets.publicId,
+        secureUrl: schema.mediaAssets.secureUrl,
+        format: schema.mediaAssets.format,
+        width: schema.mediaAssets.width,
+        height: schema.mediaAssets.height,
+        bytes: schema.mediaAssets.bytes,
+        altText: schema.mediaAssets.altText,
+      })
+      .from(schema.mediaAssets)
+      .orderBy(desc(schema.mediaAssets.createdAt)),
+  ]);
 
   if (!study) {
     notFound();
   }
-
-  // Retrieve financial schedules
-  const rawSchedules = await db
-    .select()
-    .from(schema.financialSchedules)
-    .where(eq(schema.financialSchedules.caseStudyId, id))
-    .orderBy(schema.financialSchedules.sortOrder);
-
-  // Retrieve discrepancy disclosure if one is attached
-  const [discrepancy] = await db
-    .select()
-    .from(schema.caseStudyDiscrepancies)
-    .where(eq(schema.caseStudyDiscrepancies.caseStudyId, id))
-    .limit(1);
-
-  // Retrieve revision history
-  const rawRevisions = await db
-    .select({
-      revisionNumber: schema.contentRevisions.revisionNumber,
-      changeSummary: schema.contentRevisions.changeSummary,
-      createdAt: schema.contentRevisions.createdAt,
-    })
-    .from(schema.contentRevisions)
-    .where(
-      and(
-        eq(schema.contentRevisions.entityType, "case_study"),
-        eq(schema.contentRevisions.entityId, id)
-      )
-    )
-    .orderBy(desc(schema.contentRevisions.revisionNumber))
-    .limit(10);
-
-  // Retrieve available media assets for picker
-  const rawMedia = await db
-    .select({
-      id: schema.mediaAssets.id,
-      publicId: schema.mediaAssets.publicId,
-      secureUrl: schema.mediaAssets.secureUrl,
-      format: schema.mediaAssets.format,
-      width: schema.mediaAssets.width,
-      height: schema.mediaAssets.height,
-      bytes: schema.mediaAssets.bytes,
-      altText: schema.mediaAssets.altText,
-    })
-    .from(schema.mediaAssets)
-    .orderBy(desc(schema.mediaAssets.createdAt));
 
   const schedules = rawSchedules.map((s) => ({
     id: s.id,
@@ -125,17 +134,24 @@ export default async function EditCaseStudyPage({ params }: EditCaseStudyPagePro
   };
 
   return (
-    <div className="min-h-screen bg-ink-950 text-ink-100 font-body">
-      <AdminNav userEmail={session.user?.email} userName={session.user?.name} />
-      <main className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 animate-fade-up">
-        <CaseStudyEditor
-          initialData={studyData}
-          initialSchedules={schedules}
-          discrepancy={discrepancy || null}
-          revisions={rawRevisions}
-          availableMediaAssets={rawMedia}
-        />
-      </main>
-    </div>
+    <AdminShell
+      userEmail={session.user?.email}
+      userName={session.user?.name}
+      title="Edit Case Study"
+      description={`Editing ${study.title} (Slug: /${study.slug})`}
+      breadcrumbs={[
+        { label: "Overview", href: "/admin" },
+        { label: "Case Studies", href: "/admin/case-studies" },
+        { label: "Edit" },
+      ]}
+    >
+      <CaseStudyEditor
+        initialData={studyData}
+        initialSchedules={schedules}
+        discrepancy={discrepancy || null}
+        revisions={rawRevisions}
+        availableMediaAssets={rawMedia}
+      />
+    </AdminShell>
   );
 }
