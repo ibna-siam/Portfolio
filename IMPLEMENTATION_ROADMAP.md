@@ -1,287 +1,311 @@
 # Phased Implementation Roadmap
-## Siam's Accounting-Focused Hybrid Professional Portfolio
+## Full Portfolio CMS & Next.js Architecture Evolution
 
-**Document Version:** 1.0.0  
-**Phase:** Phase 2: Implementation Planning & Execution Strategy  
-**Date:** October 10, 2026  
-**Implementation Stack:** React 19, Vite 8, Tailwind CSS 3.4, Framer Motion 12  
-**Target Identity:** Md Ibna Siam — Accounting & Finance Professional in Development  
+**Document Version:** 2.2.0  
+**Phase:** Phase 8: Controlled Vercel Preview Deployment & Staging Validation (Partially Complete)  
+**Date:** October 22, 2026  
+**Status:** Local Staging Verified; Vercel Preview Strategy Defined; Awaiting Owner Authorization for GitHub Push and Preview Deployment  
+**Target Architecture:** Next.js (App Router), Neon PostgreSQL, Drizzle ORM, Auth.js, Cloudinary  
+**Design Direction:** Executive Claymorphism  
+**Production Site:** [https://ibnasiam.vercel.app/](https://ibnasiam.vercel.app/)  
 
 ---
 
 ## 1. Roadmap Architecture & Execution Philosophy
 
-This roadmap details the sequential, step-by-step implementation plan to transform the existing codebase into the target accounting portfolio defined in `PRD.md` and `DESIGN_SYSTEM.md`.
+This roadmap outlines the systematic, zero-downtime implementation plan to evolve the existing production portfolio into an enterprise-grade **Portfolio CMS** with a protected **Admin Panel** (`/admin`).
 
-### Execution Principles:
-1. **Incremental & Non-Destructive:** Each phase produces an independently buildable and functional state. No breaking intermediate stages.
-2. **Regression Verification at Every Step:** Working features (dark/light theme toggle, Formspree contact submission, resume download link, active nav scrolling) must be validated after every phase.
-3. **No Unnecessary Dependencies:** All enhancements will be implemented using the existing installed packages (`react`, `react-dom`, `vite`, `tailwindcss`, `framer-motion`, `react-icons`, `@vercel/speed-insights`).
-
----
-
-## 2. Phase-by-Phase Execution Plan
+### 1.1 Core Execution Principles
+1. **Zero Downtime & Production Continuity:** The live production deployment on Vercel must remain operational and unaffected until the migrated application passes all staging validation gates.
+2. **Complete Content & Financial Preservation:** All 8 existing academic case studies, 4 mandatory discrepancy disclosures, 16 core competencies, 3 technology solutions, and 3 academic milestones must be faithfully preserved and seeded into the database without loss or arbitrary numbers mutation.
+3. **Strict Phase Isolation & Quality Gates:** No subsequent phase may commence until all verification checks (TypeScript compilation, ESLint, migration checks, and manual sanity tests) pass with zero errors.
+4. **Non-Destructive Git Governance:** All work will be carried out on dedicated feature/migration branches. Staging to production requires explicit project owner approval.
 
 ```mermaid
 graph TD
-    P3["Phase 3: Foundation, Design Tokens & Codebase Clean-Up"]
-    P4["Phase 4: Executive Hero, Navigation & About Section Overhaul"]
-    P5["Phase 5: Accounting & Analytical Competencies Matrix"]
-    P6["Phase 6: Financial Case Study Showcase & Interactive Viewer"]
-    P7["Phase 7: Technology & Business Problem-Solving Section"]
-    P8["Phase 8: Education Timeline & Accessible Contact Form"]
-    P9["Phase 9: SEO Metadata, Performance & A11y Optimization"]
-    P10["Phase 10: Final Verification, Cross-Browser Testing & Deployment"]
+    P0["Phase 0: Documentation Audit & Alignment"]
+    P1["Phase 1: Next.js App Router & Database Foundation (Neon + Drizzle)"]
+    P2["Phase 2: Relational Schema & Historical Data Seeding"]
+    P3["Phase 3: Auth.js Integration & Protected Admin Boundary"]
+    P4["Phase 4: Cloudinary Media Storage & Asset Management"]
+    P5["Phase 5: Core CMS Content Models & Admin UI (Completed)"]
+    P6["Phase 6: Public Portfolio Migration & Executive Claymorphism"]
+    P7["Phase 7: Draft Mode Public Integration & Live Previews"]
+    P8["Phase 8: Dynamic SEO, Open Graph & Structured Data"]
+    P9["Phase 9: End-to-End Testing, Security Audits & Vercel Launch"]
 
-    P3 --> P4 --> P5 --> P6 --> P7 --> P8 --> P9 --> P10
+    P0 --> P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> P7 --> P8 --> P9
 ```
 
 ---
 
-### Phase 3: Design Foundation, Tokens & Codebase Clean-Up
-- **Objective:** Establish the "Executive Financial Precision" design tokens in Tailwind, eliminate dead code and stray files, remove the artificial 1.6s render delay, and synchronize deployment configuration.
-- **Scope:**
-  - Delete unimported dead stylesheet: [src/App.css](file:///d:/Project/portfolio%20siam/src/App.css).
-  - Remove empty stray folder: `src/{components,hooks,data,assets}`.
-  - Delete unused template icons: [src/assets/react.svg](file:///d:/Project/portfolio%20siam/src/assets/react.svg), [src/assets/vite.svg](file:///d:/Project/portfolio%20siam/src/assets/vite.svg).
-  - Update [tailwind.config.js](file:///d:/Project/portfolio%20siam/tailwind.config.js) with semantic tokens: deep navy slate, refined emerald primary, and amber variance colors.
-  - Update [src/index.css](file:///d:/Project/portfolio%20siam/src/index.css) to import Google Fonts with `display=swap` and declare tabular number utility (`.tabular-nums`).
-  - Modify [src/App.jsx](file:///d:/Project/portfolio%20siam/src/App.jsx): Remove artificial 1.6s `setTimeout` timer; mount `<main>` immediately with smooth entry opacity transition.
-  - Reconcile [vite.config.js](file:///d:/Project/portfolio%20siam/vite.config.js) base path based on owner hosting decision.
-- **Relevant Files:**
-  - `src/App.css` (Delete)
-  - `src/assets/react.svg`, `src/assets/vite.svg` (Delete)
-  - `tailwind.config.js` (Modify)
-  - `src/index.css` (Modify)
-  - `src/App.jsx` (Modify)
-  - `vite.config.js` (Modify)
-- **Dependencies:** None.
-- **Expected Outcome:** Clean project root, instantly rendering DOM (< 500ms FCP), active semantic color palette.
-- **Acceptance Criteria:**
-  - `npm run build` succeeds with zero errors.
-  - Page renders immediately on refresh with no 1.6-second delay.
-  - Dark and light mode toggle still functions properly via `useTheme`.
-- **Testing Requirements:**
-  - Run `npm run lint` and `npm run build`.
-  - Verify that theme toggle works in browser.
-- **Risks & Rollback:**
-  - *Risk:* Removing `App.css` or template icons causes missing import errors.
-  - *Mitigation:* Audited in Phase 1 — zero imports exist in any file. Rollback via git checkout if unexpected issues occur.
+## 2. Phase-by-Phase Implementation Specifications
+
+### Phase 0: Portfolio CMS Documentation Audit & Alignment (Current Phase)
+- **Status:** **Completed & Under Review**
+- **Objective:** Audit existing codebase, dependencies, data sources, and documentation; align `PRD.md`, `PROJECT_CONTEXT.md`, `DESIGN_SYSTEM.md`, `IMPLEMENTATION_ROADMAP.md`, and `CURRENT_HANDOFF.md` with the approved target architecture without modifying application source code.
+- **Scope:** Documentation only. Zero application source code modifications.
+- **Validation Gate:** Clean Git status showing only documentation files modified; zero package installs or runtime changes.
 
 ---
 
-### Phase 4: Executive Hero, Navigation & About Section Overhaul
-- **Objective:** Overhaul the top-of-funnel experience to establish Siam's professional accounting identity.
-- **Scope:**
-  - Overhaul [src/components/Navbar.jsx](file:///d:/Project/portfolio%20siam/src/components/Navbar.jsx): Update brand logo to "Md Ibna Siam", revise nav links (`About`, `Competencies`, `Case Studies`, `Tech & Business`, `Education`, `Contact`), add `aria-expanded` and keyboard `Escape` handler to mobile drawer.
-  - Overhaul [src/components/Hero.jsx](file:///d:/Project/portfolio%20siam/src/components/Hero.jsx):
-    - Replace coder terminal prompt (`> [text] |`) with executive typography.
-    - Headline: *"Accounting & Finance Professional in Development"*.
-    - Subtitle highlighting financial reporting, budgeting, taxation, and auditing.
-    - CTAs: Primary *"Download Academic CV"* (Google Drive link with PDF icon) and Secondary *"Explore Case Studies"*.
-    - Filter social links to remove broken placeholder (`twitter.com`).
-  - Introduce Credential & Domain Ribbon below Hero (`DSE Ratio Analysis`, `NBR Tax Act 2023`, `Master Budgeting`, `Cost Accounting`, `Internal Audit`).
-  - Overhaul [src/components/About.jsx](file:///d:/Project/portfolio%20siam/src/components/About.jsx):
-    - Import canonical `SectionHeading` from standalone file; remove duplicate definition in `About.jsx`.
-    - Present narrative on analytical rigor, accounting ethics, and career vision (ACCA career trajectory).
-    - Display 4 factual academic profile highlights (BBA Accounting Candidate, Core Disciplines, Portfolio Depth [5 Case Studies + 3 Macro Papers], and ACCA Target).
-- **Relevant Files:**
-  - `src/components/Navbar.jsx`
-  - `src/components/Hero.jsx`
-  - `src/components/About.jsx`
-  - `src/components/SectionHeading.jsx`
-  - `src/data/portfolioData.js`
-- **Dependencies:** Phase 3 color and font tokens.
-- **Expected Outcome:** High-trust, professional first fold completely free of software engineer cliches.
-- **Acceptance Criteria:**
-  - Navigation smooth-scrolls to all active sections.
-  - Mobile menu closes when a link is clicked or when `Escape` is pressed.
-  - Resume button opens verified Google Drive CV in a new tab with `rel="noopener noreferrer"`.
-  - Zero broken social links in Hero.
-- **Testing Requirements:**
-  - Mobile responsive test at 375px viewport.
-  - Active section indicator test during page scroll.
+### Phase 1: Next.js App Router & Database Foundation (Neon + Drizzle)
+- **Status:** **Completed & Validated (on `feat/nextjs-cms-migration`)**
+- **Objective:** Initialize the Next.js App Router project structure, configure TypeScript, establish connection to Neon Serverless PostgreSQL, and configure Drizzle ORM with Drizzle Kit.
+- **Scope Completed:**
+  - Initialized Next.js 15.5.28 App Router in workspace with TypeScript 5.9.3, React 19.2.6, and Tailwind CSS 3.4.19.
+  - Installed dependencies: `@neondatabase/serverless` (1.2.0), `drizzle-orm` (0.45.4), `drizzle-kit` (0.31.11), `dotenv` (18.0.8).
+  - Configured `drizzle.config.ts` supporting PostgreSQL dialect with schema in `./src/lib/db/schema.ts` and migrations in `./drizzle`.
+  - Created server-only database client singleton in `src/lib/db/index.ts` with lazy initialization ensuring static build resilience.
+  - Configured `.env.example` documenting `DATABASE_URL` and `DATABASE_URL_UNPOOLED` without secret values.
+  - Established minimal diagnostic foundation route at `src/app/page.tsx` and root layout at `src/app/layout.tsx`.
+- **Validation Gate Outcome:**
+  - TypeScript compiles with zero errors (`npm run type-check` -> exit 0).
+  - ESLint passes with zero errors/warnings (`npm run lint` -> exit 0).
+  - Next.js production build succeeds cleanly (`npm run build` -> exit 0).
+  - Legacy Vite production build verified intact (`npm run build:vite` -> exit 0).
+  - Drizzle Kit schema check passes cleanly (`npm run db:check` -> exit 0).
+  - Database connectivity tested: confirmed graceful handling when `DATABASE_URL` is not yet provisioned.
+- **Dependencies:** Approved Phase 0 documentation.
+- **Risks & Rollback:** Serverless cold starts and unprovisioned credentials handled via lazy connection pooler initialization. Full rollback capability preserved.
 
 ---
 
-### Phase 5: Accounting & Analytical Competencies Matrix
-- **Objective:** Replace subjective percentage progress bars with structured, credential-backed competency grids.
-- **Scope:**
-  - Overhaul [src/components/Skills.jsx](file:///d:/Project/portfolio%20siam/src/components/Skills.jsx):
-    - Eliminate numerical percentage bars (`88%`, `70%`).
-    - Organize competencies into four structured domains:
-      1. *Financial & Managerial Accounting*
-      2. *Taxation & Regulatory Compliance (NBR / ITA 2023)*
-      3. *Auditing & Internal Controls*
-      4. *Financial & Office Software (Excel, Tally ERP, QuickBooks)*
-    - Migrate hardcoded framework badges (`IFRS`, `BAS`, `Income Tax Act 2023`, `CVP Analysis`) from component JSX into [src/data/portfolioData.js](file:///d:/Project/portfolio%20siam/src/data/portfolioData.js).
-    - Category filter tabs: *All*, *Accounting*, *Tax & Audit*, *Software*, *Soft Skills*.
-- **Relevant Files:**
-  - `src/components/Skills.jsx`
-  - `src/data/portfolioData.js`
-- **Dependencies:** Phase 3 tokens.
-- **Expected Outcome:** Credible, professionally defensible skills matrix that passes recruiter scrutiny.
-- **Acceptance Criteria:**
-  - No percentage bars appear in the rendered UI.
-  - Category filters smoothly filter competency cards using Framer Motion layout transitions.
-  - Every card clearly articulates specific accounting topics or software tools.
-- **Testing Requirements:**
-  - Test all category filter tab clicks.
-  - Verify layout transition stability on mobile screens.
+### Phase 2: Relational Schema Implementation & Historical Data Seeding
+- **Status:** **Completed & Validated (on `feat/nextjs-cms-migration`)**
+- **Objective:** Define the complete relational schema in Drizzle ORM and execute an automated seed script migrating all existing data from `src/data/*.js` into Neon PostgreSQL.
+- **Scope Completed:**
+  - Defined 12 normalized schema tables in `src/lib/db/schema.ts` (`users`, `site_settings`, `system_settings`, `case_studies`, `financial_schedules`, `case_study_discrepancies`, `competencies`, `academic_milestones`, `tech_solutions`, `media_assets`, `content_revisions`, `activity_logs`).
+  - Generated and executed Drizzle migration: `drizzle/0000_large_slayback.sql` applied cleanly against Neon PostgreSQL `neondb`.
+  - Authored idempotent seed pipeline `scripts/seed.ts` supporting dry-run and live modes.
+  - Successfully seeded 1 site settings, 8 case studies, 9 financial schedules, 3 discrepancy disclosures, 16 competencies, 3 education milestones, and 3 technology solutions.
+  - Verified idempotency: second execution resulted in 0 created, 43 updated, 0 duplicates, 0 errors.
+  - Authored automated read-only verification script `scripts/verify-db.ts` verifying 100% record parity and foreign key constraints.
+- **Validation Gate Outcome:**
+  - `npm run db:verify`: 100% match of all 8 case studies, 16 competencies, 3 milestones, 3 tech solutions, 9 schedules, 3 discrepancies.
+  - Privacy status verified: `phonePrivacyStatus = 'hidden'`.
+  - Financial discrepancies preserved: Tax refund divergence, RMG contribution margin divergence, and FIFA World Cup economic impact conflict faithfully recorded.
+  - TypeScript & ESLint: 0 errors, 0 warnings.
+- **Dependencies:** Approved Phase 1 foundation & verified Neon database.
+- **Risks & Rollback:** Fully mitigated via idempotent upserting logic and clean migration journal snapshot. Full rollback preserved.
 
 ---
 
-### Phase 6: Financial Case Study Showcase & Interactive Viewer
-- **Objective:** Refactor the monolithic 736-line `Projects.jsx` into a clean, modular showcase with direct, accessible case study drawers.
-- **Scope:**
-  - Deconstruct [src/components/Projects.jsx](file:///d:/Project/portfolio%20siam/src/components/Projects.jsx):
-    - Create `src/components/projects/ProjectCard.jsx` (Card preview with image, category, key metric highlight, and action button).
-    - Create `src/components/projects/CaseStudyModal.jsx` (Direct comprehensive case study viewer featuring Executive Summary, Problem Statement, Methodology, Financial Data Tables, and Strategic Recommendations).
-    - Create `src/components/projects/FinancialTable.jsx` (Accessible tabular numbers view with horizontal scroll indicator for mobile).
-  - Add URL hash deep linking (e.g. clicking a project sets hash `#case-study-square-pharma` allowing direct sharing).
-  - Maintain all verified financial calculations, ratios, and findings for all 8 existing projects in `portfolioData.js`.
-- **Relevant Files:**
-  - `src/components/Projects.jsx`
-  - `src/components/projects/ProjectCard.jsx` (New)
-  - `src/components/projects/CaseStudyModal.jsx` (New)
-  - `src/components/projects/FinancialTable.jsx` (New)
-  - `src/data/portfolioData.js`
-- **Dependencies:** Phase 3 & 4.
-- **Expected Outcome:** High-impact case study presentation without nested modal confusion; modular codebase with < 200 lines per file.
-- **Acceptance Criteria:**
-  - Clicking any project opens the full case study viewer directly.
-  - Financial data tables render with clean tabular figures (`font-mono text-xs tabular-nums`).
-  - Mobile scrolling inside the modal is smooth and does not trigger double-scroll on the body.
-  - Modal closes on `Escape` key or backdrop click.
-- **Testing Requirements:**
-  - Open and test every single one of the 8 projects.
-  - Test tabular numbers alignment in financial statements on desktop and mobile.
+### Phase 3: Auth.js Integration & Protected Admin Boundary
+- **Status:** **Completed & Validated (on `feat/nextjs-cms-migration`)**
+- **Objective:** Implement secure authentication for the `/admin` route using Auth.js (NextAuth v5), securing all administrative endpoints with server-enforced boundary protection.
+- **Scope Completed:**
+  - Installed Auth.js core dependencies: `next-auth@5.0.0-beta.32`, `bcryptjs`, `@types/bcryptjs`.
+  - Configured edge-compatible `src/auth.config.ts` and server-side `src/auth.ts` with Credentials Provider and JWT session strategy (eliminating unnecessary adapter session tables while reusing the verified Phase 2 `users` table).
+  - Implemented server-side brute-force protection and attempt limiting (`src/lib/auth-limiter.ts`): enforces maximum 5 failed attempts per 15-minute sliding window.
+  - Implemented reusable server-side authorization guard `requireAdmin()` and open-redirect protection `sanitizeCallbackUrl()` in `src/lib/auth.ts`.
+  - Implemented Next.js middleware boundary (`src/middleware.ts`) intercepting `/admin/:path*` and redirecting unauthenticated or non-admin requests to `/admin/login`.
+  - Authored secure administrator provisioning and credential rotation CLI tool `scripts/create-admin.ts` (`npm run db:admin:create`) with bcrypt cost factor 12 and safe idempotency.
+  - Built Executive Claymorphism login experience (`src/app/(admin)/admin/login/page.tsx` and `login-form.tsx`) with accessible controls, show/hide password toggle, and error messaging.
+  - Built protected administrative entry console (`src/app/(admin)/admin/page.tsx`) verifying server-side session identity and providing secure sign-out.
+  - Created automated 27-point security test suite (`scripts/test-auth-boundary.ts` / `npm run test:auth`).
+- **Validation Gate Outcome:**
+  - Navigating to `/admin` while unauthenticated immediately redirects to `/admin/login`.
+  - Authenticated administrators with `role: admin` access the executive console.
+  - Non-admin roles strictly denied access with `AccessDenied` notice.
+  - Failed logins display generic error messaging without disclosing user existence.
+  - Open-redirect attacks (`https://evil.com`, `//evil.com`, `javascript:`) neutralized.
+  - Password hashes excluded completely from client session tokens.
+  - All test suites green: `type-check` (0 errors), `lint` (0 errors), `build` (Next.js 15 pass), `build:vite` (legacy pass), `db:check` (pass), `db:verify` (100% pass), `test:auth` (27/27 pass).
+- **Dependencies:** Phase 2 `users` table and verified Neon database.
+- **Risks & Rollback:** Credentials authentication is fully isolated, reversible, and requires no DDL schema alterations. Legacy Vite remains 100% functional.
 
 ---
 
-### Phase 7: Business & Technology Problem-Solving Section
-- **Objective:** Introduce a dedicated supporting section demonstrating how Siam applies technology and software to solve business and operational problems.
-- **Scope:**
-  - Create new component: `src/components/TechSolutions.jsx`.
-  - Mount `<TechSolutions />` in [src/App.jsx](file:///d:/Project/portfolio%20siam/src/App.jsx) between Case Studies and Education.
-  - Add navigation item `Tech & Business` (`#tech-solutions`) in Navbar.
-  - Feature 2–3 curated projects (e.g. Financial/E-Commerce Data Management, Spreadsheet Automation) detailing:
-    - *Business Friction & Context*
-    - *Implemented System Architecture*
-    - *Financial / Commercial Outcome*
-    - *Tech Stack & Verified Repository Links*
-- **Relevant Files:**
-  - `src/components/TechSolutions.jsx` (New)
-  - `src/App.jsx`
-  - `src/components/Navbar.jsx`
-  - `src/data/portfolioData.js`
-- **Dependencies:** Phase 6.
-- **Expected Outcome:** Seamless demonstration of hybrid capability that reinforces—rather than overshadows—the core accounting identity.
-- **Acceptance Criteria:**
-  - Clear visual distinction showing this is a supporting capability (2-column layout, compact cards).
-  - Valid links to source code repositories where applicable.
-- **Testing Requirements:**
-  - Anchor link navigation `#tech-solutions` scrolls to correct section.
+### Phase 4: Cloudinary Media Storage & Asset Management
+- **Status:** **Completed & Validated (on `feat/nextjs-cms-migration`)**
+- **Objective:** Integrate Cloudinary for scalable image delivery, automatic WebP/AVIF format optimization, direct signed administrative uploads, and PostgreSQL asset metadata registration.
+- **Scope Completed:**
+  - Installed official Cloudinary Node.js SDK: `cloudinary` 2.11.0.
+  - Configured server-side client module `src/lib/cloudinary.ts` with signature generation (`generateSignedUploadParams`), response signature verification (`verifyCloudinaryResponseSignature`), and resilient fallback diagnostics (`getCloudinaryStatus`).
+  - Implemented secure Server Actions (`src/app/(admin)/admin/media/actions.ts`):
+    - `getUploadSignatureAction`: Authenticated generation of short-lived upload tickets strictly scoped to `portfolio/media`.
+    - `registerMediaAssetAction`: Verifies returned Cloudinary cryptographic response signature, enforces 5 MB size limit and format whitelist (`jpg`, `jpeg`, `png`, `webp`), and performs conflict-aware upsert into PostgreSQL `media_assets`.
+    - `updateMediaAssetAltTextAction`: Updates image alternative text for accessibility (WCAG 2.1 AA).
+    - `deleteMediaAssetAction`: Enforces reference integrity guard (blocks deletion if referenced in published site profile settings) before calling Cloudinary destroy and database deletion.
+  - Built Executive Claymorphism Media Library UI (`src/app/(admin)/admin/media/page.tsx` & `media-client.tsx`):
+    - Authenticated direct browser-to-Cloudinary upload with real-time status.
+    - Responsive asset grid with aspect ratio wells, format badges, dimensions, and file size indicators.
+    - Search by public ID/alt text and format filter pills (All, WEBP, JPG, JPEG, PNG).
+    - Asset inspector detail modal, inline alt text editor, and copy-URL action with visual feedback.
+    - Added explicit root `src/app/not-found.tsx` preventing App Router invariant collisions during production builds.
+  - Uploaded Siam's local portrait asset (`src/assets/siam.jpeg`) to Cloudinary (`portfolio/media/siam_portrait`) via `scripts/upload-portrait.ts` (`npm run db:media:portrait`), persisting verified metadata in `media_assets` table. Original local asset preserved; public site references preserved.
+  - Authored automated 24-point security and validation test suite (`scripts/test-media-pipeline.ts` / `npm run test:media`).
+- **Validation Gate Outcome:**
+  - Cloudinary connectivity tested and confirmed (`status: 'ok'`).
+  - Signed direct browser upload flow verified; unauthenticated calls rejected by `requireAdmin()`.
+  - Forged and tampered upload signatures strictly rejected.
+  - Executable/vector formats (SVG, EXE, PDF) rejected.
+  - Reference guard prevents deleting active profile assets.
+  - Database verification (`npm run db:verify`) confirms 100% record integrity across all 12 tables + verified media asset.
+  - All test suites green: `type-check` (0 errors), `lint` (0 errors), `build` (Next.js 15 pass), `build:vite` (legacy pass), `db:check` (pass), `db:verify` (pass), `test:auth` (27/27 pass), `test:media` (24/24 pass).
+- **Dependencies:** Phase 3 authenticated admin shell and verified Neon PostgreSQL database.
+- **Risks & Rollback:** Zero DDL migrations required. Cloudinary operations are fully decoupled from public portfolio runtime; legacy Vite remains 100% functional.
 
 ---
 
-### Phase 8: Education Timeline & Accessible Contact Form Overhaul
-- **Objective:** Polish the education section and transform the contact form into an accessible, error-resilient communication channel.
-- **Scope:**
-  - Overhaul [src/components/Experience.jsx](file:///d:/Project/portfolio%20siam/src/components/Experience.jsx):
-    - Rename section title accurately to *"Education & Qualifications"*.
-    - Present clean vertical timeline with DIU BBA Accounting, HSC at Ghatail Cantonment College, and SSC.
-    - Highlight core coursework badges (Financial Accounting, Auditing, Taxation, Corporate Finance).
-  - Overhaul [src/components/Contact.jsx](file:///d:/Project/portfolio%20siam/src/components/Contact.jsx):
-    - Shift messaging from freelance gigs to internships, trainee accountant roles, and academic collaboration.
-    - Wrap Formspree `fetch` in `try...catch` with inline error state for network failures.
-    - Add explicit `id` attributes to inputs and `htmlFor` to `<label>` elements.
-    - Add hidden honeypot field (`_gotcha`) for spam prevention.
-    - Add inquiry type selector (Internship / Entry-Level Role / Academic / General).
-  - Polish [src/components/Footer.jsx](file:///d:/Project/portfolio%20siam/src/components/Footer.jsx):
-    - Update branding, current dynamic year, verified social links, and smooth back-to-top button.
-- **Relevant Files:**
-  - `src/components/Experience.jsx`
-  - `src/components/Contact.jsx`
-  - `src/components/Footer.jsx`
-  - `src/data/portfolioData.js`
-- **Dependencies:** Phase 7.
-- **Expected Outcome:** Full WCAG 2.1 AA accessibility compliance on all form fields; reliable contact channel.
-- **Acceptance Criteria:**
-  - Form inputs are correctly associated with labels for screen readers.
-  - Network disconnect triggers visible inline error banner rather than silent failure.
-  - Successful submission displays polite confirmation message with reset option.
-- **Testing Requirements:**
-  - Test client-side validation for empty fields and invalid emails.
-  - Verify that clicking labels focuses corresponding inputs.
+### Phase 5: Core CMS Content Models & Admin UI
+- **Status:** **Completed & Validated (on `feat/nextjs-cms-migration`)**
+- **Objective:** Build the core content-management layer in the authenticated admin area, establishing full CRUD capabilities, tabular financial schedule editing with `.tabular-nums`, historical financial discrepancy preservation, supporting modules (Competencies, Academic Journey, Tech Solutions), reusable Cloudinary Media Picker, append-only content revisions, and administrative activity logging.
+- **Scope Completed:**
+  - Case Studies CMS (`src/app/(admin)/admin/case-studies/`):
+    - Real-time search, status filtering, category filtering, quick publish toggle, and safe deletion.
+    - Full structured editor (`[id]/edit/page.tsx` & `new/page.tsx`) with markdown/narrative fields, methodology, findings, audit notes, recommendations, and status toggles.
+    - Tabular Financial Schedule Matrix Editor: Add/remove/reorder columns and rows, numeric vs narrative distinction, currency specifications, and `.tabular-nums` preview.
+    - Financial Integrity Guardrails: Explicit warning alerts on case studies linked to historical discrepancies (VAL-09, VAL-10, VAL-11); deletion safeguard blocks deleting case studies bound to disclosures.
+    - Admin-Only Draft Preview (`[id]/preview/page.tsx`): Gated preview environment rendering full draft state, tabular schedules, and discrepancy notices with a direct "Publish Now" action.
+  - Append-Only Revision Snapshotting (`src/lib/cms-audit.ts`): Sequential version numbering and complete JSONB snapshots in `content_revisions`.
+  - Administrative Activity Logging (`src/lib/cms-audit.ts`): User-attributed audit trail in `activity_logs`.
+  - Competencies CMS (`/admin/competencies`): Management across all 4 domains (`Financial Accounting`, `Managerial Accounting`, `Taxation & Audit`, `Software & Tech`) with qualification safeguards.
+  - Academic Journey & ACCA Trajectory (`/admin/academic-journey`): Manages education milestones and ACCA career roadmap planning while safeguarding privacy (`phonePrivacyStatus = 'hidden'`) and preventing unverified credential claims.
+  - Tech Solutions CMS (`/admin/tech-solutions`): Manages 3 business/tech problem-solving solutions with safe URL sanitization.
+  - Reusable Media Picker Modal (`src/components/admin/media-picker-modal.tsx`): Integrates Cloudinary assets without duplicating database records.
+  - Executive Claymorphism Navigation & Dashboard (`/admin`): Shared header `AdminNav` across all 6 admin modules, real-time metrics cards, and live activity log feed.
+  - Automated 41-Point Verification Test Suite (`scripts/test-cms-pipeline.ts` / `npm run test:cms`).
+- **Validation Gate Outcome:**
+  - All 41 assertions passed: record counts, discrepancy guardrails, financial schedule structure, append-only revisions, activity logs, ACCA planning constraints, URL safety, and 4-domain competency distribution.
+  - All test suites green: `type-check` (0 errors), `lint` (0 errors), `build` (Next.js 15 pass across all 12 routes), `build:vite` (legacy pass), `db:check` (pass), `db:verify` (pass), `test:auth` (27/27 pass), `test:media` (24/24 pass), `test:cms` (41/41 pass).
+  - Legacy Vite application untouched and fully operational.
+- **Dependencies:** Phase 3 Auth.js, Phase 4 Cloudinary integration, Neon PostgreSQL schema.
+- **Risks & Rollback:** Zero breaking DDL changes. Full rollback capability preserved.
 
 ---
 
-### Phase 9: SEO Metadata, Performance & A11y Optimization
-- **Objective:** Maximize search discoverability, optimize bundle size, and achieve high Core Web Vitals.
-- **Scope:**
-  - Update [index.html](file:///d:/Project/portfolio%20siam/index.html):
-    - Title: `Md Ibna Siam | Accounting & Finance Portfolio`
-    - Meta description highlighting BBA in Accounting at Daffodil International University.
-    - Complete Open Graph tags (`og:title`, `og:description`, `og:image`, `og:url`, `og:type`).
-    - Twitter card metadata.
-    - Correct favicon MIME type and link.
-  - Optimize Assets:
-    - Replace oversized 378 KB `favicon.png` with optimized multi-size assets (< 15 KB).
-    - Convert `siam.jpeg` (203 KB) to WebP format.
-  - Bundle Optimization in [vite.config.js](file:///d:/Project/portfolio%20siam/vite.config.js):
-    - Configure Rollup `manualChunks` to split `react`, `framer-motion`, and `react-icons`.
-    - Lazy-load case study viewer modal via `React.lazy()` and `Suspense`.
-  - Rewrite [README.md](file:///d:/Project/portfolio%20siam/README.md): Replace template "Alex Morgan" text with comprehensive portfolio documentation.
-- **Relevant Files:**
-  - `index.html`
-  - `public/favicon.png`
-  - `src/assets/siam.jpeg`
-  - `vite.config.js`
-  - `README.md`
-- **Dependencies:** Phases 3–8.
-- **Expected Outcome:** Primary JavaScript bundle < 160 kB gzip; professional social preview cards on LinkedIn and WhatsApp.
-- **Acceptance Criteria:**
-  - `npm run build` generates split chunks (`vendor`, `framer`, `icons`) with no chunk > 200 kB.
-  - `index.html` passes HTML validation with zero meta syntax errors.
-  - Social sharing debuggers render accurate rich preview cards.
-- **Testing Requirements:**
-  - Inspect `dist/` bundle sizes after build.
-  - Validate Open Graph tags via metadata linter.
+### Phase 6: Public Portfolio Migration & Executive Claymorphism Styling
+- **Status:** **Completed & Validated (on `feat/nextjs-cms-migration`)**
+- **Objective:** Rebuild the public portfolio interface within Next.js App Router, fetching live published data from Neon PostgreSQL via Drizzle ORM, styled with Executive Claymorphism, with Next.js Draft Mode preview workflow and full financial integrity disclosures.
+- **Scope Completed:**
+  - Dedicated server-only data access layer in `src/lib/public-data.ts`:
+    - Filters published content strictly (`status = 'published'`) for public visitors.
+    - Strips `privatePhone` and internal config fields (VAL-07 privacy isolation).
+    - Preserves all 4 financial discrepancy guardrails (VAL-08, VAL-09, VAL-10, VAL-11).
+    - Formats rectangular financial schedules with `.tabular-nums`.
+    - Retrieves 16 competencies (4 domains), 3 educational milestones, and 3 tech solutions.
+  - Secure Next.js Draft Mode preview pipeline (`/api/draft/enable`, `/api/draft/disable`):
+    - Session-derived administrator verification via Auth.js.
+    - Strict local path sanitization (`^\/[a-zA-Z0-9_\-\/]*$`) preventing open redirects.
+    - Sticky preview notification banner (`draft-preview-banner.tsx`) with instant exit CTA.
+  - Complete Executive Claymorphism public component suite in `src/components/public/`:
+    - `public-nav.tsx`: Executive wordmark, ACCA status badge, theme switcher, desktop & mobile menu.
+    - `public-hero.tsx`: Editorial headline, Cloudinary portrait, verified CV action, domain ribbon.
+    - `public-about.tsx`: Academic profile, core attributes, and verified credentials.
+    - `public-case-studies.tsx`: Filterable showcase of published case studies with domain tabs.
+    - `public-competencies.tsx`: 4-domain competency matrix with responsive cards.
+    - `public-academic-journey.tsx`: Chronological education milestones + distinct ACCA career trajectory target card.
+    - `public-tech-solutions.tsx`: Verified business technology solutions with secure external GitHub links.
+    - `public-contact.tsx`: Formspree-powered contact form with inquiry categorization and clipboard copy button.
+    - `public-footer.tsx`: Canonical dossier anchors, verified social links, and back-to-top button.
+    - `discrepancy-notice.tsx`: Financial discrepancy disclosure cards preserving VAL-09, VAL-10, VAL-11 notices and formula audits.
+    - `financial-schedule-table.tsx`: Accessible, mobile-responsive tabular financial schedule viewer preserving `.tabular-nums`.
+    - `theme-toggle.tsx`: Hydration-safe light/dark theme switcher with `useSyncExternalStore`.
+  - Public routes:
+    - `/` (`src/app/page.tsx`): Dynamic public homepage with draft mode banner.
+    - `/case-studies` (`src/app/case-studies/page.tsx`): Collection page with domain filters.
+    - `/case-studies/[slug]` (`src/app/case-studies/[slug]/page.tsx`): Detail page with schedules and disclosures; 404 for drafts when not in preview mode.
+  - Automated 16-point public pipeline test suite (`scripts/test-public-pipeline.ts` / `npm run test:public`).
+- **Validation Gate Outcome:**
+  - `npm run test:public`: 16/16 assertions passed.
+  - `npm run build`: Next.js 15 production build compiled cleanly across all 15 routes.
+  - `npm run build:vite`: Legacy Vite build compiled in 2.81s.
+  - `npm run lint`: 0 errors, 0 warnings.
+  - `npm run type-check`: 0 errors.
+  - Legacy Vite application untouched and live production portfolio completely isolated.
+- **Dependencies:** Phase 2 seeded database, Phase 4 Cloudinary assets, Phase 5 CMS content models.
+- **Risks & Rollback:** Zero breaking changes. Full rollback capability preserved.
 
 ---
 
-### Phase 10: Final Verification, Cross-Browser Testing & Deployment
-- **Objective:** Final end-to-end regression testing and deployment handoff.
+### Phase 7: Draft Mode Public Integration & Live Previews
+- **Objective:** Implement Next.js Draft Mode for authenticated live public page previews with draft content overlays.
 - **Scope:**
-  - Complete end-to-end audit:
-    - Theme toggle persistence across page reloads.
-    - All 8 case study modals open, render tables, and close cleanly.
-    - Contact form validation and submission flow.
-    - Responsive layout verification from 320px to 2560px screen widths.
-    - Keyboard navigation (Tab, Enter, Escape).
-  - Verify production build with `npm run build` and `npm run preview`.
-  - Prepare deployment instructions for chosen host (Vercel or GitHub Pages).
-- **Relevant Files:** Whole repository.
+  - Draft Mode Route Handler (`app/api/draft/route.ts`):
+    - Verifies secret token (`DRAFT_MODE_SECRET`) and content slug.
+    - Enables Next.js Draft Mode cookies, rendering draft case studies on public routes for the authenticated administrator.
+  - Draft banner on public layout indicating active preview mode with "Exit Preview" action.
+  - One-click seamless transition between admin preview (`/admin/case-studies/[id]/preview`) and public draft preview.
+- **Dependencies:** Phase 5 CMS Content Models & Phase 6 Public Portfolio.
+- **Validation Gate:**
+  - Draft case studies are completely invisible to unauthenticated public visitors on `https://ibnasiam.vercel.app/`.
+  - Activating Draft Mode enables viewing unpublished case studies within the live public page layout.
+  - Publishing a draft makes it immediately visible to public users.
+
+
+---
+
+### Phase 8: Dynamic SEO, Open Graph & Structured Data Management
+- **Objective:** Implement dynamic server-rendered SEO metadata, automatic Open Graph social cards, and Schema.org JSON-LD structured data.
+- **Scope:**
+  - Implement Next.js `generateMetadata` on public routes:
+    - Dynamic page title: `[Case Study Title] | Md Ibna Siam | Accounting & Finance Portfolio`
+    - Dynamic meta description and canonical URLs.
+    - Open Graph (`og:title`, `og:description`, `og:image`) and Twitter Card tags.
+  - Dynamic Open Graph image generation (`app/api/og/route.tsx`) via `@vercel/og` rendering branded claymorphic preview cards with case study titles.
+  - Enhanced Schema.org JSON-LD structured data (`Person`, `EducationalOccupationalCredential`, and `Article`).
+  - Generate dynamic `sitemap.xml` and `robots.txt`.
+  - Admin SEO management interface (`app/admin/seo/`) for editing global and per-route metadata.
+- **Dependencies:** Phase 5 Public Portfolio, Phase 6 CMS.
+- **Validation Gate:**
+  - View-source on public routes confirms server-rendered meta tags and JSON-LD schema.
+  - Social card debugger (LinkedIn Post Inspector / Twitter Card Validator) renders custom dynamic OG images.
+  - `sitemap.xml` lists all published routes and omits draft routes.
+
+### Phase 8.1: Secure Git Handoff & Isolated Vercel Preview Deployment Readiness
+- **Status:** Completed (Ready for Owner Authorization)
+- **Objective:** Establish an explicit file allowlist, perform complete secret hygiene verification, verify Vercel preview isolation (`portfolio-cms-preview`), run 11 local quality gates with 100% pass rate, and package an actionable Git handoff for the project owner.
+- **Scope:**
+  - File allowlist and working tree audit ensuring legacy Vite source remains 100% intact.
+  - Secret hygiene scanning confirming zero credentials or private data in source code, with `.env` strictly ignored.
+  - Vercel preview isolation ensuring live production project `portfolio` (`https://ibnasiam.vercel.app/`) is untouched.
+  - 11 local quality gates executed with exit code 0 (124 automated tests passed).
+  - Preparation of `PHASE_8_1_HANDOFF_REPORT.md` and owner execution commands.
+- **Dependencies:** Phase 6 Public Portfolio, Phase 7 QA Suite, Phase 8 Preview Audit.
+- **Validation Gate:**
+  - 11/11 project scripts pass cleanly with exit code 0.
+  - Allowlist strictly excludes `.env` and local build outputs.
+  - Awaiting owner authorization for Git push and Vercel preview deployment.
+
+---
+
+### Phase 9: End-to-End Testing, Security Audits & Vercel Launch
+- **Objective:** Execute comprehensive cross-browser validation, accessibility audits, security hardening, and production deployment on Vercel.
+- **Scope:**
+  - Automated Regression & E2E Testing:
+    - Playwright / Cypress suite verifying all public sections, case study modals, contact form, and admin login flow.
+  - Accessibility Audit:
+    - Run axe-core / Lighthouse audit ensuring WCAG 2.1 AA compliance (zero critical violations).
+  - Security Audit:
+    - Test rate limiting on `/admin/login`.
+    - Verify CSRF protection, SQL injection prevention, and XSS sanitization.
+    - Confirm zero exposed environment variables or database connection strings.
+  - Production Deployment on Vercel:
+    - Configure production environment variables in Vercel project settings.
+    - Trigger production build and verify root deployment at `https://ibnasiam.vercel.app/`.
+    - Post-launch smoke tests verifying database queries, Cloudinary asset delivery, and contact form submissions.
 - **Dependencies:** All previous phases.
-- **Expected Outcome:** Production-ready portfolio ready for deployment to the live URL.
-- **Acceptance Criteria:**
-  - `npm run lint` passes with 0 errors.
-  - `npm run build` compiles with 0 errors in < 10 seconds.
-  - Zero console errors during full navigation walkthrough.
+- **Validation Gate:**
+  - Lighthouse scores: Performance > 90, Accessibility > 95, Best Practices > 95, SEO 100.
+  - Zero console errors or unhandled server-side exceptions.
+  - Explicit sign-off from project owner prior to production domain cutover.
 
 ---
 
 ## 3. Regression Testing Protocol (Working Features Checklist)
 
-The following existing working features must be regression-tested after every single implementation phase:
+The following core features must be verified after every migration phase to ensure zero regression:
 
 | Feature | Verification Method | Pass Criteria |
 |---|---|---|
-| **Theme Toggle** | Click Sun/Moon icon in header | Page toggles between dark/light; preference persists in `localStorage` |
-| **CV Download** | Click "Download Academic CV" button | Opens verified Google Drive PDF link in new tab |
-| **Section Scrolling** | Click all nav links in Navbar & Mobile Menu | Smoothly scrolls to `#about`, `#skills`, `#projects`, `#education`, `#contact` |
-| **Mobile Drawer** | Open on screen width < 768px | Opens drawer smoothly; closes upon link selection or backdrop tap |
-| **Case Study View** | Click project cards | Case study viewer opens without throwing React unhandled exceptions |
-| **ESLint Check** | Run `npm run lint` | Exits with code 0 (0 errors, 0 warnings) |
-| **Vite Production Build** | Run `npm run build` | Compiles successfully without bundle warnings |
+| **Theme Toggle** | Click Sun/Moon icon in header | Switches between light and dark modes with persistent local preference |
+| **CV Download** | Click "Download Academic CV" button | Opens verified Google Drive / Cloudinary PDF in new tab |
+| **Section Scrolling** | Click all nav links in Navbar & Mobile Drawer | Smoothly scrolls to target sections without layout jumping |
+| **Case Study Inspection** | Click project cards | Opens Interactive Case Study Viewer modal with all 5 tabs and tables |
+| **Financial Discrepancy Transparency**| Inspect Tax, RMG, and FIFA case studies | Transparent disclosure banners are prominently rendered with formulas |
+| **Contact Form** | Submit test message on contact form | Client validates fields; Formspree responds with confirmation |
+| **ACCA Trajectory Integrity** | Read Hero, About, and Timeline | ACCA presented strictly as target qualification in planning |
+| **Phone Privacy Guardrail** | Inspect rendered DOM / Source | Phone number `+880 1841-380687` has zero instances in public DOM |
+| **Next.js Production Build** | Run `npm run build` | Compiles successfully with zero TypeScript or linting errors |

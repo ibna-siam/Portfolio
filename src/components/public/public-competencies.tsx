@@ -1,0 +1,162 @@
+"use client";
+
+import { useState } from "react";
+import { FiCheckCircle, FiTag } from "react-icons/fi";
+
+interface CompetencyItem {
+  id: string;
+  name: string;
+  domain: string;
+  category: string;
+  evidenceLabel: string;
+  description: string;
+  frameworkTags: string[];
+  relatedProject: string;
+  sortOrder: number;
+}
+
+interface PublicCompetenciesProps {
+  competencies: CompetencyItem[];
+}
+
+const CATEGORIES = [
+  { id: "All", label: "All Disciplines" },
+  { id: "Financial Accounting", label: "Financial Accounting" },
+  { id: "Managerial Accounting", label: "Managerial Accounting" },
+  { id: "Taxation & Audit", label: "Taxation & Audit" },
+  { id: "Software & Tech", label: "Software & Tech" },
+];
+
+export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
+  const [activeCategory, setActiveCategory] = useState("All");
+
+  const filtered =
+    activeCategory === "All"
+      ? competencies
+      : competencies.filter(
+          (c) => c.category === activeCategory || c.domain === activeCategory
+        );
+
+  return (
+    <section
+      id="competencies"
+      className="py-20 sm:py-24 bg-ink-100/50 dark:bg-ink-950/60 border-t border-ink-200/60 dark:border-ink-800/60"
+    >
+      <div className="max-w-6xl mx-auto px-5 sm:px-8">
+        {/* Section Heading */}
+        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+          <span className="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
+            Domain Capabilities
+          </span>
+          <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink-900 dark:text-ink-50 tracking-tight">
+            Accounting & Analytical Competencies
+          </h2>
+          <p className="text-sm sm:text-base text-ink-600 dark:text-ink-300 leading-relaxed">
+            A structured matrix of financial accounting, managerial costing, regulatory compliance, and spreadsheet-based financial modeling grounded in academic coursework and empirical case studies.
+          </p>
+        </div>
+
+        {/* Category Filter Tabs */}
+        <div
+          role="tablist"
+          aria-label="Filter competencies by discipline"
+          className="flex justify-center gap-2 mb-10 flex-wrap"
+        >
+          {CATEGORIES.map((cat) => {
+            const isSelected = activeCategory === cat.id;
+            const count =
+              cat.id === "All"
+                ? competencies.length
+                : competencies.filter(
+                    (c) => c.category === cat.id || c.domain === cat.id
+                  ).length;
+
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                role="tab"
+                aria-selected={isSelected}
+                onClick={() => setActiveCategory(cat.id)}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer ${
+                  isSelected
+                    ? "bg-emerald-700 text-white font-semibold shadow-xs"
+                    : "bg-white dark:bg-ink-900 text-ink-700 dark:text-ink-300 font-medium hover:bg-ink-100 dark:hover:bg-ink-800 border border-ink-200/80 dark:border-ink-800/80"
+                }`}
+              >
+                <span>{cat.label}</span>
+                <span
+                  className={`text-[11px] font-mono px-1.5 py-0.5 rounded-full ${
+                    isSelected
+                      ? "bg-ink-950/30 text-white font-bold"
+                      : "bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300"
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Competencies Grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-5">
+          {filtered.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white dark:bg-ink-900 rounded-2xl p-5 sm:p-6 border border-ink-200/80 dark:border-ink-800/80 hover:border-emerald-500/40 dark:hover:border-emerald-500/30 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                {/* Meta Header */}
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[11px] font-mono text-ink-500 dark:text-ink-400 uppercase font-semibold">
+                    {item.domain}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 font-medium">
+                    <FiCheckCircle size={11} className="text-emerald-600 dark:text-emerald-400" />
+                    {item.evidenceLabel}
+                  </span>
+                </div>
+
+                {/* Skill Title */}
+                <h3 className="font-display font-bold text-base sm:text-lg text-ink-900 dark:text-ink-50 leading-snug">
+                  {item.name}
+                </h3>
+
+                {/* Description */}
+                <p className="text-xs sm:text-sm text-ink-600 dark:text-ink-300 leading-relaxed">
+                  {item.description}
+                </p>
+
+                {/* Framework Tags */}
+                {item.frameworkTags && item.frameworkTags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {item.frameworkTags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-400 border border-ink-200 dark:border-ink-700"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Related Study Anchor */}
+              <div className="pt-4 mt-4 border-t border-ink-100 dark:border-ink-800/80 flex items-center justify-between text-xs font-mono text-ink-500 dark:text-ink-400">
+                <span className="text-[11px] flex items-center gap-1">
+                  <FiTag size={11} />
+                  Applied in:
+                </span>
+                <span className="font-medium text-ink-700 dark:text-ink-300 truncate max-w-[240px]">
+                  {item.relatedProject}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

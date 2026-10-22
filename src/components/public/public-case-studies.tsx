@@ -1,0 +1,199 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import {
+  FiArrowRight,
+  FiAlertTriangle,
+  FiCheckCircle,
+} from "react-icons/fi";
+import { PublicCaseStudySummary } from "@/lib/public-data";
+
+interface PublicCaseStudiesProps {
+  caseStudies: PublicCaseStudySummary[];
+}
+
+export function PublicCaseStudies({ caseStudies }: PublicCaseStudiesProps) {
+  const [activeGroup, setActiveGroup] = useState<"all" | "accounting" | "macroeconomics">("all");
+
+  const filtered = caseStudies.filter((item) => {
+    if (activeGroup === "all") return true;
+    return item.groupId === activeGroup;
+  });
+
+  const accountingCount = caseStudies.filter((c) => c.groupId === "accounting").length;
+  const macroCount = caseStudies.filter((c) => c.groupId === "macroeconomics").length;
+
+  return (
+    <section
+      id="case-studies"
+      className="py-20 sm:py-24 bg-white dark:bg-ink-950/70 border-t border-ink-200/60 dark:border-ink-800/60"
+    >
+      <div className="max-w-6xl mx-auto px-5 sm:px-8">
+        {/* Section Heading */}
+        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+          <span className="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
+            Evidence-Based Coursework & Research
+          </span>
+          <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink-900 dark:text-ink-50 tracking-tight">
+            Financial Case Studies & Applied Analysis
+          </h2>
+          <p className="text-sm sm:text-base text-ink-600 dark:text-ink-300 leading-relaxed">
+            Detailed examinations of audited financial statements, operational cost models, taxation schedules under the Bangladesh Income Tax Act 2023, and macroeconomic dynamics.
+          </p>
+        </div>
+
+        {/* Group Filter Tabs */}
+        <div
+          role="tablist"
+          aria-label="Filter case studies by discipline"
+          className="flex justify-center gap-2 mb-10 flex-wrap"
+        >
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeGroup === "all"}
+            onClick={() => setActiveGroup("all")}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer ${
+              activeGroup === "all"
+                ? "bg-emerald-700 text-white font-semibold shadow-xs"
+                : "bg-ink-100 dark:bg-ink-900 text-ink-700 dark:text-ink-300 font-medium hover:bg-ink-200 dark:hover:bg-ink-800"
+            }`}
+          >
+            <span>All Studies</span>
+            <span
+              className={`text-[11px] font-mono px-1.5 py-0.5 rounded-full ${
+                activeGroup === "all"
+                  ? "bg-ink-950/30 text-white font-bold"
+                  : "bg-ink-200 dark:bg-ink-800 text-ink-600 dark:text-ink-300"
+              }`}
+            >
+              {caseStudies.length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeGroup === "accounting"}
+            onClick={() => setActiveGroup("accounting")}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer ${
+              activeGroup === "accounting"
+                ? "bg-emerald-700 text-white font-semibold shadow-xs"
+                : "bg-ink-100 dark:bg-ink-900 text-ink-700 dark:text-ink-300 font-medium hover:bg-ink-200 dark:hover:bg-ink-800"
+            }`}
+          >
+            <span>Applied Accounting</span>
+            <span
+              className={`text-[11px] font-mono px-1.5 py-0.5 rounded-full ${
+                activeGroup === "accounting"
+                  ? "bg-ink-950/30 text-white font-bold"
+                  : "bg-ink-200 dark:bg-ink-800 text-ink-600 dark:text-ink-300"
+              }`}
+            >
+              {accountingCount}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeGroup === "macroeconomics"}
+            onClick={() => setActiveGroup("macroeconomics")}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer ${
+              activeGroup === "macroeconomics"
+                ? "bg-emerald-700 text-white font-semibold shadow-xs"
+                : "bg-ink-100 dark:bg-ink-900 text-ink-700 dark:text-ink-300 font-medium hover:bg-ink-200 dark:hover:bg-ink-800"
+            }`}
+          >
+            <span>Macroeconomic Research</span>
+            <span
+              className={`text-[11px] font-mono px-1.5 py-0.5 rounded-full ${
+                activeGroup === "macroeconomics"
+                  ? "bg-ink-950/30 text-white font-bold"
+                  : "bg-ink-200 dark:bg-ink-800 text-ink-600 dark:text-ink-300"
+              }`}
+            >
+              {macroCount}
+            </span>
+          </button>
+        </div>
+
+        {/* Case Studies Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
+          {filtered.map((study) => (
+            <article
+              key={study.id}
+              className="rounded-3xl p-6 sm:p-7 bg-white dark:bg-ink-900 border border-ink-200/80 dark:border-ink-800/80 shadow-clay-card dark:shadow-clay-card-dark hover:border-emerald-500/40 dark:hover:border-emerald-500/30 transition-all flex flex-col justify-between group"
+            >
+              <div className="space-y-4">
+                {/* Meta pills bar */}
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span className="font-mono font-semibold px-2.5 py-0.5 rounded-md bg-ink-100 dark:bg-ink-800 text-ink-700 dark:text-ink-300 border border-ink-200 dark:border-ink-700">
+                    {study.category}
+                  </span>
+
+                  {study.hasDiscrepancy ? (
+                    <span className="inline-flex items-center gap-1 font-mono text-[11px] px-2.5 py-0.5 rounded-md bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20 font-medium">
+                      <FiAlertTriangle size={12} className="text-amber-500" />
+                      Discrepancy Disclosed
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 font-mono text-[11px] px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 font-medium">
+                      <FiCheckCircle size={12} className="text-emerald-500" />
+                      Academic Analysis
+                    </span>
+                  )}
+                </div>
+
+                {/* Title */}
+                <h3 className="font-display font-bold text-xl sm:text-2xl text-ink-900 dark:text-ink-50 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-snug">
+                  <Link href={`/case-studies/${study.slug}`}>{study.title}</Link>
+                </h3>
+
+                {/* Framework & Scope */}
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex items-start gap-1.5 text-ink-600 dark:text-ink-400">
+                    <span className="font-mono uppercase text-ink-400 text-[10px] w-20 shrink-0 mt-0.5">
+                      Framework:
+                    </span>
+                    <span className="font-medium text-ink-800 dark:text-ink-200">
+                      {study.framework}
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-1.5 text-ink-600 dark:text-ink-400">
+                    <span className="font-mono uppercase text-ink-400 text-[10px] w-20 shrink-0 mt-0.5">
+                      Currency:
+                    </span>
+                    <span className="font-mono text-ink-800 dark:text-ink-200">
+                      {study.currencyUnit}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Brief description */}
+                <p className="text-sm text-ink-600 dark:text-ink-300 leading-relaxed line-clamp-3">
+                  {study.description}
+                </p>
+              </div>
+
+              {/* Action Footer */}
+              <div className="pt-5 mt-5 border-t border-ink-100 dark:border-ink-800/80 flex items-center justify-between">
+                <span className="text-xs font-mono text-ink-400">
+                  {study.groupShort} Case Study
+                </span>
+                <Link
+                  href={`/case-studies/${study.slug}`}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform"
+                >
+                  <span>Inspect Case Study</span>
+                  <FiArrowRight size={14} />
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
