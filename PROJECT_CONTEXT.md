@@ -5,7 +5,7 @@
 **Production Site:** [https://ibnasiam.vercel.app/](https://ibnasiam.vercel.app/)  
 **Target Identity:** Md Ibna Siam — Accounting & Finance Student, Daffodil International University (Academic ID: 252-58-083)  
 **Career Target:** ACCA (Association of Chartered Certified Accountants) Pathway  
-**Current Architecture Status:** Phase 12.2 Legacy Codebase Decommissioning & Global Formatting Complete (Legacy Vite SPA artifacts and unused React components decommissioned; Next.js 15.5.28 App Router consolidated as primary framework; Prettier code formatting standardized; 127/127 automated test assertions and Next.js production build 100% operational).  
+**Current Architecture Status:** Phase 15 Dedicated CRUD Pages & Compact Admin Management Lists Complete (Standardized page-based CRUD navigation with dual-routing aliases for Competencies, Tech Solutions, and Academic Journey; high-density management tables with instant search, category filtering, and direct actions; shared admin form component suite; modals retained strictly for delete confirmations; zero schema migrations; 151/151 automated test assertions and production build 100% operational).  
 **Planned Target Architecture:** Full-Stack Portfolio CMS (Next.js App Router + Neon PostgreSQL + Drizzle ORM + Auth.js + Cloudinary)  
 **Design Direction:** Executive Financial Precision (Dual-Theme: Obsidian/Emerald Dark Mode & Architectural Soft-Slate Light Mode)  
 
@@ -310,8 +310,10 @@ The following items are formally registered as pending owner decisions or known 
 
 ## 6. Current Technical Limitations & Migration Risks
 
-1. **Monolithic Data Extraction:** The static data files contain raw strings, nested objects, and formatting quirks. A robust migration seed script must parse and insert these records into PostgreSQL without schema truncation.
-2. **Financial Table Dynamism:** The 8 case studies contain different tabular structures (e.g., 3-year ratios vs. cost breakdown schedules vs. tax brackets). The database schema must use flexible JSONB column storage for table headers and rows while preserving `.tabular-nums` formatting.
-3. **Draft Mode Security:** Next.js Draft Mode must be properly secured with a cryptographic secret to prevent unauthorized public access to unpublished draft case studies.
-4. **Cloudinary Asset Transition:** Profile portraits and documents currently located in `src/assets/` or Google Drive must be mirrored to Cloudinary with fallback handling to guarantee zero 404 image errors during DNS propagation.
-6. **Deployment Isolation & Handoff (Phase 8.1):** Live production website (`https://ibnasiam.vercel.app/`) is powered by Vercel project `portfolio` (`prj_T00X3uhpDtkTm4pFvJM0Erk6rYiY`) on `main` (Vite SPA) and remains 100% untouched. The Next.js migration will deploy to an isolated preview project `portfolio-cms-preview` tracking `feat/nextjs-cms-migration` once authorized by the owner.
+1. **Monolithic Data Extraction:** The static data files contain raw strings, nested objects, and formatting quirks. A robust migration seed script has parsed and inserted these records into PostgreSQL without schema truncation.
+2. **Financial Table Dynamism:** The 8 case studies contain different tabular structures (e.g., 3-year ratios vs. cost breakdown schedules vs. tax brackets). The database schema uses flexible JSONB column storage for table headers and rows while preserving `.tabular-nums` formatting.
+3. **Draft Mode Security:** Next.js Draft Mode is secured with cryptographic session checks and strict path regex validation.
+4. **Cloudinary Asset Transition:** Profile portraits and documents leverage Cloudinary CDN transformations with local fallbacks.
+5. **Phase 13 Visual Polish:** Visual hierarchy, alternating surface backgrounds, 44-word profile summary, and distinct dossier / showcase layouts are fully verified and integrated across public routes.
+6. **Phase 14 Admin Standardization:** Complete architecture audit documented in `PHASE_14_ADMIN_ARCHITECTURE_AUDIT.md`. Identified modal-based data-entry bottlenecks and established a standardized page-based CRUD blueprint for Phases 15–16 without requiring database migrations.
+7. **Deployment Isolation & Handoff:** Live production website (`https://ibnasiam.vercel.app/`) runs commit `e2d2fa1`. All Phase 11-14 code is consolidated and verified on local `main`, awaiting explicit authorization for git push and production cutover.

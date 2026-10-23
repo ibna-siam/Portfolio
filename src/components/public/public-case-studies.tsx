@@ -135,78 +135,110 @@ export function PublicCaseStudies({ caseStudies }: PublicCaseStudiesProps) {
           </button>
         </div>
 
-        {/* Case Studies Grid (Initially Max 2 Items) */}
+        {/* Case Studies Grid */}
         <div id="case-studies-grid" className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
           {displayedStudies.map((study) => (
             <article
               key={study.id}
-              className="rounded-3xl p-6 sm:p-7 bg-white dark:bg-ink-900 border border-ink-200/80 dark:border-ink-800/80 shadow-clay-card dark:shadow-clay-card-dark hover:border-emerald-500/40 dark:hover:border-emerald-500/30 transition-all flex flex-col justify-between group"
+              className="rounded-2xl p-6 sm:p-7 bg-white dark:bg-ink-900 border border-ink-200/90 dark:border-ink-800 shadow-sm hover:shadow-md hover:border-emerald-500/40 dark:hover:border-emerald-500/30 transition-all duration-200 flex flex-col justify-between group"
             >
               <div className="space-y-4">
                 {/* Meta pills bar */}
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <span className="font-mono font-semibold px-2.5 py-0.5 rounded-md bg-ink-100 dark:bg-ink-800 text-ink-700 dark:text-ink-300 border border-ink-200 dark:border-ink-700">
+                  <span className="font-mono font-semibold px-2.5 py-1 rounded-md bg-slate-100 dark:bg-ink-800 text-ink-800 dark:text-ink-200 border border-ink-200 dark:border-ink-700">
                     {study.category}
                   </span>
 
                   {study.hasDiscrepancy ? (
-                    <span className="inline-flex items-center gap-1 font-mono text-[11px] px-2.5 py-0.5 rounded-md bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20 font-medium">
-                      <FiAlertTriangle size={12} className="text-amber-500" />
+                    <span className="inline-flex items-center gap-1 font-mono text-[11px] px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-500/25 font-semibold">
+                      <FiAlertTriangle
+                        size={12}
+                        className="text-amber-600 dark:text-amber-400"
+                      />
                       Discrepancy Disclosed
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 font-mono text-[11px] px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 font-medium">
-                      <FiCheckCircle size={12} className="text-emerald-500" />
-                      Academic Analysis
+                    <span className="inline-flex items-center gap-1 font-mono text-[11px] px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 font-medium">
+                      <FiCheckCircle
+                        size={12}
+                        className="text-emerald-600 dark:text-emerald-400"
+                      />
+                      Empirical Case Study
                     </span>
                   )}
                 </div>
 
                 {/* Title */}
-                <h3 className="font-display font-bold text-xl sm:text-2xl text-ink-900 dark:text-ink-50 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-snug">
+                <h3 className="font-display font-bold text-xl sm:text-2xl text-ink-900 dark:text-ink-50 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors leading-snug">
                   <Link href={`/case-studies/${study.slug}`} prefetch={true}>
                     {study.title}
                   </Link>
                 </h3>
 
-                {/* Framework & Scope */}
-                <div className="space-y-1.5 text-xs">
-                  <div className="flex items-start gap-1.5 text-ink-600 dark:text-ink-400">
-                    <span className="font-mono uppercase text-ink-600 dark:text-ink-400 text-[10px] w-20 shrink-0 mt-0.5">
-                      Framework:
+                {/* Compact Financial Metric Strip */}
+                <div className="grid grid-cols-3 gap-2 py-2.5 px-3 rounded-xl bg-slate-50 dark:bg-ink-950/70 border border-ink-200/70 dark:border-ink-800/70 text-xs">
+                  <div>
+                    <span className="block text-[10px] font-mono uppercase text-ink-500 dark:text-ink-400 font-medium">
+                      Framework
                     </span>
-                    <span className="font-medium text-ink-800 dark:text-ink-200">
+                    <span
+                      className="font-semibold text-ink-900 dark:text-ink-100 truncate block mt-0.5"
+                      title={study.framework}
+                    >
                       {study.framework}
                     </span>
                   </div>
-                  <div className="flex items-start gap-1.5 text-ink-600 dark:text-ink-400">
-                    <span className="font-mono uppercase text-ink-600 dark:text-ink-400 text-[10px] w-20 shrink-0 mt-0.5">
-                      Currency:
+                  <div>
+                    <span className="block text-[10px] font-mono uppercase text-ink-500 dark:text-ink-400 font-medium">
+                      Currency
                     </span>
-                    <span className="font-mono text-ink-800 dark:text-ink-200">
+                    <span className="font-mono font-semibold text-ink-900 dark:text-ink-100 truncate block mt-0.5">
                       {study.currencyUnit}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="block text-[10px] font-mono uppercase text-ink-500 dark:text-ink-400 font-medium">
+                      Discipline
+                    </span>
+                    <span className="font-semibold text-ink-900 dark:text-ink-100 truncate block mt-0.5">
+                      {study.groupShort}
                     </span>
                   </div>
                 </div>
 
                 {/* Brief description */}
-                <p className="text-sm text-ink-600 dark:text-ink-300 leading-relaxed line-clamp-3">
+                <p className="text-xs sm:text-sm text-ink-600 dark:text-ink-300 leading-relaxed line-clamp-3">
                   {study.description}
                 </p>
+
+                {/* Discrepancy Notice Snippet (if active) */}
+                {study.hasDiscrepancy && study.discrepancyHeadline && (
+                  <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-800 dark:text-amber-200">
+                    <span className="font-semibold block font-mono text-[11px]">
+                      Notice:
+                    </span>
+                    <span className="text-[11px] leading-tight block mt-0.5">
+                      {study.discrepancyHeadline}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Action Footer */}
-              <div className="pt-5 mt-5 border-t border-ink-100 dark:border-ink-800/80 flex items-center justify-between">
+              <div className="pt-4 mt-5 border-t border-ink-100 dark:border-ink-800/80 flex items-center justify-between">
                 <span className="text-xs font-mono text-ink-600 dark:text-ink-400">
                   {study.groupShort} Case Study
                 </span>
                 <Link
                   href={`/case-studies/${study.slug}`}
                   prefetch={true}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 group-hover:translate-x-1 transition-transform"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors"
                 >
-                  <span>Inspect Case Study</span>
-                  <FiArrowRight size={14} />
+                  <span>View Case Study</span>
+                  <FiArrowRight
+                    size={14}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
                 </Link>
               </div>
             </article>
@@ -215,7 +247,7 @@ export function PublicCaseStudies({ caseStudies }: PublicCaseStudiesProps) {
 
         {/* Progressive Disclosure & Full Catalog Action Bar */}
         <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-          {filtered.length > 2 && (
+          {filtered.length > 4 && (
             <button
               type="button"
               onClick={() => setIsExpanded((prev) => !prev)}
@@ -226,7 +258,7 @@ export function PublicCaseStudies({ caseStudies }: PublicCaseStudiesProps) {
               {isExpanded ? (
                 <>
                   <FiChevronUp size={16} />
-                  <span>Show Less (Collapse to 2)</span>
+                  <span>Show Less (Collapse to 4)</span>
                 </>
               ) : (
                 <>
@@ -240,7 +272,7 @@ export function PublicCaseStudies({ caseStudies }: PublicCaseStudiesProps) {
           <Link
             href="/case-studies"
             prefetch={true}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-ink-700 dark:text-ink-300 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 shadow-xs hover:bg-ink-50 dark:hover:bg-ink-800 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-ink-700 dark:text-ink-300 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 shadow-xs hover:bg-slate-50 dark:hover:bg-ink-800 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
           >
             <FiFolder size={15} className="text-emerald-700 dark:text-emerald-400" />
             <span>Explore Complete Catalog ({caseStudies.length} Studies)</span>

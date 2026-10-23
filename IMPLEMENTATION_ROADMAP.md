@@ -457,6 +457,114 @@ graph TD
 
 ---
 
+
+---
+
+### Phase 13: Visual Refinement, Content Simplification & Recruiter-Focused UX
+- **Status:** **Completed & Validated**
+- **Objective:** Improve the portfolio so it looks more polished, distinctive, readable, and recruiter-friendly without changing core architecture or introducing unnecessary features.
+- **Scope Completed:**
+  - **Visual Hierarchy & Background Cadence:** Alternating canvas and slate surfaces with clean border transitions.
+  - **Hero Proportions:** Geometric aura backdrop, refined line-height, expanded domains ribbon padding.
+  - **Content Simplification:** Profile narrative condensed to 44 words (zero promotional filler); removed redundant tags.
+  - **Financial Case Studies:** Distinct financial dossier cards with 3-parameter strips (Framework, Currency, Discipline) and elevated discrepancy disclosures.
+  - **Competencies Matrix:** Emerald left-accent styling with clear domain and evidence badges.
+  - **Tech Solutions Showcase:** Dual-panel architecture (Problem Context vs Implemented System) with verified status and tech stack monospace pills.
+  - **Academic Timeline:** High-visibility spine, distinct date period badges, and structured ACCA strategic pathway paper matrix.
+  - **Contact & Footer:** Accessible high-contrast input borders, uppercase labels, elevated submit button weight, and AAA contrast on dark navy footer.
+- **Validation Gate Outcome:**
+  - `npm run test:public`: 19 / 19 passed.
+  - `npm run test:seo`: 40 / 40 passed.
+  - `npm run test:auth`: 27 / 27 passed.
+  - `npm run test:cms`: 41 / 41 passed.
+  - `npm run test:media`: 24 / 24 passed.
+  - Total automated assertions: 151 / 151 passed.
+  - `npm run type-check`: 0 errors.
+  - `npm run lint`: 0 errors.
+  - `npm run build`: Exit code 0 (15 routes generated).
+- **Reports Generated:**
+  - `PHASE_13_VISUAL_REFINEMENT_REPORT.md`
+
+---
+
+
+---
+
+### Phase 14: Admin CMS Architecture Audit & CRUD Standardization Plan
+- **Status:** **Completed (Audit & Planning Only)**
+- **Objective:** Audit existing Admin Panel architecture and design an evidence-based implementation plan to standardize CRUD workflows, eliminate modal-based data entry, and improve form usability.
+- **Scope Completed:**
+  - **Module Inventory:** Cataloged existing routes, components, server actions, and validation dependencies.
+  - **Identified Bottlenecks:** Modal-based data entry in Competencies, Tech Solutions, and Academic Journey causing mobile scroll collisions, data loss risks, and lack of deep-linkability.
+  - **Standardized Architecture Plan:** Uniform page-based CRUD pattern (`/new` and `/[id]/edit`) with shared form components and lightweight modals reserved strictly for delete confirmations.
+  - **Phased Implementation Roadmap:** Detailed plan for dedicated pages and compact management tables.
+- **Reports Generated:**
+  - `PHASE_14_ADMIN_ARCHITECTURE_AUDIT.md`
+
+---
+
+### Phase 15: Dedicated CRUD Pages & Compact Admin Management Lists
+- **Status:** **Completed & Verified**
+- **Objective:** Implement dedicated page-based CRUD navigation for Competencies, Tech Solutions, and Academic Journey; provide high-density management tables with instant search, category filters, and direct actions; create a shared form component suite; eliminate modal data entry while retaining lightweight delete confirmation dialogs.
+- **Scope Completed:**
+  - **Shared Admin Form Suite (`src/components/admin/forms/`):** Implemented `AdminPageHeader`, `FormCard`, `TagInputField`, and `DeleteConfirmationModal`.
+  - **Competencies Module Modernization:** Converted `competencies-client.tsx` to a compact categorized table with domain filters, search, and Up/Down reorder triggers; created reusable `competency-editor.tsx`; deployed `/admin/competencies/new`, `/admin/competencies/[id]/edit`, and redirect alias `/admin/competencies/edit/[id]`.
+  - **Tech Solutions Module Modernization:** Converted `solutions-client.tsx` to a compact system showcase table with category, role, monospace tech tags, and repo links; created reusable `tech-solution-editor.tsx`; deployed `/admin/tech-solutions/new`, `/admin/tech-solutions/[id]/edit`, and redirect alias `/admin/tech-solutions/edit/[id]`.
+  - **Academic Journey Module Modernization:** Converted `journey-client.tsx` to a high-density credentials table and executive ACCA card with dedicated edit links; created `milestone-editor.tsx` and `acca-trajectory-editor.tsx`; deployed `/admin/academic-journey/[id]/edit`, redirect alias `/admin/academic-journey/edit/[id]`, and `/admin/academic-journey/acca/edit`.
+  - **Case Studies High-Density Management Table:** Refactored `case-studies-client.tsx` into a responsive data table featuring title/slug, category group, schedule counters, publish status toggle, and direct action triggers.
+  - **Zero Schema Migrations & Data Integrity:** 0 migrations created; 100% of data records preserved; guardrails `VAL-03`, `VAL-07`, `VAL-08`, and `VAL-09/10/11` preserved.
+- **Validation Gate Outcome:**
+  - `npm run lint`: 0 errors, 0 warnings.
+  - `npm run type-check`: 0 errors.
+  - `npm run format:check`: 100% Prettier compliant.
+  - `npm run test:cms`: 41 / 41 passed.
+  - `npm run test:public`: 19 / 19 passed.
+  - `npm run test:auth`: 27 / 27 passed.
+  - `npm run test:seo`: 40 / 40 passed.
+  - `npm run test:media`: 24 / 24 passed.
+  - Total automated assertions: **151 / 151 PASSED (0 FAILED)**.
+  - `npm run build`: Exit code 0 (18 routes generated and optimized).
+- **Reports Generated:**
+  - `PHASE_15_ADMIN_CRUD_IMPLEMENTATION_REPORT.md`
+
+---
+
+### Phase 16: Admin Dashboard, Academic Journey & Media Library Refinement
+- **Status:** **Completed & Verified**
+- **Objective:** Refine remaining administrative interface components to achieve a consistent, compact, professional, accessible, and responsive CMS experience across the Admin Dashboard, Academic Journey, and Media Library.
+- **Scope Completed:**
+  - **Admin Dashboard Refinement (`/admin`):**
+    - Standardized compact module cards with concise, scannable operational labels replacing verbose descriptions.
+    - Compressed vertical spacing and streamlined system diagnostic status bar.
+    - Upgraded Audit Trail with SQL `leftJoin(users)` resolving actor name and email; formatted into an accessible, high-density table with action badges, entity tags, actor details, and timestamps.
+  - **Academic Journey Refinement (`/admin/academic-journey`):**
+    - Rendered "Planned Strategic Focus Areas" into a responsive 2×2 grid on desktop (`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3`) with gold index numbers (`01`–`04`).
+    - Standardized milestone table edit action buttons with consistent padding (`px-3 py-1.5`), 13px icon, tooltip titles, and accessible `aria-label` attributes.
+    - Preserved single-record configuration model and persistence behavior without schema changes.
+  - **Media Library Refinement (`/admin/media`):**
+    - Compacted upload dropzone vertical footprint by >50% with `w-10 h-10` icon and clear format tags (`JPG, PNG, WEBP · Max 5 MB`).
+    - Integrated real drag-and-drop feedback with dynamic `isDragging` highlight state.
+    - Implemented desktop thumbnail hover overlay with backdrop blur displaying format, dimensions, file size, truncated public ID, Copy URL button with green "Copied!" feedback, and expand trigger.
+    - Preserved full touch-device and keyboard parity with direct action buttons below thumbnails.
+  - **Zero Schema Migrations & Data Integrity:**
+    - 0 database migrations created; 100% of existing data preserved.
+    - Guardrails preserved: `VAL-03` (ACCA non-membership), `VAL-07` (phone privacy), `VAL-08` (Square Pharma proposal framing), `VAL-09/10/11` (financial discrepancies).
+- **Validation Gate Outcome:**
+  - `npm run lint`: 0 errors, 0 warnings.
+  - `npm run type-check`: 0 errors.
+  - `npm run format:check`: 100% Prettier compliant.
+  - `npm run test:cms`: 41 / 41 passed.
+  - `npm run test:public`: 19 / 19 passed.
+  - `npm run test:auth`: 27 / 27 passed.
+  - `npm run test:seo`: 40 / 40 passed.
+  - `npm run test:media`: 24 / 24 passed.
+  - Total automated assertions: **151 / 151 PASSED (0 FAILED)**.
+  - `npm run build`: Exit code 0 (18 routes generated and optimized).
+- **Reports Generated:**
+  - `PHASE_16_ADMIN_DASHBOARD_ACADEMIC_MEDIA_REFINEMENT_REPORT.md`
+
+---
+
 ## 3. Regression Testing Protocol (Working Features Checklist)
 
 The following core features must be verified after every migration phase to ensure zero regression:

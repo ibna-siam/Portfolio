@@ -1,20 +1,9 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
-import {
-  FiBookOpen,
-  FiEdit3,
-  FiShield,
-  FiCheckCircle,
-  FiTrendingUp,
-} from "react-icons/fi";
-import {
-  updateMilestoneAction,
-  updateAccaTrajectoryAction,
-  MilestoneFormData,
-  AccaTrajectoryFormData,
-} from "./actions";
-import { Modal } from "@/components/admin/modal";
+import React from "react";
+import Link from "next/link";
+import { FiBookOpen, FiEdit3, FiTrendingUp } from "react-icons/fi";
+import type { AccaTrajectoryFormData } from "./actions";
 
 export interface MilestoneItem {
   id: string;
@@ -35,515 +24,188 @@ interface JourneyClientProps {
 }
 
 export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientProps) {
-  const [milestones, setMilestones] = useState<MilestoneItem[]>(initialMilestones);
-  const [acca, setAcca] = useState<AccaTrajectoryFormData>(initialAcca);
-  const [isPending, startTransition] = useTransition();
-  const [feedback, setFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
-
-  // Milestone edit state
-  const [editingMilestone, setEditingMilestone] = useState<MilestoneItem | null>(null);
-  const [disciplinesText, setDisciplinesText] = useState("");
-
-  // ACCA edit state
-  const [isEditingAcca, setIsEditingAcca] = useState(false);
-  const [accaForm, setAccaForm] = useState<AccaTrajectoryFormData>(initialAcca);
-  const [strategicFocusText, setStrategicFocusText] = useState(
-    (initialAcca.strategicFocus || []).join("\n")
-  );
-
-  const handleOpenMilestoneEdit = (m: MilestoneItem) => {
-    setEditingMilestone(m);
-    setDisciplinesText((m.disciplines || []).join(", "));
-  };
-
-  const handleSaveMilestone = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingMilestone) return;
-
-    startTransition(async () => {
-      const payload: MilestoneFormData = {
-        id: editingMilestone.id,
-        degree: editingMilestone.degree,
-        institution: editingMilestone.institution,
-        campus: editingMilestone.campus,
-        major: editingMilestone.major,
-        status: editingMilestone.status,
-        period: editingMilestone.period,
-        overview: editingMilestone.overview,
-        disciplines: disciplinesText
-          .split(",")
-          .map((d) => d.trim())
-          .filter(Boolean),
-        sortOrder: editingMilestone.sortOrder,
-      };
-
-      const res = await updateMilestoneAction(payload);
-      if (res.success) {
-        setFeedback({ type: "success", message: res.message || "Milestone updated." });
-        setMilestones((prev) =>
-          prev.map((m) => (m.id === payload.id ? { ...m, ...payload } : m))
-        );
-        setEditingMilestone(null);
-      } else {
-        setFeedback({
-          type: "error",
-          message: res.error || "Failed to update milestone.",
-        });
-      }
-    });
-  };
-
-  const handleSaveAcca = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    startTransition(async () => {
-      const payload: AccaTrajectoryFormData = {
-        ...accaForm,
-        strategicFocus: strategicFocusText
-          .split("\n")
-          .map((f) => f.trim())
-          .filter(Boolean),
-      };
-
-      const res = await updateAccaTrajectoryAction(payload);
-      if (res.success) {
-        setFeedback({
-          type: "success",
-          message: res.message || "ACCA trajectory updated.",
-        });
-        setAcca(payload);
-        setIsEditingAcca(false);
-      } else {
-        setFeedback({
-          type: "error",
-          message: res.error || "Failed to update ACCA trajectory.",
-        });
-      }
-    });
-  };
-
   return (
     <div className="space-y-8">
-      {/* Feedback Banner */}
-      {feedback && (
-        <div
-          role="alert"
-          className={`p-4 rounded-xl text-xs font-medium border flex items-center justify-between animate-fade-in ${
-            feedback.type === "success"
-              ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-300"
-              : "bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/30 text-red-800 dark:text-red-300"
-          }`}
-        >
-          <span>{feedback.message}</span>
-          <button
-            onClick={() => setFeedback(null)}
-            className="underline text-xs ml-4 cursor-pointer"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
-
-      {/* ACCA Trajectory Section (Prominent Strategic Card) */}
-      <section className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-emerald-500/30 rounded-3xl p-6 sm:p-8 shadow-sm dark:shadow-clay-card-dark relative overflow-hidden transition-all">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-              <FiTrendingUp className="w-5 h-5" />
-            </div>
-            <div>
-              <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-700 dark:text-emerald-400 block font-semibold">
-                Target Professional Credential
-              </span>
-              <h2 className="font-display text-xl font-bold text-ink-900 dark:text-ink-50">
-                {acca.qualification} ({acca.credentialBody})
-              </h2>
-            </div>
+      {/* SECTION 1: Institutional Education Milestones */}
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h2 className="font-display font-bold text-lg text-ink-900 dark:text-ink-50 tracking-tight flex items-center gap-2">
+              <FiBookOpen className="text-emerald-600 dark:text-emerald-400" />
+              <span>Institutional Education Milestones</span>
+            </h2>
+            <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">
+              Verified university degrees, secondary qualifications, and curriculum
+              disciplines.
+            </p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-2">
-            <span className="px-3 py-1 rounded-full text-xs font-mono font-semibold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30">
-              {acca.statusLabel}
+        {/* Compact Milestones Table */}
+        <div className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-2xl overflow-hidden shadow-xs">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr className="border-b border-ink-200 dark:border-ink-800 bg-slate-50/75 dark:bg-ink-950/60 font-mono text-[11px] text-ink-500 uppercase tracking-wider">
+                  <th className="py-3 px-4 w-12 text-center">#</th>
+                  <th className="py-3 px-4 min-w-[220px]">Degree & Institution</th>
+                  <th className="py-3 px-4 min-w-[140px]">Period & Status</th>
+                  <th className="py-3 px-4 min-w-[220px]">Curriculum Disciplines</th>
+                  <th className="py-3 px-4 w-28 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-ink-100 dark:divide-ink-800 font-sans">
+                {initialMilestones.map((m, idx) => (
+                  <tr
+                    key={m.id}
+                    className="hover:bg-slate-50/60 dark:hover:bg-ink-800/40 transition-colors group"
+                  >
+                    {/* Index */}
+                    <td className="py-3.5 px-4 text-center font-mono text-ink-400 font-semibold">
+                      {idx + 1}
+                    </td>
+
+                    {/* Degree & Institution */}
+                    <td className="py-3.5 px-4">
+                      <div className="font-semibold text-ink-900 dark:text-ink-100 font-sans leading-tight">
+                        <Link
+                          href={`/admin/academic-journey/${m.id}/edit`}
+                          className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                        >
+                          {m.degree}
+                        </Link>
+                      </div>
+                      <div className="text-[11px] text-ink-500 dark:text-ink-400 font-mono mt-0.5">
+                        {m.institution} • {m.major}
+                      </div>
+                    </td>
+
+                    {/* Period & Status */}
+                    <td className="py-3.5 px-4">
+                      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-mono bg-ink-100 dark:bg-ink-800 text-ink-700 dark:text-ink-300 border border-ink-200 dark:border-ink-700/60">
+                        {m.period}
+                      </span>
+                      <div className="text-[11px] text-ink-500 dark:text-ink-400 font-mono mt-1">
+                        {m.status}
+                      </div>
+                    </td>
+
+                    {/* Disciplines */}
+                    <td className="py-3.5 px-4">
+                      <div className="flex flex-wrap gap-1">
+                        {(m.disciplines || []).map((disc, dIdx) => (
+                          <span
+                            key={dIdx}
+                            className="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60"
+                          >
+                            {disc}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="py-3 px-4 text-right">
+                      <Link
+                        href={`/admin/academic-journey/${m.id}/edit`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium text-ink-700 dark:text-ink-300 hover:text-emerald-600 dark:hover:text-emerald-400 bg-ink-50 hover:bg-ink-100 dark:bg-ink-800 dark:hover:bg-ink-700 border border-ink-200 dark:border-ink-700 transition-colors"
+                        aria-label={`Edit ${m.degree}`}
+                        title={`Edit ${m.degree}`}
+                      >
+                        <FiEdit3 size={13} aria-hidden="true" />
+                        <span>Edit</span>
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* SECTION 2: ACCA Career Trajectory Strategic Roadmap */}
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h2 className="font-display font-bold text-lg text-ink-900 dark:text-ink-50 tracking-tight flex items-center gap-2">
+              <FiTrendingUp className="text-emerald-600 dark:text-emerald-400" />
+              <span>ACCA Career Trajectory & Professional Roadmap</span>
+            </h2>
+            <p className="text-xs text-ink-500 dark:text-ink-400 mt-0.5">
+              Strategic career pathway targets, targeted exam papers, and ethical
+              non-membership disclosure.
+            </p>
+          </div>
+          <Link
+            href="/admin/academic-journey/acca/edit"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white dark:bg-emerald-400 dark:text-ink-950 dark:hover:bg-emerald-300 text-xs font-mono font-medium rounded-xl shadow-xs transition-colors self-start sm:self-auto"
+          >
+            <FiEdit3 size={13} />
+            <span>Edit ACCA Trajectory</span>
+          </Link>
+        </div>
+
+        {/* ACCA Strategy Showcase Card */}
+        <div className="p-5 sm:p-6 bg-white dark:bg-ink-900 border border-emerald-500/30 rounded-2xl shadow-xs space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-ink-100 dark:border-ink-800">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold font-mono">
+                ACCA
+              </div>
+              <div>
+                <h3 className="font-bold text-base text-ink-900 dark:text-ink-100">
+                  {initialAcca.qualification}
+                </h3>
+                <div className="text-xs text-ink-500 font-mono">
+                  {initialAcca.credentialBody} • {initialAcca.trajectoryType}
+                </div>
+              </div>
+            </div>
+
+            <span className="px-3 py-1 rounded-full text-xs font-mono font-medium bg-emerald-50 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
+              {initialAcca.statusLabel}
             </span>
-            <button
-              type="button"
-              onClick={() => {
-                setIsEditingAcca(true);
-                setAccaForm(acca);
-                setStrategicFocusText((acca.strategicFocus || []).join("\n"));
-              }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono text-ink-800 dark:text-ink-200 bg-ink-100 hover:bg-ink-200 dark:bg-ink-800 dark:hover:bg-ink-700 border border-ink-200 dark:border-ink-700 transition-all cursor-pointer"
-            >
-              <FiEdit3 className="w-3.5 h-3.5" />
-              <span>Edit Roadmap</span>
-            </button>
           </div>
-        </div>
 
-        {/* Guardrail Notice Banner */}
-        <div className="bg-ink-50 dark:bg-ink-950/80 border border-ink-200 dark:border-ink-800 rounded-xl p-4 text-xs font-mono space-y-1 text-ink-700 dark:text-ink-300 mb-6">
-          <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold">
-            <FiShield className="w-4 h-4" />
-            <span>ACCURACY & ETHICAL COMPLIANCE GUARDRAIL (VAL-03)</span>
+          <div className="space-y-1.5">
+            <div className="text-xs font-semibold text-ink-700 dark:text-ink-300 uppercase tracking-wider font-mono">
+              Ethical Non-Membership Disclosure Notice:
+            </div>
+            <p className="text-xs text-ink-600 dark:text-ink-300 bg-slate-50 dark:bg-ink-950 p-3.5 rounded-xl border border-ink-200 dark:border-ink-800 leading-relaxed font-sans">
+              {initialAcca.integrityNotice}
+            </p>
           </div>
-          <p className="text-[11px] text-ink-600 dark:text-ink-400 leading-relaxed font-sans">
-            {acca.integrityNotice}
-          </p>
-        </div>
 
-        {/* Strategic Focus Grid */}
-        <div className="space-y-3">
-          <h3 className="font-mono text-xs font-bold text-ink-700 dark:text-ink-200 uppercase tracking-wider">
-            Planned Strategic Focus Areas
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {(acca.strategicFocus || []).map((focus, idx) => (
-              <div
-                key={idx}
-                className="p-3.5 rounded-xl bg-ink-50 dark:bg-ink-950/60 border border-ink-200 dark:border-ink-800/80 text-xs font-sans text-ink-800 dark:text-ink-200 flex items-start gap-2.5"
-              >
-                <FiCheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                <span>{focus}</span>
+          {/* Planned Strategic Focus Areas in Compact 2x2 Grid */}
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="text-xs font-semibold text-ink-700 dark:text-ink-300 uppercase tracking-wider font-mono">
+                Planned Strategic Focus Areas:
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              <span className="text-[11px] font-mono text-ink-500">
+                {initialAcca.strategicFocus?.length || 0} Professional Papers
+              </span>
+            </div>
 
-      {/* Verified Academic Milestones (Timeline) */}
-      <section className="space-y-4">
-        <h2 className="font-display font-bold text-lg text-ink-900 dark:text-ink-100 flex items-center gap-2">
-          <FiBookOpen className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-          <span>Verified Educational Milestones ({milestones.length})</span>
-        </h2>
-
-        <div className="grid grid-cols-1 gap-4">
-          {milestones.map((m) => (
-            <div
-              key={m.id}
-              className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 shadow-sm dark:shadow-clay-card-dark rounded-2xl p-6 space-y-4 hover:border-emerald-500/40 transition-all"
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
-                      {m.period}
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-ink-100 dark:bg-ink-950 text-ink-700 dark:text-ink-300 border border-ink-200 dark:border-ink-800">
-                      {m.status}
-                    </span>
-                  </div>
-                  <h3 className="font-display font-bold text-lg text-ink-900 dark:text-ink-50">
-                    {m.degree}
-                  </h3>
-                  <p className="text-xs font-mono text-ink-600 dark:text-ink-400">
-                    {m.institution} · {m.campus} · Major: {m.major}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => handleOpenMilestoneEdit(m)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono text-ink-800 dark:text-ink-200 bg-ink-100 hover:bg-ink-200 dark:bg-ink-800 dark:hover:bg-ink-700 border border-ink-200 dark:border-ink-700 self-start sm:self-auto cursor-pointer transition-colors"
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3">
+              {(initialAcca.strategicFocus || []).map((paper, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 rounded-xl bg-slate-50 dark:bg-ink-950/60 border border-ink-200 dark:border-ink-800 text-xs font-mono text-ink-800 dark:text-ink-200 flex items-center gap-2.5 hover:border-emerald-500/40 transition-colors"
                 >
-                  <FiEdit3 className="w-3.5 h-3.5" />
-                  <span>Edit Milestone</span>
-                </button>
-              </div>
-
-              <p className="text-xs text-ink-600 dark:text-ink-300 font-sans leading-relaxed">
-                {m.overview}
-              </p>
-
-              {m.disciplines && m.disciplines.length > 0 && (
-                <div className="pt-3 border-t border-ink-100 dark:border-ink-800/80 flex flex-wrap gap-1.5">
-                  {m.disciplines.map((d, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2.5 py-1 rounded-lg text-[10px] font-mono bg-ink-100 dark:bg-ink-950 text-ink-700 dark:text-ink-300 border border-ink-200 dark:border-ink-800"
-                    >
-                      {d}
-                    </span>
-                  ))}
+                  <span className="w-5 h-5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center font-bold text-[11px] shrink-0">
+                    {idx + 1}
+                  </span>
+                  <span className="font-medium text-ink-900 dark:text-ink-100">
+                    {paper}
+                  </span>
                 </div>
-              )}
+              ))}
             </div>
-          ))}
+          </div>
         </div>
-      </section>
-
-      {/* Edit Milestone Modal */}
-      <Modal
-        isOpen={!!editingMilestone}
-        onClose={() => setEditingMilestone(null)}
-        title={
-          editingMilestone
-            ? `Edit Milestone: ${editingMilestone.degree}`
-            : "Edit Milestone"
-        }
-        description="Configure institution, degree classification, duration, and key disciplines."
-        maxWidth="lg"
-        footer={
-          <div className="flex items-center justify-end gap-3 w-full">
-            <button
-              type="button"
-              onClick={() => setEditingMilestone(null)}
-              className="px-4 py-2 rounded-xl text-xs font-mono text-ink-600 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-200 bg-ink-100 hover:bg-ink-200 dark:bg-ink-800 dark:hover:bg-ink-700 transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              form="milestone-form"
-              disabled={isPending}
-              className="px-4 py-2 rounded-xl text-xs font-mono font-medium text-white bg-emerald-600 hover:bg-emerald-700 dark:text-ink-950 dark:bg-emerald-400 dark:hover:bg-emerald-300 shadow-sm disabled:opacity-50 transition-colors cursor-pointer"
-            >
-              {isPending ? "Saving..." : "Save Milestone"}
-            </button>
-          </div>
-        }
-      >
-        {editingMilestone && (
-          <form
-            id="milestone-form"
-            onSubmit={handleSaveMilestone}
-            className="space-y-4 text-xs font-mono"
-          >
-            <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
-                Degree / Certificate Name
-              </label>
-              <input
-                type="text"
-                required
-                value={editingMilestone.degree}
-                onChange={(e) =>
-                  setEditingMilestone({ ...editingMilestone, degree: e.target.value })
-                }
-                className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3.5 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
-                  Institution
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={editingMilestone.institution}
-                  onChange={(e) =>
-                    setEditingMilestone({
-                      ...editingMilestone,
-                      institution: e.target.value,
-                    })
-                  }
-                  className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
-                  Campus / City
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={editingMilestone.campus}
-                  onChange={(e) =>
-                    setEditingMilestone({ ...editingMilestone, campus: e.target.value })
-                  }
-                  className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
-                  Major / Discipline
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={editingMilestone.major}
-                  onChange={(e) =>
-                    setEditingMilestone({ ...editingMilestone, major: e.target.value })
-                  }
-                  className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
-                  Time Period
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={editingMilestone.period}
-                  onChange={(e) =>
-                    setEditingMilestone({ ...editingMilestone, period: e.target.value })
-                  }
-                  className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
-                Status Label
-              </label>
-              <input
-                type="text"
-                required
-                value={editingMilestone.status}
-                onChange={(e) =>
-                  setEditingMilestone({ ...editingMilestone, status: e.target.value })
-                }
-                className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
-                Academic Overview
-              </label>
-              <textarea
-                rows={3}
-                value={editingMilestone.overview}
-                onChange={(e) =>
-                  setEditingMilestone({ ...editingMilestone, overview: e.target.value })
-                }
-                className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl p-3 text-ink-900 dark:text-ink-100 font-sans focus:outline-none focus:border-emerald-500/60 transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
-                Key Disciplines (comma separated)
-              </label>
-              <input
-                type="text"
-                value={disciplinesText}
-                onChange={(e) => setDisciplinesText(e.target.value)}
-                placeholder="Financial Accounting, Cost Accounting, Auditing"
-                className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3.5 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
-              />
-            </div>
-          </form>
-        )}
-      </Modal>
-
-      {/* Edit ACCA Roadmap Modal */}
-      <Modal
-        isOpen={isEditingAcca}
-        onClose={() => setIsEditingAcca(false)}
-        title="Edit ACCA Career Trajectory"
-        description="Maintain strictly verified target designations and ethical disclaimer boundaries (VAL-11)."
-        maxWidth="lg"
-        footer={
-          <div className="flex items-center justify-end gap-3 w-full">
-            <button
-              type="button"
-              onClick={() => setIsEditingAcca(false)}
-              className="px-4 py-2 rounded-xl text-xs font-mono text-ink-600 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-200 bg-ink-100 hover:bg-ink-200 dark:bg-ink-800 dark:hover:bg-ink-700 transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              form="acca-form"
-              disabled={isPending}
-              className="px-4 py-2 rounded-xl text-xs font-mono font-medium text-white bg-emerald-600 hover:bg-emerald-700 dark:text-ink-950 dark:bg-emerald-400 dark:hover:bg-emerald-300 shadow-sm disabled:opacity-50 transition-colors cursor-pointer"
-            >
-              {isPending ? "Saving..." : "Save ACCA Roadmap"}
-            </button>
-          </div>
-        }
-      >
-        <form
-          id="acca-form"
-          onSubmit={handleSaveAcca}
-          className="space-y-4 text-xs font-mono"
-        >
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
-                Qualification
-              </label>
-              <input
-                type="text"
-                required
-                value={accaForm.qualification}
-                onChange={(e) =>
-                  setAccaForm({ ...accaForm, qualification: e.target.value })
-                }
-                className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
-                Credential Body
-              </label>
-              <input
-                type="text"
-                required
-                value={accaForm.credentialBody}
-                onChange={(e) =>
-                  setAccaForm({ ...accaForm, credentialBody: e.target.value })
-                }
-                className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
-              Status Label
-            </label>
-            <input
-              type="text"
-              required
-              value={accaForm.statusLabel}
-              onChange={(e) => setAccaForm({ ...accaForm, statusLabel: e.target.value })}
-              placeholder="Target Professional Credential (In Planning)"
-              className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
-            />
-          </div>
-
-          <div>
-            <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
-              Ethical Integrity Notice
-            </label>
-            <textarea
-              rows={2}
-              value={accaForm.integrityNotice}
-              onChange={(e) =>
-                setAccaForm({ ...accaForm, integrityNotice: e.target.value })
-              }
-              className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl p-3 text-ink-900 dark:text-ink-100 font-sans focus:outline-none focus:border-emerald-500/60 transition-colors"
-            />
-          </div>
-
-          <div>
-            <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
-              Strategic Focus Areas (one per line)
-            </label>
-            <textarea
-              rows={4}
-              value={strategicFocusText}
-              onChange={(e) => setStrategicFocusText(e.target.value)}
-              className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl p-3 text-ink-900 dark:text-ink-100 font-sans focus:outline-none focus:border-emerald-500/60 transition-colors"
-            />
-          </div>
-        </form>
-      </Modal>
+      </div>
     </div>
   );
 }

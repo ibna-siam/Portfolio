@@ -55,9 +55,6 @@ export function PublicNav() {
           <span className="font-display font-bold text-lg sm:text-xl text-ink-900 dark:text-ink-50 tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
             Md Ibna Siam
           </span>
-          <span className="hidden sm:inline-flex items-center text-[11px] font-mono font-medium px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
-            Accounting & Finance
-          </span>
         </Link>
 
         {/* Desktop Navigation Links */}

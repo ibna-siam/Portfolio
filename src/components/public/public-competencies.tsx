@@ -49,12 +49,12 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
   return (
     <section
       id="competencies"
-      className="py-20 sm:py-24 bg-ink-100/50 dark:bg-ink-950/60 border-t border-ink-200/60 dark:border-ink-800/60"
+      className="py-20 sm:py-24 bg-slate-50/80 dark:bg-ink-900/40 border-t border-ink-200/80 dark:border-ink-800/80"
     >
       <div className="max-w-6xl mx-auto px-5 sm:px-8">
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
-          <span className="text-xs font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
+          <span className="text-xs font-mono uppercase tracking-widest text-emerald-800 dark:text-emerald-300 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
             Domain Capabilities
           </span>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink-900 dark:text-ink-50 tracking-tight">
@@ -91,7 +91,7 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm transition-all flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 cursor-pointer ${
                   isSelected
                     ? "bg-emerald-700 text-white font-semibold shadow-xs"
-                    : "bg-white dark:bg-ink-900 text-ink-700 dark:text-ink-300 font-medium hover:bg-ink-100 dark:hover:bg-ink-800 border border-ink-200/80 dark:border-ink-800/80"
+                    : "bg-white dark:bg-ink-900 text-ink-700 dark:text-ink-300 font-medium hover:bg-slate-100 dark:hover:bg-ink-800 border border-ink-200 dark:border-ink-800"
                 }`}
               >
                 <span>{cat.label}</span>
@@ -109,7 +109,7 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
           })}
         </div>
 
-        {/* Competencies Grid (Initially Max 2 Items) */}
+        {/* Competencies Grid */}
         <div
           id="competencies-grid"
           className="grid sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-5"
@@ -117,17 +117,17 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
           {displayedCompetencies.map((item) => (
             <div
               key={item.id}
-              className="bg-white dark:bg-ink-900 rounded-2xl p-5 sm:p-6 border border-ink-200/80 dark:border-ink-800/80 hover:border-emerald-500/40 dark:hover:border-emerald-500/30 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between"
+              className="bg-white dark:bg-ink-900 rounded-xl p-5 sm:p-6 border border-ink-200/90 dark:border-ink-800 border-l-4 border-l-emerald-600 dark:border-l-emerald-500 hover:border-emerald-500/50 shadow-xs hover:shadow-sm transition-all duration-200 flex flex-col justify-between"
             >
               <div className="space-y-3">
                 {/* Meta Header */}
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-mono text-ink-600 dark:text-ink-400 uppercase font-semibold">
+                  <span className="text-xs font-mono text-emerald-800 dark:text-emerald-300 uppercase font-semibold">
                     {item.domain}
                   </span>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 font-medium">
+                  <span className="inline-flex items-center gap-1 text-xs font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 font-medium">
                     <FiCheckCircle
-                      size={11}
+                      size={12}
                       className="text-emerald-600 dark:text-emerald-400"
                     />
                     {item.evidenceLabel}
@@ -150,7 +150,7 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
                     {item.frameworkTags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-[10px] font-mono px-2 py-0.5 rounded bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-400 border border-ink-200 dark:border-ink-700"
+                        className="text-xs font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-ink-800 text-ink-700 dark:text-ink-300 border border-ink-200 dark:border-ink-700"
                       >
                         {tag}
                       </span>
@@ -160,12 +160,12 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
               </div>
 
               {/* Related Study Anchor */}
-              <div className="pt-4 mt-4 border-t border-ink-100 dark:border-ink-800/80 flex items-center justify-between text-xs font-mono text-ink-600 dark:text-ink-400">
-                <span className="text-[11px] flex items-center gap-1">
-                  <FiTag size={11} />
+              <div className="pt-3.5 mt-4 border-t border-ink-100 dark:border-ink-800/80 flex items-center justify-between text-xs font-mono text-ink-600 dark:text-ink-400">
+                <span className="text-xs flex items-center gap-1 font-medium text-ink-600 dark:text-ink-400">
+                  <FiTag size={12} className="text-emerald-600 dark:text-emerald-400" />
                   Applied in:
                 </span>
-                <span className="font-medium text-ink-700 dark:text-ink-300 truncate max-w-[240px]">
+                <span className="font-medium text-ink-800 dark:text-ink-200 truncate max-w-[240px]">
                   {item.relatedProject}
                 </span>
               </div>
@@ -174,7 +174,7 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
         </div>
 
         {/* Progressive Disclosure Control */}
-        {filtered.length > 2 && (
+        {filtered.length > 4 && (
           <div className="mt-10 flex justify-center">
             <button
               type="button"
@@ -186,7 +186,7 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
               {isExpanded ? (
                 <>
                   <FiChevronUp size={16} />
-                  <span>Show Less (Collapse to 2)</span>
+                  <span>Show Less (Collapse to 4)</span>
                 </>
               ) : (
                 <>

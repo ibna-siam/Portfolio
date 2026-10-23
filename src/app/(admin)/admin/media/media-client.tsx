@@ -51,6 +51,7 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
 
   // Upload state
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
   const [uploadProgressText, setUploadProgressText] = useState<string>("");
@@ -80,11 +81,8 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
     }
   };
 
-  // Upload Handler
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  // Unified File Upload Handler
+  const uploadFile = async (file: File) => {
     setUploadError(null);
     setUploadSuccess(null);
     setActionError(null);
@@ -93,13 +91,11 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
     const allowed = ["image/jpeg", "image/png", "image/webp"];
     if (!allowed.includes(file.type)) {
       setUploadError("Invalid file type. Only JPEG, PNG, and WebP images are allowed.");
-      e.target.value = "";
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
       setUploadError("File exceeds the maximum allowed size of 5 MB.");
-      e.target.value = "";
       return;
     }
 
@@ -176,7 +172,35 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
     } finally {
       setIsUploading(false);
       setUploadProgressText("");
-      e.target.value = "";
+    }
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await uploadFile(file);
+    e.target.value = "";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (configStatus.isConfigured && !isUploading) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (!configStatus.isConfigured || isUploading) return;
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      await uploadFile(file);
     }
   };
 
@@ -316,20 +340,29 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
       )}
 
       {/* Upload Zone */}
-      <section className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 shadow-sm dark:shadow-clay-card-dark rounded-2xl p-6 sm:p-8">
-        <div className="flex items-center justify-between mb-4">
+      <section className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-2xl p-4 sm:p-5 shadow-xs">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <FiUploadCloud className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
-            <h2 className="font-display text-lg font-bold text-ink-900 dark:text-ink-50">
+            <FiUploadCloud className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
+            <h2 className="font-display text-sm font-bold text-ink-900 dark:text-ink-50">
               Direct Signed Media Upload
             </h2>
           </div>
-          <span className="text-xs font-mono text-ink-600 dark:text-ink-400">
-            JPG, PNG, WEBP (Max 5 MB)
+          <span className="text-[11px] font-mono text-ink-500 dark:text-ink-400">
+            JPG, PNG, WEBP · Max 5 MB
           </span>
         </div>
 
-        <div className="relative border-2 border-dashed border-ink-200 dark:border-ink-800 hover:border-emerald-500/50 rounded-xl p-8 sm:p-12 text-center transition-all bg-ink-50/50 dark:bg-ink-950/60 group">
+        <div
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={`relative border-2 border-dashed rounded-xl p-4 sm:p-6 text-center transition-all ${
+            isDragging
+              ? "border-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/20 scale-[0.99]"
+              : "border-ink-200 dark:border-ink-800 hover:border-emerald-500/40 bg-ink-50/40 dark:bg-ink-950/40"
+          } group`}
+        >
           <input
             id="media-file-input"
             type="file"
@@ -340,16 +373,22 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
             aria-label="Upload media file"
           />
 
-          <div className="flex flex-col items-center justify-center space-y-3 pointer-events-none">
-            <div className="w-14 h-14 rounded-2xl bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 shadow-sm dark:shadow-clay-card-dark flex items-center justify-center text-emerald-700 dark:text-emerald-400 group-hover:scale-110 transition-transform">
-              <FiUploadCloud className="w-7 h-7" />
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pointer-events-none">
+            <div
+              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform ${
+                isDragging
+                  ? "bg-emerald-600 text-white scale-110"
+                  : "bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-emerald-700 dark:text-emerald-400 group-hover:scale-105 shadow-xs"
+              }`}
+            >
+              <FiUploadCloud className="w-5 h-5" />
             </div>
 
             {isUploading ? (
-              <div className="space-y-2">
-                <div className="flex items-center justify-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-400 font-mono">
+              <div className="space-y-1 text-center sm:text-left">
+                <div className="flex items-center justify-center sm:justify-start gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 font-mono">
                   <svg
-                    className="animate-spin h-4 w-4 text-emerald-700 dark:text-emerald-400"
+                    className="animate-spin h-3.5 w-3.5 text-emerald-700 dark:text-emerald-400"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -370,28 +409,28 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
                   </svg>
                   <span>Processing Upload</span>
                 </div>
-                <p className="text-xs text-ink-600 dark:text-ink-400 font-mono">
+                <p className="text-[11px] text-ink-500 dark:text-ink-400 font-mono">
                   {uploadProgressText}
                 </p>
               </div>
             ) : configStatus.isConfigured ? (
-              <div>
-                <p className="text-sm font-medium text-ink-800 dark:text-ink-200">
-                  <span className="text-emerald-700 dark:text-emerald-400 underline font-semibold">
-                    Click to select an image
+              <div className="text-center sm:text-left">
+                <p className="text-xs font-medium text-ink-800 dark:text-ink-200">
+                  <span className="text-emerald-700 dark:text-emerald-400 font-semibold underline underline-offset-2">
+                    Click to browse
                   </span>{" "}
-                  or drag and drop
+                  or drag & drop an image here
                 </p>
-                <p className="text-xs text-ink-600 dark:text-ink-400 mt-1 font-mono">
-                  Authenticated direct browser upload with server signature verification.
+                <p className="text-[11px] text-ink-500 dark:text-ink-400 mt-0.5 font-mono">
+                  Direct authenticated upload with cryptographic signature verification
                 </p>
               </div>
             ) : (
-              <div>
-                <p className="text-sm font-medium text-ink-700 dark:text-ink-300">
-                  Uploads disabled until Cloudinary credentials are configured.
+              <div className="text-center sm:text-left">
+                <p className="text-xs font-medium text-ink-700 dark:text-ink-300">
+                  Uploads in standby until Cloudinary API keys are configured.
                 </p>
-                <p className="text-xs text-ink-600 dark:text-ink-400 mt-1 font-mono">
+                <p className="text-[11px] text-ink-500 dark:text-ink-400 mt-0.5 font-mono">
                   Existing assets remain viewable.
                 </p>
               </div>
@@ -412,12 +451,13 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search assets by ID or alt text..."
-            className="w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-ink-900 dark:text-ink-100 placeholder:text-ink-500 dark:placeholder:text-ink-400 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 font-body shadow-xs transition-colors"
+            className="w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 text-ink-900 dark:text-ink-100 placeholder:text-ink-500 dark:placeholder:text-ink-400 rounded-xl pl-10 pr-4 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/40 font-body shadow-xs transition-colors"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
               className="absolute inset-y-0 right-0 pr-3 flex items-center text-ink-500 hover:text-ink-800 dark:hover:text-ink-200"
+              title="Clear search"
             >
               <FiX className="w-3.5 h-3.5" />
             </button>
@@ -444,28 +484,28 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
 
       {/* Assets Grid */}
       {filteredAssets.length === 0 ? (
-        <div className="bg-white dark:bg-ink-900/60 border border-ink-200 dark:border-ink-800 rounded-2xl p-12 text-center shadow-sm">
-          <div className="w-14 h-14 rounded-2xl bg-ink-100 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 flex items-center justify-center text-ink-400 dark:text-ink-500 mx-auto mb-4">
-            <FiImage className="w-7 h-7" />
+        <div className="bg-white dark:bg-ink-900/60 border border-ink-200 dark:border-ink-800 rounded-2xl p-10 text-center shadow-xs">
+          <div className="w-12 h-12 rounded-xl bg-ink-100 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 flex items-center justify-center text-ink-400 dark:text-ink-500 mx-auto mb-3">
+            <FiImage className="w-6 h-6" />
           </div>
-          <h3 className="font-display text-lg font-bold text-ink-800 dark:text-ink-200 mb-1">
+          <h3 className="font-display text-base font-bold text-ink-800 dark:text-ink-200 mb-1">
             {assets.length === 0 ? "No Media Assets Registered" : "No Assets Match Query"}
           </h3>
-          <p className="text-xs text-ink-600 dark:text-ink-400 max-w-md mx-auto leading-relaxed">
+          <p className="text-xs text-ink-500 dark:text-ink-400 max-w-md mx-auto leading-relaxed">
             {assets.length === 0
               ? "The media asset register is currently empty. Uploaded assets will appear here with full metadata and copyable URLs."
               : "Try adjusting your search terms or format filter."}
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredAssets.map((asset) => {
             const sizeInKb = asset.bytes ? (asset.bytes / 1024).toFixed(1) : "—";
 
             return (
               <div
                 key={asset.id}
-                className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-2xl shadow-sm dark:shadow-clay-card-dark overflow-hidden flex flex-col group transition-all hover:border-emerald-500/40"
+                className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-2xl shadow-xs overflow-hidden flex flex-col group transition-all hover:border-emerald-500/40"
               >
                 {/* Thumbnail Display with Aspect Ratio Well */}
                 <div className="relative aspect-video bg-ink-100 dark:bg-ink-950 border-b border-ink-200 dark:border-ink-800/80 overflow-hidden flex items-center justify-center">
@@ -476,8 +516,8 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
                     className="max-h-full max-w-full object-contain p-2 group-hover:scale-105 transition-transform duration-300"
                   />
 
-                  {/* Format & Dimensions Overlay Pill */}
-                  <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
+                  {/* Format & Dimensions Overlay Pill (Static badge) */}
+                  <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5 z-10 pointer-events-none">
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold uppercase bg-white/90 dark:bg-ink-950/80 backdrop-blur-md text-emerald-700 dark:text-emerald-400 border border-ink-200 dark:border-ink-800 shadow-xs">
                       {asset.format || "IMG"}
                     </span>
@@ -488,23 +528,77 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
                     )}
                   </div>
 
-                  {/* Quick Expand Button */}
-                  <button
-                    onClick={() => setViewingAsset(asset)}
-                    className="absolute bottom-2.5 right-2.5 p-1.5 rounded-lg bg-white/90 dark:bg-ink-950/80 backdrop-blur-md text-ink-700 dark:text-ink-300 hover:text-ink-900 dark:hover:text-white border border-ink-200 dark:border-ink-800 hover:border-emerald-500/50 shadow-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
-                    aria-label="View full details"
-                  >
-                    <FiMaximize2 className="w-3.5 h-3.5" />
-                  </button>
+                  {/* Desktop Hover Overlay: Exposes Asset Name, Format/Dimensions & Copy URL */}
+                  <div className="absolute inset-0 bg-ink-950/80 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity p-3 hidden sm:flex flex-col justify-between z-20 pointer-events-none group-hover:pointer-events-auto group-focus-within:pointer-events-auto">
+                    <div className="flex items-center justify-between">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        {asset.format || "IMG"}{" "}
+                        {asset.width && asset.height
+                          ? `· ${asset.width}×${asset.height}`
+                          : ""}
+                      </span>
+                      <span className="text-[10px] font-mono text-ink-300 font-semibold">
+                        {sizeInKb} KB
+                      </span>
+                    </div>
+
+                    <div className="text-center px-1">
+                      <p
+                        className="text-xs font-mono font-semibold text-white truncate"
+                        title={asset.publicId}
+                      >
+                        {asset.publicId}
+                      </p>
+                      {asset.altText && (
+                        <p className="text-[11px] text-ink-300 line-clamp-1 italic mt-0.5">
+                          "{asset.altText}"
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleCopyUrl(asset.id, asset.secureUrl)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-medium bg-emerald-600 hover:bg-emerald-500 text-white shadow-xs transition-colors cursor-pointer"
+                        title="Copy image URL"
+                      >
+                        {copiedId === asset.id ? (
+                          <>
+                            <FiCheck className="w-3.5 h-3.5 text-emerald-200" />
+                            <span>Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <FiCopy className="w-3.5 h-3.5" />
+                            <span>Copy URL</span>
+                          </>
+                        )}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setViewingAsset(asset)}
+                        className="p-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white border border-white/20 transition-colors cursor-pointer"
+                        title="Expand preview"
+                        aria-label="Expand image details"
+                      >
+                        <FiMaximize2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Asset Metadata & Controls */}
-                <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                {/* Asset Metadata & Controls (Touch-friendly & Always Accessible) */}
+                <div className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between space-y-3">
                   <div>
-                    <div className="text-xs font-mono text-ink-900 dark:text-ink-100 font-semibold truncate mb-1">
+                    <div
+                      className="text-xs font-mono text-ink-900 dark:text-ink-100 font-semibold truncate mb-1"
+                      title={asset.publicId}
+                    >
                       {asset.publicId}
                     </div>
-                    <div className="text-[11px] text-ink-600 dark:text-ink-400 flex items-center justify-between font-mono">
+                    <div className="text-[11px] text-ink-500 dark:text-ink-400 flex items-center justify-between font-mono">
                       <span>Size: {sizeInKb} KB</span>
                       <span>{new Date(asset.createdAt).toLocaleDateString()}</span>
                     </div>
@@ -512,7 +606,7 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
                     {/* Alt Text summary */}
                     <div className="mt-2 text-xs text-ink-700 dark:text-ink-300 bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800/80 rounded-lg p-2">
                       <div className="flex items-center justify-between mb-0.5">
-                        <span className="text-[10px] font-mono uppercase text-ink-600 dark:text-ink-400 font-semibold">
+                        <span className="text-[10px] font-mono uppercase text-ink-500 dark:text-ink-400 font-semibold">
                           Alt Text
                         </span>
                         <button
@@ -521,6 +615,7 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
                             setAltTextInput(asset.altText || "");
                           }}
                           className="text-[11px] text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer font-semibold"
+                          title="Edit alt text"
                         >
                           <FiEdit3 className="w-3 h-3" />
                           <span>Edit</span>
@@ -532,11 +627,12 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
+                  {/* Action Buttons (Touch-Friendly for Mobile & Keyboard Accessible) */}
                   <div className="flex items-center gap-2 pt-2 border-t border-ink-100 dark:border-ink-800/80">
                     <button
                       onClick={() => handleCopyUrl(asset.id, asset.secureUrl)}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono font-medium bg-ink-100 hover:bg-ink-200 dark:bg-ink-950 dark:hover:bg-ink-800 text-ink-800 dark:text-ink-200 border border-ink-200 dark:border-ink-800 transition-all cursor-pointer"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-medium bg-ink-100 hover:bg-ink-200 dark:bg-ink-950 dark:hover:bg-ink-800 text-ink-800 dark:text-ink-200 border border-ink-200 dark:border-ink-800 transition-all cursor-pointer"
+                      title="Copy asset URL"
                     >
                       {copiedId === asset.id ? (
                         <>
@@ -547,15 +643,25 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
                         </>
                       ) : (
                         <>
-                          <FiCopy className="w-3.5 h-3.5 text-ink-600 dark:text-ink-400" />
+                          <FiCopy className="w-3.5 h-3.5 text-ink-500 dark:text-ink-400" />
                           <span>Copy URL</span>
                         </>
                       )}
                     </button>
 
                     <button
+                      onClick={() => setViewingAsset(asset)}
+                      className="p-1.5 rounded-xl text-ink-600 dark:text-ink-400 hover:text-ink-900 dark:hover:text-ink-100 bg-ink-100 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 hover:border-ink-300 dark:hover:border-ink-700 transition-all cursor-pointer"
+                      title="View full details"
+                      aria-label="View full asset details"
+                    >
+                      <FiMaximize2 className="w-3.5 h-3.5" />
+                    </button>
+
+                    <button
                       onClick={() => setDeletingAsset(asset)}
-                      className="p-2 rounded-xl text-ink-500 dark:text-ink-400 hover:text-red-600 dark:hover:text-red-400 bg-ink-100 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 hover:border-red-300 dark:hover:border-red-500/30 transition-all cursor-pointer"
+                      className="p-1.5 rounded-xl text-ink-500 dark:text-ink-400 hover:text-red-600 dark:hover:text-red-400 bg-ink-100 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 hover:border-red-300 dark:hover:border-red-500/30 transition-all cursor-pointer"
+                      title="Delete asset"
                       aria-label="Delete asset"
                     >
                       <FiTrash2 className="w-3.5 h-3.5" />

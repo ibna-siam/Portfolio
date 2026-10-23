@@ -17,13 +17,13 @@ export function PublicAbout({ settings }: PublicAboutProps) {
   return (
     <section
       id="about"
-      className="py-20 sm:py-24 bg-ink-100/40 dark:bg-ink-950/40 border-t border-ink-200/60 dark:border-ink-800/60"
+      className="py-20 sm:py-24 bg-slate-50/80 dark:bg-ink-900/40 border-t border-ink-200/80 dark:border-ink-800/80"
     >
       <div className="max-w-6xl mx-auto px-5 sm:px-8">
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
-          <span className="text-xs font-mono uppercase tracking-widest text-emerald-700 dark:text-emerald-400 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
-            Background & Focus
+          <span className="text-xs font-mono uppercase tracking-widest text-emerald-800 dark:text-emerald-300 font-semibold px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 inline-block">
+            Background & Academic Scope
           </span>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-ink-900 dark:text-ink-50 tracking-tight">
             Professional Profile
@@ -36,42 +36,36 @@ export function PublicAbout({ settings }: PublicAboutProps) {
         </div>
 
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-          {/* Narrative Summary */}
+          {/* Narrative Summary (Concise, Recruiter-Focused ~45 words) */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="text-ink-600 dark:text-ink-300 leading-relaxed space-y-4 text-sm sm:text-base">
-              <p className="text-base sm:text-lg text-ink-800 dark:text-ink-100 font-medium leading-relaxed">
-                I am an undergraduate accounting student at Daffodil International
-                University, focused on mastering corporate financial reporting, cost
-                accounting, and tax compliance.
+            <div className="p-6 rounded-2xl bg-white dark:bg-ink-900 border border-ink-200/90 dark:border-ink-800 shadow-sm space-y-3.5">
+              <p className="text-base sm:text-lg text-ink-900 dark:text-ink-50 font-medium leading-relaxed">
+                Undergraduate accounting candidate at Daffodil International University
+                specializing in corporate financial reporting, managerial costing, and
+                Bangladesh Income Tax Act 2023 compliance. Combining IFRS/BAS frameworks
+                with structured spreadsheet modeling and analytical tools to deliver
+                transparent, audit-ready financial insights.
               </p>
-              <p className="leading-relaxed">
-                My academic coursework and case studies emphasize practical accounting
-                frameworks—including International Financial Reporting Standards (IFRS),
-                Bangladesh Accounting Standards (BAS), and the Bangladesh Income Tax Act
-                2023. Through structured financial modeling, I examine audited statements,
-                evaluate cost-volume-profit relationships, and build operational master
-                budgets.
-              </p>
-              <p className="leading-relaxed">
-                I view technology and automation as essential multipliers for accounting
-                precision. By integrating spreadsheet automation, financial software, and
-                structured dashboard workflows, I focus on turning complex transactions
-                into reliable, reproducible managerial intelligence.
+              <p className="text-xs sm:text-sm text-ink-600 dark:text-ink-300 leading-relaxed pt-2 border-t border-ink-100 dark:border-ink-800/80">
+                Integrating spreadsheet automation, financial software, and structured
+                dashboard workflows to convert complex transactions into reliable decision
+                intelligence.
               </p>
             </div>
 
             {/* Factual Academic Identity Details */}
-            <div className="pt-4 border-t border-ink-200 dark:border-ink-800/80">
-              <h3 className="text-xs font-mono uppercase tracking-widest text-ink-600 dark:text-ink-400 mb-3 font-semibold">
+            <div className="pt-2">
+              <h3 className="text-xs font-mono uppercase tracking-widest text-ink-700 dark:text-ink-300 mb-3 font-semibold flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
                 Key Academic Attributes
               </h3>
               <div className="grid sm:grid-cols-2 gap-3">
                 {profileDetails.map(({ label, value, isEmail }) => (
                   <div
                     key={label}
-                    className="p-3.5 rounded-xl bg-white dark:bg-ink-900 border border-ink-200/70 dark:border-ink-800/70 shadow-xs"
+                    className="p-3.5 rounded-xl bg-white dark:bg-ink-900 border border-ink-200/80 dark:border-ink-800 shadow-xs hover:border-emerald-500/30 transition-colors"
                   >
-                    <span className="text-[11px] font-mono text-ink-600 dark:text-ink-300 uppercase block font-medium">
+                    <span className="text-[11px] font-mono text-ink-600 dark:text-ink-400 uppercase block font-semibold">
                       {label}
                     </span>
                     {isEmail ? (
@@ -92,25 +86,22 @@ export function PublicAbout({ settings }: PublicAboutProps) {
             </div>
           </div>
 
-          {/* Highlights 4-Card Grid */}
-          <div className="lg:col-span-5 grid sm:grid-cols-2 lg:grid-cols-1 gap-4">
+          {/* Highlights 4-Card Grid (Refined surfaces, no redundant pills) */}
+          <div className="lg:col-span-5 grid sm:grid-cols-2 lg:grid-cols-1 gap-3.5">
             {settings.aboutHighlights?.map((item) => (
               <div
                 key={item.label}
-                className="p-5 rounded-2xl bg-white dark:bg-ink-900 border border-ink-200/80 dark:border-ink-800/80 shadow-clay-card dark:shadow-clay-card-dark space-y-1.5"
+                className="p-5 rounded-2xl bg-white dark:bg-ink-900 border border-ink-200/90 dark:border-ink-800 shadow-sm hover:shadow-md hover:border-emerald-500/40 transition-all space-y-1.5"
               >
                 <div className="flex items-center justify-between text-xs font-mono">
-                  <span className="text-emerald-700 dark:text-emerald-400 font-semibold uppercase tracking-wider text-[11px]">
-                    Academic Highlight
-                  </span>
-                  <span className="text-ink-600 dark:text-ink-300 font-medium">
+                  <h4 className="font-display font-bold text-base text-ink-900 dark:text-ink-50">
+                    {item.label}
+                  </h4>
+                  <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20">
                     Verified
                   </span>
                 </div>
-                <h4 className="font-display font-bold text-base text-ink-900 dark:text-ink-50">
-                  {item.label}
-                </h4>
-                <p className="text-xs text-ink-600 dark:text-ink-300 leading-relaxed">
+                <p className="text-xs sm:text-sm text-ink-600 dark:text-ink-300 leading-relaxed font-normal">
                   {item.value}
                 </p>
               </div>

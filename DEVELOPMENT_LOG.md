@@ -1322,22 +1322,161 @@
      - `npm run test:cms`: 41 / 41 passed.
      - `npm run build`: Exit code 0 (15 routes generated, production build verified).
 
+---
 
+## Phase 13: Visual Refinement, Content Simplification & Recruiter-Focused UX
+- **Date:** October 23, 2026
+- **Status:** Completed & Fully Verified
+- **Scope:** Visual Hierarchy, Alternating Surface Backgrounds, Profile Content Simplification (44 words), Dossier Styling for Case Studies, Engineering Dual-Panels for Tech Solutions, Visible Timeline Alignment, Form Focus & Contrast, Accessibility Verification
+- **Deliverables & Accomplishments:**
+  1. **Alternating Section Surfaces:**
+     - Established a clean rhythmic cadence alternating pure white (`bg-white dark:bg-ink-950`) and subtle slate (`bg-slate-50/80 dark:bg-ink-900/40`) with crisp borders across all public sections.
+  2. **Hero Proportions & Geometric Accent:**
+     - Added subtle geometric aura backdrop behind profile portrait.
+     - Replaced claymorphism multi-layer shadows with executive frame (`border border-ink-200/90 dark:border-ink-800 shadow-md`).
+     - Refined serif headline line-height and expanded analytical domains ribbon spacing (`mt-20 pt-10`).
+  3. **Professional Profile Simplification:**
+     - Condensed narrative from 105 words down to a crisp 44-word concrete academic statement, eliminating generic promotional filler while maintaining core focus on IFRS/IAS, Bangladesh Income Tax Act 2023, and software reconciliation systems.
+     - Removed redundant tags from academic attributes.
+  4. **Financial Case Studies Distinct Dossier Treatment:**
+     - Distinct financial dossier card styling with 3-tile micro-metrics parameter strip (`Framework`, `Currency`, `Discipline`).
+     - Elevated active discrepancy disclosure callouts (`VAL-09`, `VAL-10`, `VAL-11`).
+     - Added context-specific action: "View Case Study" with animated hover arrow.
+     - Corrected collapse button label to `(Collapse to 4)`.
+  5. **Accounting & Analytical Competencies Matrix:**
+     - Refined into a distinct capability matrix with emerald left-accent borders (`border-l-4 border-l-emerald-600 dark:border-l-emerald-500`).
+     - Added prominent domain and verified evidence tags.
+     - Corrected collapse button label to `(Collapse to 4)`.
+  6. **Business & Technology Solutions Project Showcase:**
+     - Implemented dual-panel engineering showcase layout: "Problem Context" (slate sub-panel) vs "Implemented System" (emerald sub-panel).
+     - Added verified status pills and monospace tech stack pills.
+     - Verified safe external repository links with `rel="noopener noreferrer"`.
+  7. **Academic Journey & ACCA Trajectory Timeline:**
+     - Strengthened timeline spine visibility (`w-0.5 bg-ink-300 dark:bg-ink-700`).
+     - Standardized milestone date contrast badges and node icons.
+     - Upgraded ACCA Strategic Pathway card with 2px emerald border and structured 3-paper target matrix.
+  8. **Contact Form & Footer Focus/Contrast:**
+     - Enhanced input borders (`border-ink-300 dark:border-ink-700 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20`).
+     - Formatted uppercase labels with required asterisks.
+     - Elevated submit button visual weight and preserved Formspree integration (`https://formspree.io/f/mqaevepk`).
+     - Enhanced footer padding, grid alignment, focus rings, and AAA contrast.
+  9. **Quality Gate Verification (100% Green):**
+     - `npm run format:check`: 100% Prettier compliant.
+     - `npm run lint`: 0 errors, 0 warnings.
+     - `npm run type-check`: 0 errors (`tsc --noEmit`).
+     - `npm run test:public`: 19 / 19 passed.
+     - `npm run test:seo`: 40 / 40 passed.
+     - `npm run test:auth`: 27 / 27 passed.
+     - `npm run test:cms`: 41 / 41 passed.
+     - `npm run test:media`: 24 / 24 passed.
+     - Total automated assertions: **151 / 151 PASSED (0 FAILED)**.
+     - `npm run build`: Production build exit code 0 (15 routes generated).
+- **Reports Generated:**
+  - `PHASE_13_VISUAL_REFINEMENT_REPORT.md`
 
+---
 
+## Phase 14: Admin CMS Architecture Audit & CRUD Standardization Plan
+- **Date:** October 23, 2026
+- **Status:** Completed (Audit & Architecture Planning Only — No Source Code Changes)
+- **Scope:** Filesystem Route Inventory, Modal-to-Page CRUD Audit, Data Model Analysis, Reusable Form Component Planning, Security/Integrity Safeguards
+- **Key Findings & Accomplishments:**
+  1. **Comprehensive Route & Component Inventory:**
+     - Audited all existing admin subroutes (`/admin`, `/admin/case-studies`, `/admin/competencies`, `/admin/academic-journey`, `/admin/tech-solutions`, `/admin/media`).
+     - Confirmed that Case Studies already uses a dedicated multi-page CRUD architecture (`/admin/case-studies/new`, `/admin/case-studies/[id]/edit`, `/admin/case-studies/[id]/preview`).
+     - Identified that Competencies, Tech Solutions, and Academic Journey currently rely on constrained modal forms (`modal.tsx`), creating usability friction, risk of accidental data loss on backdrop click, and lack of deep-linkability.
+  2. **Data Model Architecture Clarification:**
+     - Clarified that Academic Journey is a hybrid entity managing a relational collection of academic milestone records (`academic_milestones` table) alongside a singleton configuration document (`acca_trajectory` stored as JSONB in `site_settings`).
+     - Confirmed that zero database migrations are required; existing Drizzle schema satisfies all standardized CRUD operations.
+  3. **Standardized CRUD & Layout Plan Formulated:**
+     - Proposed uniform Page-Based CRUD pattern: compact management list view (`/admin/[module]`), dedicated create page (`/admin/[module]/new`), dedicated edit page (`/admin/[module]/[id]/edit`).
+     - Preserved lightweight modals strictly for destructive delete confirmations and media asset selection.
+     - Planned shared reusable form components (`AdminPageHeader`, `FormSection`, `TagInputField`, `FormActionBar`, `DeleteConfirmationModal`).
+  4. **Sequencing for Phases 15 & 16:**
+     - Phase 15: Create shared form components and migrate Competencies & Tech Solutions to dedicated create/edit pages.
+     - Phase 16: Migrate Academic Journey and refine Case Studies list to a high-density financial data table.
+- **Reports Generated:**
+  - `PHASE_14_ADMIN_ARCHITECTURE_AUDIT.md`
 
+---
 
+## Phase 15: Dedicated CRUD Pages & Compact Admin Management Lists
+- **Date:** October 23, 2026
+- **Status:** Completed & Verified
+- **Scope:** Dedicated Page-Based CRUD Architecture, Shared Form Component Suite, Compact High-Density Data Tables, Zero Schema Migrations, 100% Quality Gate Verification
+- **Key Deliverables & Architectural Accomplishments:**
+  1. **Shared Admin Form Suite (`src/components/admin/forms/`):**
+     - `admin-page-header.tsx`: Standardized breadcrumb trail, title, contextual description, and top action buttons slot.
+     - `form-card.tsx`: Modular container component for grouping related form fields with subtle border and elevation styling.
+     - `tag-input-field.tsx`: Keyboard-first interactive pill/badge manager supporting Enter/comma addition, backspace deletion, and duplicate checks.
+     - `delete-confirmation-modal.tsx`: Accessible, action-only confirmation modal highlighting entity title and destructive warning.
+  2. **Competencies Module Modernization:**
+     - Refactored `competencies-client.tsx` from bulky cards into a compact categorized table with domain filter dropdown, search filter, and instant Up/Down reorder triggers (`reorderCompetencyAction`).
+     - Built reusable `competency-editor.tsx` supporting domain taxonomy, interactive skills tag input, and sticky bottom action bar.
+     - Implemented dedicated routes: `/admin/competencies/new`, `/admin/competencies/[id]/edit`, and `/admin/competencies/edit/[id]` (redirect alias).
+  3. **Tech Solutions Module Modernization:**
+     - Refactored `solutions-client.tsx` from verbose multi-paragraph cards into a compact system showcase table with category badges, role indicators, monospace tech stack pills, verified repo links, and direct edit triggers.
+     - Built reusable `tech-solution-editor.tsx` for system slug, title, category, status theme, architectural role, problem bottleneck, engineered solution, tech tags, and features checklist.
+     - Implemented dedicated routes: `/admin/tech-solutions/new`, `/admin/tech-solutions/[id]/edit`, and `/admin/tech-solutions/edit/[id]` (redirect alias).
+  4. **Academic Journey Module Modernization:**
+     - Refactored `journey-client.tsx` to eliminate modal forms; introduced a high-density credentials table for milestones and an executive strategic roadmap card with direct links to dedicated edit pages.
+     - Built `milestone-editor.tsx` for degree, institution, credential badge, timeline, GPA honors, and curriculum tags.
+     - Built `acca-trajectory-editor.tsx` with dedicated strategic focus areas management and strict non-membership disclosure compliance (`VAL-03`).
+     - Implemented dedicated routes: `/admin/academic-journey/[id]/edit`, `/admin/academic-journey/edit/[id]` (redirect alias), and `/admin/academic-journey/acca/edit`.
+  5. **Case Studies High-Density Management Table:**
+     - Refactored `case-studies-client.tsx` from wide cards to a responsive data table featuring title/slug, category group, financial schedule counters, live publish toggle, and direct action triggers.
+  6. **Zero Schema Migrations & Integrity Verification:**
+     - 0 database migrations created; 100% of existing data records preserved (16 competencies, 8 case studies, 3 solutions, 3 milestones, 3 discrepancy disclosures).
+     - Guardrails preserved: `VAL-03` (ACCA non-membership), `VAL-07` (phone privacy), `VAL-08` (Square Pharma proposal framing), `VAL-09/10/11` (financial discrepancies).
+  7. **Quality Gate Verification (100% Green):**
+     - `npm run lint`: 0 errors, 0 warnings.
+     - `npm run type-check`: 0 errors (`tsc --noEmit`).
+     - `npm run format:check`: 100% Prettier compliant.
+     - `npm run test:cms`: 41 / 41 passed.
+     - `npm run test:public`: 19 / 19 passed.
+     - `npm run test:auth`: 27 / 27 passed.
+     - `npm run test:seo`: 40 / 40 passed.
+     - `npm run test:media`: 24 / 24 passed.
+     - Total automated assertions: **151 / 151 PASSED (0 FAILED)**.
+     - `npm run build`: Production build exit code 0 (18 static and dynamic routes compiled).
+- **Reports Generated:**
+  - `PHASE_15_ADMIN_CRUD_IMPLEMENTATION_REPORT.md`
 
+---
 
-
-
-
-
-
-
-
-
-
-
-
+## Phase 16: Admin Dashboard, Academic Journey & Media Library Refinement
+- **Date:** October 23, 2026
+- **Status:** Completed & Verified
+- **Scope:** Dashboard Information Hierarchy & Scannability, Academic Journey 2×2 Layout & Milestone Button Standardizations, Media Library Dropzone Footprint & Thumbnail Actions Overlay, Zero Schema Migrations, 100% Quality Gate Verification
+- **Key Deliverables & Architectural Accomplishments:**
+  1. **Admin Dashboard Refinement (`src/app/(admin)/admin/page.tsx`):**
+     - Replaced verbose descriptive paragraphs on module cards with concise, scannable operational labels ("Narrative financial case studies", "Core financial & technical skill matrices", "ACCA trajectory & academic milestones", etc.).
+     - Reduced card padding to `p-4 sm:p-5` and compacted the 3-metric diagnostic strip (Database, Security, Media Storage).
+     - Upgraded Drizzle Audit Trail query with `leftJoin(schema.users, eq(schema.activityLogs.userId, schema.users.id))` to resolve actor name and email.
+     - Formatted Audit Trail into a compact, accessible table with action badges (`CREATE`, `UPDATE`, `PUBLISH`, `DELETE`, `REORDER`), entity tags, target IDs, resolved actor identity, and relative timestamps.
+  2. **Academic Journey Refinement (`src/app/(admin)/admin/academic-journey/journey-client.tsx` & `src/components/admin/acca-trajectory-editor.tsx`):**
+     - Transformed "Planned Strategic Focus Areas" into a responsive 2×2 grid on desktop (`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3`) featuring clean slate borders and gold index markers (`01`–`04`).
+     - Standardized milestone table edit action buttons with consistent padding (`px-3 py-1.5`), 13px icon, tooltip titles, and accessible `aria-label` attributes.
+     - Maintained existing single-record configuration model and persistence behavior without schema changes.
+  3. **Media Library Refinement (`src/app/(admin)/admin/media/media-client.tsx`):**
+     - Compacted upload dropzone vertical height by >50% (`p-4 sm:p-6`), with a `w-10 h-10` icon and a clear accepted format tag (`JPG, PNG, WEBP · Max 5 MB`).
+     - Added real-time drag-and-drop feedback with dynamic `isDragging` visual highlight.
+     - Implemented desktop thumbnail hover overlay with backdrop blur displaying format, dimensions, file size, truncated public ID, Copy URL button with green "Copied!" feedback, and expand trigger.
+     - Preserved full mobile touch and keyboard accessibility with dedicated actions below the thumbnail.
+  4. **Data Integrity & Zero Migrations:**
+     - 0 database migrations created; 100% of existing data preserved.
+     - Strict guardrails maintained: `VAL-03` (ACCA non-membership), `VAL-07` (phone privacy), `VAL-08` (Square Pharma proposal framing), `VAL-09/10/11` (financial discrepancies).
+  5. **Quality Gate Verification (100% Green):**
+     - `npm run lint`: 0 errors, 0 warnings.
+     - `npm run type-check`: 0 errors (`tsc --noEmit`).
+     - `npm run format:check`: 100% Prettier compliant.
+     - `npm run test:cms`: 41 / 41 passed.
+     - `npm run test:public`: 19 / 19 passed.
+     - `npm run test:auth`: 27 / 27 passed.
+     - `npm run test:seo`: 40 / 40 passed.
+     - `npm run test:media`: 24 / 24 passed.
+     - Total automated assertions: **151 / 151 PASSED (0 FAILED)**.
+     - `npm run build`: Production build exit code 0 (18 static and dynamic routes compiled).
+- **Reports Generated:**
+  - `PHASE_16_ADMIN_DASHBOARD_ACADEMIC_MEDIA_REFINEMENT_REPORT.md`
 

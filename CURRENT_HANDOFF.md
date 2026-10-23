@@ -1,11 +1,11 @@
 # Project Handoff Documentation: Siam's Personal Portfolio & Portfolio CMS
 
-**Current Phase:** Implementation Phase 12.1: Navigation Performance Diagnosis & Remediation (Completed & Formally Verified)  
+**Current Phase:** Implementation Phase 16: Admin Dashboard, Academic Journey & Media Library Refinement (Completed & Verified)
 **Date:** October 23, 2026  
-**Status:** PHASE 12.1 COMPLETE (Evidence-based navigation profiling performed; identified route-level loading feedback absence and uncached database queries; wrapped public queries in React.cache(); added loading.tsx skeletons for root, catalog, and detail routes; enabled prefetch={true} on key navigation paths; measured 30.8% - 62.4% warm transition latency reduction and <50ms instant perceived responsiveness; all 127 automated tests passing; production deployment NOT performed, waiting for authorization)  
+**Status:** PHASE 16 IMPLEMENTATION COMPLETE (Compact scannable Admin Dashboard with resolved actor identity in Audit Trail table; Academic Journey 2×2 desktop grid for Planned Strategic Focus Areas and standardized milestone table edit controls; Media Library compact dropzone with dynamic isDragging highlight, desktop hover overlay with instant Copy URL/preview, and touch-friendly mobile parity; zero schema migrations; all 151 automated tests passed; production build passed with Exit Code 0; awaiting authorization to commit/push)
 **Auditor & Solutions Architect:** Senior Next.js Performance Engineer, Production QA Engineer & Technical SEO Specialist  
 **Repository:** [https://github.com/ibna-siam/Portfolio](https://github.com/ibna-siam/Portfolio)  
-**Active Branch:** `main` (Contains uncommitted Phase 11, 12, and 12.1 remediations)  
+**Active Branch:** `main` (Contains uncommitted Phase 11, 12, 12.1, 13, 14, 15, and 16 implementations)  
 **Live Production Deployment:** [https://ibnasiam.vercel.app/](https://ibnasiam.vercel.app/) (Running earlier commit `e2d2fa1`)  
 **Target Identity:** Md Ibna Siam — Accounting & Finance Candidate, Daffodil International University (ACCA Pathway)  
 
@@ -16,29 +16,46 @@
 The production application is running Next.js 15.5.28 App Router deployed to Vercel at `https://ibnasiam.vercel.app/`.
 
 ### Verified Technical Baseline
-- **SEO & Indexing Infrastructure (Phase 11 Implemented):**
-  - **Centralized SEO Config (`src/lib/seo-config.ts`):** Single source of truth for metadataBase, canonical domain, verified facts, social links, and Schema.org structured data helpers.
-  - **Dynamic Robots (`src/app/robots.ts`):** Dynamic `/robots.txt` allowing public routes (`/`, `/case-studies`, `/case-studies/*`) and strictly disallowing `/admin`, `/admin/*`, and `/api/*`.
-  - **Dynamic Sitemap (`src/app/sitemap.ts`):** Dynamic `/sitemap.xml` listing `/`, `/case-studies`, and 8 published case studies with accurate `updatedAt` lastmod timestamps. Draft studies and admin routes strictly excluded.
-  - **Canonical & OpenGraph Metadata:** Canonical tags and OpenGraph/Twitter Cards configured across root layout, homepage, case study collection, and case study detail routes.
-  - **Schema.org Structured Data:** Valid `Person`, `WebSite`, `CollectionPage`, and `Article` JSON-LD rendered.
-- **Consolidated Modern Architecture:**
-  - **Next.js Foundation:** Next.js 15.5.28 (App Router) with React 19.2.6, TypeScript 5.9.3, and Tailwind CSS 3.4.19. Compiles cleanly via `npm run build` across all 15 static/dynamic routes and middleware (0 errors, 0 warnings).
-  - **Legacy Decommissioning:** Obsolete Vite build files (`vite.config.js`, `index.html`, `dist/`), legacy React SPA components (`src/components/*.jsx`), and unused hooks pruned.
+- **Admin Dashboard, Academic Journey & Media Library Polish (Phase 16 Implemented):**
+  - **Admin Dashboard (`/admin`):**
+    - Compact module directory cards with concise scannable operational labels replacing verbose descriptions.
+    - Compacted system diagnostic status strip with muted monospace status badges.
+    - High-density Audit Trail table querying Drizzle with SQL `leftJoin(users)` on `activity_logs.author_id` to render color-coded action badges, entity tags, target IDs, resolved actor identity, and relative timestamps.
+  - **Academic Journey Refinement (`/admin/academic-journey`):**
+    - Responsive 2×2 grid on desktop (`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3`) for "Planned Strategic Focus Areas" with gold index markers (`01`–`04`).
+    - Standardized milestone table edit action buttons with consistent padding (`px-3 py-1.5`), 13px icon, tooltip titles, and accessible `aria-label` attributes.
+  - **Media Library Refinement (`/admin/media`):**
+    - Compacted upload dropzone (>50% height reduction) with dynamic `isDragging` highlight and clear format tags (`JPG, PNG, WEBP · Max 5 MB`).
+    - Desktop thumbnail hover overlay exposing format badges, dimensions, size, direct preview trigger, and an instant Copy URL button with green visual feedback.
+    - Retained full touch-device and keyboard parity with accessible action buttons located directly below thumbnails.
+- **Dedicated CRUD & Compact Management Lists (Phase 15 Implemented):**
+  - **Shared Admin Form Component Suite:** `AdminPageHeader` (breadcrumbs + sticky header action bar), `FormCard` (structured layout containers), `TagInputField` (keyboard-first tag manager), `DeleteConfirmationModal` (accessible action-only dialog).
+  - **Dedicated Full-Page CRUD Routes:**
+    - Competencies: `/admin/competencies/new`, `/admin/competencies/[id]/edit`, `/admin/competencies/edit/[id]` (alias redirect).
+    - Tech Solutions: `/admin/tech-solutions/new`, `/admin/tech-solutions/[id]/edit`, `/admin/tech-solutions/edit/[id]` (alias redirect).
+    - Academic Journey: `/admin/academic-journey/[id]/edit`, `/admin/academic-journey/edit/[id]` (alias redirect), `/admin/academic-journey/acca/edit` (dedicated ACCA strategy editor).
+    - Case Studies: `/admin/case-studies/new`, `/admin/case-studies/[id]/edit`, `/admin/case-studies/[id]/preview`.
+  - **High-Density Compact Management Lists:**
+    - Case Studies: Responsive tabular management table with title/slug, category group, financial schedule counters, live publish toggle, and direct action triggers.
+    - Competencies: Compact categorized table with instant domain filtering, live title search, quick Up/Down display order triggers, and delete confirmation.
+    - Tech Solutions: System showcase table displaying title, category, role badge, monospace tech stack pills, repo links, and direct action triggers.
+    - Academic Journey: Clean credentials overview table and executive ACCA trajectory card with direct navigation to dedicated edit pages.
+  - **Action Confirmation Dialogs Exclusively:** Modal forms eliminated for all data entry; retained strictly for destructive delete confirmations.
 - **Quality Gates (All 100% Green):**
   - TypeScript Typecheck (`npm run type-check`): 0 errors.
-  - ESLint (`npm run lint`): 0 errors, 0 warnings.
+  - ESLint (`npm run lint`): 0 errors, 0 warnings across all code and components.
   - Prettier Code Format (`npm run format:check`): 100% formatted.
-  - Production Next.js Build (`npm run build`): Exit code 0, 15 routes generated (including `/robots.txt` and `/sitemap.xml`).
-  - SEO Pipeline Test Suite (`npm run test:seo`): Exit code 0 (40/40 assertions passed).
+  - Production Next.js Build (`npm run build`): Exit code 0, 18 routes generated and optimized.
+  - CMS Pipeline Test Suite (`npm run test:cms`): Exit code 0 (41/41 assertions passed).
   - Public Pipeline Test Suite (`npm run test:public`): Exit code 0 (19/19 assertions passed).
   - Security Test Suite (`npm run test:auth`): Exit code 0 (27/27 assertions passed).
-  - CMS Pipeline Test Suite (`npm run test:cms`): Exit code 0 (41/41 assertions passed).
-  - Total Test Assertions: **127 PASSED | 0 FAILED**.
+  - SEO Pipeline Test Suite (`npm run test:seo`): Exit code 0 (40/40 assertions passed).
+  - Media Pipeline Test Suite (`npm run test:media`): Exit code 0 (24/24 assertions passed).
+  - Total Test Assertions: **151 PASSED | 0 FAILED**.
 - **Content Store & Assets (100% Intact):**
-  - All original static data modules (`src/data/*.js`) preserved without alterations.
-  - Local portrait `src/assets/siam.jpeg` preserved untouched.
+  - Zero database migrations; all 16 competencies, 8 case studies, 3 solutions, 3 milestones, and 3 discrepancy disclosures preserved.
   - Strict privacy guardrail VAL-07: `phonePrivacyStatus = 'hidden'` in database; phone number excluded from public exposure.
+  - ACCA non-membership guardrail VAL-03 enforced in dedicated trajectory editor.
 
 ---
 
