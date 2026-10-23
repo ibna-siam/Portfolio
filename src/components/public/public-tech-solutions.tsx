@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { FiTool, FiExternalLink, FiCheckCircle, FiChevronDown, FiChevronUp } from "react-icons/fi";
+import {
+  FiTool,
+  FiExternalLink,
+  FiCheckCircle,
+  FiChevronDown,
+  FiChevronUp,
+} from "react-icons/fi";
 
 interface TechSolutionItem {
   id: string;
@@ -32,7 +38,10 @@ export function PublicTechSolutions({ solutions }: PublicTechSolutionsProps) {
   const remainingCount = solutions.length - INITIAL_LIMIT;
 
   return (
-    <section id="tech-solutions" className="py-20 sm:py-24 bg-ink-100/30 dark:bg-ink-950/40 border-t border-ink-200/60 dark:border-ink-800/60 scroll-mt-20">
+    <section
+      id="tech-solutions"
+      className="py-20 sm:py-24 bg-ink-100/30 dark:bg-ink-950/40 border-t border-ink-200/60 dark:border-ink-800/60 scroll-mt-20"
+    >
       <div id="solutions" className="scroll-mt-20" />
       <div className="max-w-6xl mx-auto px-5 sm:px-8">
         {/* Section Heading */}
@@ -44,7 +53,9 @@ export function PublicTechSolutions({ solutions }: PublicTechSolutionsProps) {
             Business & Technology Solutions
           </h2>
           <p className="text-sm sm:text-base text-ink-600 dark:text-ink-300 leading-relaxed">
-            Practical software systems, calculation engines, and digital workflows developed to automate expense reconciliations, managerial budgeting, and financial reporting.
+            Practical software systems, calculation engines, and digital workflows
+            developed to automate expense reconciliations, managerial budgeting, and
+            financial reporting.
           </p>
         </div>
 
@@ -59,7 +70,10 @@ export function PublicTechSolutions({ solutions }: PublicTechSolutionsProps) {
                 Technological Capability Supporting Accounting Rigor
               </h3>
               <p className="text-xs text-ink-600 dark:text-ink-400 leading-relaxed">
-                These projects demonstrate practical problem-solving using modern web tools and structured calculation logic. They serve as complementary evidence of analytical capability, distinct from the core academic accounting case studies.
+                These projects demonstrate practical problem-solving using modern web
+                tools and structured calculation logic. They serve as complementary
+                evidence of analytical capability, distinct from the core academic
+                accounting case studies.
               </p>
             </div>
           </div>

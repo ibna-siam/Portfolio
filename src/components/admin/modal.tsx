@@ -92,7 +92,10 @@ export function Modal({
         {/* Sticky Header */}
         <div className="p-5 sm:px-6 border-b border-ink-200 dark:border-ink-800 flex items-center justify-between shrink-0 bg-white dark:bg-ink-900">
           <div>
-            <h2 id="modal-title" className="font-display font-bold text-ink-900 dark:text-ink-50 text-base sm:text-lg">
+            <h2
+              id="modal-title"
+              className="font-display font-bold text-ink-900 dark:text-ink-50 text-base sm:text-lg"
+            >
               {title}
             </h2>
             {description && (

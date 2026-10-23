@@ -108,7 +108,10 @@ export async function upsertCaseStudyAction(data: CaseStudyFormData) {
       .limit(1);
 
     if (existingSlug.length > 0) {
-      return { success: false, error: `Slug "${normalizedSlug}" is already in use by another study.` };
+      return {
+        success: false,
+        error: `Slug "${normalizedSlug}" is already in use by another study.`,
+      };
     }
   } else {
     const existingSlug = await db
@@ -149,8 +152,10 @@ export async function upsertCaseStudyAction(data: CaseStudyFormData) {
           framework: data.framework?.trim() || "IFRS / Bangladesh Income Tax Act",
           evidenceType: data.evidenceType?.trim() || "Coursework & Empirical Case Data",
           currencyUnit: data.currencyUnit?.trim() || "BDT (Bangladeshi Taka)",
-          inputsClassification: data.inputsClassification?.trim() || "Verified Academic Coursework",
-          calculationBasis: data.calculationBasis?.trim() || "Standard CVP & Financial Statement Ratios",
+          inputsClassification:
+            data.inputsClassification?.trim() || "Verified Academic Coursework",
+          calculationBasis:
+            data.calculationBasis?.trim() || "Standard CVP & Financial Statement Ratios",
           integrityStatusKey: data.integrityStatusKey?.trim() || "STANDARD",
           secondaryStatusKey: data.secondaryStatusKey?.trim() || null,
           description: data.description?.trim() || "",
@@ -190,8 +195,10 @@ export async function upsertCaseStudyAction(data: CaseStudyFormData) {
           framework: data.framework?.trim() || "IFRS / Bangladesh Income Tax Act",
           evidenceType: data.evidenceType?.trim() || "Coursework & Empirical Case Data",
           currencyUnit: data.currencyUnit?.trim() || "BDT (Bangladeshi Taka)",
-          inputsClassification: data.inputsClassification?.trim() || "Verified Academic Coursework",
-          calculationBasis: data.calculationBasis?.trim() || "Standard CVP & Financial Statement Ratios",
+          inputsClassification:
+            data.inputsClassification?.trim() || "Verified Academic Coursework",
+          calculationBasis:
+            data.calculationBasis?.trim() || "Standard CVP & Financial Statement Ratios",
           integrityStatusKey: data.integrityStatusKey?.trim() || "STANDARD",
           secondaryStatusKey: data.secondaryStatusKey?.trim() || null,
           description: data.description?.trim() || "",
@@ -293,14 +300,21 @@ export async function upsertCaseStudyAction(data: CaseStudyFormData) {
 /**
  * Server Action: Quick Toggle Publish / Unpublish Status.
  */
-export async function togglePublishCaseStudyAction(id: string, newStatus: "published" | "draft") {
+export async function togglePublishCaseStudyAction(
+  id: string,
+  newStatus: "published" | "draft"
+) {
   const session = await requireAdmin();
   const authorId = session.user?.id;
   const db = getDb();
 
   try {
     const [existing] = await db
-      .select({ id: schema.caseStudies.id, title: schema.caseStudies.title, status: schema.caseStudies.status })
+      .select({
+        id: schema.caseStudies.id,
+        title: schema.caseStudies.title,
+        status: schema.caseStudies.status,
+      })
       .from(schema.caseStudies)
       .where(eq(schema.caseStudies.id, id))
       .limit(1);
@@ -354,7 +368,11 @@ export async function deleteCaseStudyAction(id: string) {
   try {
     // Check if the study exists
     const [study] = await db
-      .select({ id: schema.caseStudies.id, title: schema.caseStudies.title, slug: schema.caseStudies.slug })
+      .select({
+        id: schema.caseStudies.id,
+        title: schema.caseStudies.title,
+        slug: schema.caseStudies.slug,
+      })
       .from(schema.caseStudies)
       .where(eq(schema.caseStudies.id, id))
       .limit(1);
@@ -366,7 +384,10 @@ export async function deleteCaseStudyAction(id: string) {
     // MANDATORY FINANCIAL INTEGRITY GUARDRAIL:
     // Check if this case study has an active discrepancy disclosure record
     const discrepancies = await db
-      .select({ id: schema.caseStudyDiscrepancies.id, headline: schema.caseStudyDiscrepancies.headline })
+      .select({
+        id: schema.caseStudyDiscrepancies.id,
+        headline: schema.caseStudyDiscrepancies.headline,
+      })
       .from(schema.caseStudyDiscrepancies)
       .where(eq(schema.caseStudyDiscrepancies.caseStudyId, id))
       .limit(1);
@@ -384,9 +405,7 @@ export async function deleteCaseStudyAction(id: string) {
       .where(eq(schema.financialSchedules.caseStudyId, id));
 
     // Delete case study
-    await db
-      .delete(schema.caseStudies)
-      .where(eq(schema.caseStudies.id, id));
+    await db.delete(schema.caseStudies).where(eq(schema.caseStudies.id, id));
 
     // Record activity log
     await recordActivityLog({

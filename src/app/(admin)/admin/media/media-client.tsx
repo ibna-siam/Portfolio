@@ -133,14 +133,17 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
       if (!cloudRes.ok) {
         const errJson = await cloudRes.json().catch(() => ({}));
         throw new Error(
-          errJson.error?.message || `Cloudinary upload failed with status ${cloudRes.status}`
+          errJson.error?.message ||
+            `Cloudinary upload failed with status ${cloudRes.status}`
         );
       }
 
       const cloudData = await cloudRes.json();
 
       // 4. Send returned payload to server for cryptographic signature verification and DB registration
-      setUploadProgressText("Verifying cryptographic signature and registering in PostgreSQL...");
+      setUploadProgressText(
+        "Verifying cryptographic signature and registering in PostgreSQL..."
+      );
       const registerRes = await registerMediaAssetAction({
         public_id: cloudData.public_id,
         version: cloudData.version,
@@ -154,7 +157,9 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
       });
 
       if (!registerRes.success || !registerRes.data) {
-        throw new Error(registerRes.error || "Server failed to verify and register asset.");
+        throw new Error(
+          registerRes.error || "Server failed to verify and register asset."
+        );
       }
 
       const newAsset: MediaAssetItem = {
@@ -258,9 +263,23 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
               Configuration Notice · Credentials Required for Live Uploads
             </span>
             <span>
-              Cloudinary API credentials are not yet configured in <code className="bg-ink-100 dark:bg-ink-950 px-1.5 py-0.5 rounded border border-ink-200 dark:border-ink-800 font-mono">.env</code>.
-              To enable signed uploads, configure <code className="bg-ink-100 dark:bg-ink-950 px-1.5 py-0.5 rounded border border-ink-200 dark:border-ink-800 font-mono">NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME</code>, <code className="bg-ink-100 dark:bg-ink-950 px-1.5 py-0.5 rounded border border-ink-200 dark:border-ink-800 font-mono">CLOUDINARY_API_KEY</code>, and <code className="bg-ink-100 dark:bg-ink-950 px-1.5 py-0.5 rounded border border-ink-200 dark:border-ink-800 font-mono">CLOUDINARY_API_SECRET</code>.
-              Existing database assets remain securely viewable.
+              Cloudinary API credentials are not yet configured in{" "}
+              <code className="bg-ink-100 dark:bg-ink-950 px-1.5 py-0.5 rounded border border-ink-200 dark:border-ink-800 font-mono">
+                .env
+              </code>
+              . To enable signed uploads, configure{" "}
+              <code className="bg-ink-100 dark:bg-ink-950 px-1.5 py-0.5 rounded border border-ink-200 dark:border-ink-800 font-mono">
+                NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+              </code>
+              ,{" "}
+              <code className="bg-ink-100 dark:bg-ink-950 px-1.5 py-0.5 rounded border border-ink-200 dark:border-ink-800 font-mono">
+                CLOUDINARY_API_KEY
+              </code>
+              , and{" "}
+              <code className="bg-ink-100 dark:bg-ink-950 px-1.5 py-0.5 rounded border border-ink-200 dark:border-ink-800 font-mono">
+                CLOUDINARY_API_SECRET
+              </code>
+              . Existing database assets remain securely viewable.
             </span>
           </div>
         </div>
@@ -351,12 +370,17 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
                   </svg>
                   <span>Processing Upload</span>
                 </div>
-                <p className="text-xs text-ink-600 dark:text-ink-400 font-mono">{uploadProgressText}</p>
+                <p className="text-xs text-ink-600 dark:text-ink-400 font-mono">
+                  {uploadProgressText}
+                </p>
               </div>
             ) : configStatus.isConfigured ? (
               <div>
                 <p className="text-sm font-medium text-ink-800 dark:text-ink-200">
-                  <span className="text-emerald-700 dark:text-emerald-400 underline font-semibold">Click to select an image</span> or drag and drop
+                  <span className="text-emerald-700 dark:text-emerald-400 underline font-semibold">
+                    Click to select an image
+                  </span>{" "}
+                  or drag and drop
                 </p>
                 <p className="text-xs text-ink-600 dark:text-ink-400 mt-1 font-mono">
                   Authenticated direct browser upload with server signature verification.
@@ -517,7 +541,9 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
                       {copiedId === asset.id ? (
                         <>
                           <FiCheck className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
-                          <span className="text-emerald-700 dark:text-emerald-400 font-semibold">Copied!</span>
+                          <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                            Copied!
+                          </span>
                         </>
                       ) : (
                         <>
@@ -617,11 +643,13 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
               <FiTrash2 className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0" />
               <div className="text-xs text-red-800 dark:text-red-300">
                 <span className="font-semibold block">Irreversible Operation</span>
-                Asset <code className="font-mono">{deletingAsset.publicId}</code> will be removed.
+                Asset <code className="font-mono">{deletingAsset.publicId}</code> will be
+                removed.
               </div>
             </div>
             <p className="text-xs text-ink-700 dark:text-ink-300 leading-relaxed font-body">
-              Are you sure you want to proceed? Any case study or competency referencing this asset URL will need to be updated.
+              Are you sure you want to proceed? Any case study or competency referencing
+              this asset URL will need to be updated.
             </p>
           </div>
         )}
@@ -661,7 +689,9 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
             <div className="space-y-2 text-xs font-mono">
               <div className="flex items-center justify-between p-2 bg-ink-50 dark:bg-ink-950/60 rounded-lg border border-ink-200 dark:border-ink-800/60">
                 <span className="text-ink-500 dark:text-ink-400">Public ID:</span>
-                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{viewingAsset.publicId}</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                  {viewingAsset.publicId}
+                </span>
               </div>
               <div className="flex items-center justify-between p-2 bg-ink-50 dark:bg-ink-950/60 rounded-lg border border-ink-200 dark:border-ink-800/60">
                 <span className="text-ink-500 dark:text-ink-400">Dimensions:</span>
@@ -671,7 +701,9 @@ export function MediaClient({ initialAssets, configStatus }: MediaClientProps) {
               </div>
               <div className="flex items-center justify-between p-2 bg-ink-50 dark:bg-ink-950/60 rounded-lg border border-ink-200 dark:border-ink-800/60">
                 <span className="text-ink-500 dark:text-ink-400">Format / Mime:</span>
-                <span className="text-ink-800 dark:text-ink-200 uppercase font-semibold">{viewingAsset.format}</span>
+                <span className="text-ink-800 dark:text-ink-200 uppercase font-semibold">
+                  {viewingAsset.format}
+                </span>
               </div>
               <div className="flex items-center justify-between p-2 bg-ink-50 dark:bg-ink-950/60 rounded-lg border border-ink-200 dark:border-ink-800/60">
                 <span className="text-ink-500 dark:text-ink-400">Size:</span>

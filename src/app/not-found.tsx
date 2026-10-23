@@ -12,7 +12,8 @@ export default function NotFound() {
           Page Not Found
         </h1>
         <p className="text-sm text-ink-400 mb-6 leading-relaxed">
-          The requested resource does not exist or has been relocated within the portfolio system.
+          The requested resource does not exist or has been relocated within the portfolio
+          system.
         </p>
         <Link
           href="/"

@@ -42,7 +42,9 @@ async function runBenchmark() {
       where: eq(schema.caseStudies.status, "published"),
       orderBy: [desc(schema.caseStudies.sourceId), desc(schema.caseStudies.createdAt)],
     });
-    results["Public Case Studies (Filtered Published, Order desc)"].push(performance.now() - t0);
+    results["Public Case Studies (Filtered Published, Order desc)"].push(
+      performance.now() - t0
+    );
 
     // 4. Competencies
     t0 = performance.now();
@@ -84,15 +86,19 @@ async function runBenchmark() {
     results["Admin Case Studies with Revisions List Query"].push(performance.now() - t0);
   }
 
-  console.log("---------------------------------------------------------------------------------------------------------");
+  console.log(
+    "---------------------------------------------------------------------------------------------------------"
+  );
   console.log(
     "Benchmark Target".padEnd(55) +
-    "Min (ms)".padStart(12) +
-    "Max (ms)".padStart(12) +
-    "Avg (ms)".padStart(12) +
-    "P95 (ms)".padStart(12)
+      "Min (ms)".padStart(12) +
+      "Max (ms)".padStart(12) +
+      "Avg (ms)".padStart(12) +
+      "P95 (ms)".padStart(12)
   );
-  console.log("---------------------------------------------------------------------------------------------------------");
+  console.log(
+    "---------------------------------------------------------------------------------------------------------"
+  );
 
   for (const [target, timings] of Object.entries(results)) {
     const min = Math.min(...timings).toFixed(2);
@@ -103,15 +109,21 @@ async function runBenchmark() {
 
     console.log(
       target.padEnd(55) +
-      min.padStart(12) +
-      max.padStart(12) +
-      avg.padStart(12) +
-      p95.padStart(12)
+        min.padStart(12) +
+        max.padStart(12) +
+        avg.padStart(12) +
+        p95.padStart(12)
     );
   }
-  console.log("---------------------------------------------------------------------------------------------------------");
-  console.log("Client-side cached Neon SQL instance eliminates repeated TLS/TCP handshake overhead.");
-  console.log("Parallelized Admin overview fetches prevent sequential N+1 network stalls.\n");
+  console.log(
+    "---------------------------------------------------------------------------------------------------------"
+  );
+  console.log(
+    "Client-side cached Neon SQL instance eliminates repeated TLS/TCP handshake overhead."
+  );
+  console.log(
+    "Parallelized Admin overview fetches prevent sequential N+1 network stalls.\n"
+  );
 }
 
 runBenchmark().catch(console.error);

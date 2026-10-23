@@ -8,7 +8,8 @@ import { CaseStudiesClient, CaseStudyListItem } from "./case-studies-client";
 
 export const metadata: Metadata = {
   title: "Case Studies CMS | Md Ibna Siam Admin",
-  description: "Manage academic accounting and finance research papers and financial schedules.",
+  description:
+    "Manage academic accounting and finance research papers and financial schedules.",
   robots: {
     index: false,
     follow: false,
@@ -21,10 +22,7 @@ export default async function AdminCaseStudiesPage() {
 
   // Retrieve case studies, schedules, and discrepancies in parallel
   const [rawStudies, rawSchedules, rawDiscrepancies] = await Promise.all([
-    db
-      .select()
-      .from(schema.caseStudies)
-      .orderBy(schema.caseStudies.sourceId),
+    db.select().from(schema.caseStudies).orderBy(schema.caseStudies.sourceId),
     db
       .select({
         caseStudyId: schema.financialSchedules.caseStudyId,
@@ -68,10 +66,7 @@ export default async function AdminCaseStudiesPage() {
       userName={session.user?.name}
       title="Academic Case Studies"
       description="Manage research papers, financial schedules, CVP models, and mandatory integrity disclosures."
-      breadcrumbs={[
-        { label: "Overview", href: "/admin" },
-        { label: "Case Studies" },
-      ]}
+      breadcrumbs={[{ label: "Overview", href: "/admin" }, { label: "Case Studies" }]}
       actions={
         <Link
           href="/admin/case-studies/new"

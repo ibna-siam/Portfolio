@@ -70,7 +70,9 @@ async function main() {
     console.error("ERROR: Administrator email and password are required.");
     console.error("\nUsage options:");
     console.error("  1. CLI Flags:     --email <email> --password <password> [--update]");
-    console.error("  2. Env Variables: ADMIN_EMAIL=<email> ADMIN_PASSWORD=<password> npx tsx scripts/create-admin.ts\n");
+    console.error(
+      "  2. Env Variables: ADMIN_EMAIL=<email> ADMIN_PASSWORD=<password> npx tsx scripts/create-admin.ts\n"
+    );
     process.exit(1);
   }
 
@@ -96,10 +98,13 @@ async function main() {
   const db = drizzle(sql, { schema });
 
   // Verify database connection and identity
-  const [dbInfo] = await sql`SELECT current_database() as db_name, current_user as db_user;`;
+  const [dbInfo] =
+    await sql`SELECT current_database() as db_name, current_user as db_user;`;
   console.log(`Target Database: ${dbInfo.db_name} (User: ${dbInfo.db_user})`);
   console.log(`Target Email:    ${email}`);
-  console.log(`Action Mode:     ${shouldUpdate ? "CREATE OR ROTATE" : "SAFE IDEMPOTENT CREATE"}`);
+  console.log(
+    `Action Mode:     ${shouldUpdate ? "CREATE OR ROTATE" : "SAFE IDEMPOTENT CREATE"}`
+  );
   if (isDryRun) {
     console.log("Dry Run Mode:    ACTIVE (No database mutations will be applied)\n");
   }
@@ -125,7 +130,9 @@ async function main() {
       console.log(`- User ID: ${existing.id}`);
       console.log(`- Role:    ${existing.role}`);
       console.log(`- Created: ${existing.createdAt.toISOString()}`);
-      console.log("\nTo rotate this administrator's password, re-run with the '--update' flag.");
+      console.log(
+        "\nTo rotate this administrator's password, re-run with the '--update' flag."
+      );
       console.log("No changes have been made.");
       return;
     }
@@ -135,7 +142,9 @@ async function main() {
     const passwordHash = await bcrypt.hash(rawPassword, saltRounds);
 
     if (isDryRun) {
-      console.log("[DRY-RUN] Verified hash generation (bcrypt-12). Skipped database UPDATE.");
+      console.log(
+        "[DRY-RUN] Verified hash generation (bcrypt-12). Skipped database UPDATE."
+      );
       return;
     }
 
@@ -163,7 +172,9 @@ async function main() {
   const passwordHash = await bcrypt.hash(rawPassword, saltRounds);
 
   if (isDryRun) {
-    console.log("[DRY-RUN] Verified hash generation (bcrypt-12). Skipped database INSERT.");
+    console.log(
+      "[DRY-RUN] Verified hash generation (bcrypt-12). Skipped database INSERT."
+    );
     return;
   }
 
@@ -192,6 +203,9 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error("FATAL: Administrator provisioning failed:", err instanceof Error ? err.message : err);
+  console.error(
+    "FATAL: Administrator provisioning failed:",
+    err instanceof Error ? err.message : err
+  );
   process.exit(1);
 });

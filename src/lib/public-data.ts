@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { eq, asc } from "drizzle-orm";
 import { getDb } from "./db";
 import {
@@ -66,6 +67,7 @@ export interface PublicCaseStudySummary {
   hasDiscrepancy: boolean;
   discrepancyHeadline?: string;
   discrepancySummary?: string;
+  updatedAt: Date;
 }
 
 export interface PublicFinancialSchedule {
@@ -110,192 +112,207 @@ export interface PublicCaseStudyDetail extends PublicCaseStudySummary {
  * Retrieve public-safe site settings.
  * Strict Guardrail VAL-07: privatePhone is intentionally NOT selected or returned.
  */
-export async function getPublicSiteSettings(): Promise<PublicSiteSettings | null> {
-  const db = getDb();
-  const [row] = await db
-    .select({
-      siteName: siteSettings.siteName,
-      ownerName: siteSettings.ownerName,
-      headline: siteSettings.headline,
-      taglines: siteSettings.taglines,
-      bio: siteSettings.bio,
-      location: siteSettings.location,
-      publicEmail: siteSettings.publicEmail,
-      resumeUrl: siteSettings.resumeUrl,
-      avatarUrl: siteSettings.avatarUrl,
-      socialLinks: siteSettings.socialLinks,
-      aboutSummary: siteSettings.aboutSummary,
-      aboutHighlights: siteSettings.aboutHighlights,
-      accaTrajectory: siteSettings.accaTrajectory,
-    })
-    .from(siteSettings)
-    .limit(1);
+export const getPublicSiteSettings = cache(
+  async (): Promise<PublicSiteSettings | null> => {
+    const db = getDb();
+    const [row] = await db
+      .select({
+        siteName: siteSettings.siteName,
+        ownerName: siteSettings.ownerName,
+        headline: siteSettings.headline,
+        taglines: siteSettings.taglines,
+        bio: siteSettings.bio,
+        location: siteSettings.location,
+        publicEmail: siteSettings.publicEmail,
+        resumeUrl: siteSettings.resumeUrl,
+        avatarUrl: siteSettings.avatarUrl,
+        socialLinks: siteSettings.socialLinks,
+        aboutSummary: siteSettings.aboutSummary,
+        aboutHighlights: siteSettings.aboutHighlights,
+        accaTrajectory: siteSettings.accaTrajectory,
+      })
+      .from(siteSettings)
+      .limit(1);
 
-  return row || null;
-}
+    return row || null;
+  }
+);
 
 /**
  * Retrieve case studies for public listing.
  * By default, retrieves ONLY status = 'published'.
  * When isDraftMode = true, also includes drafts for authorized previewers.
+ * Wrapped in React cache using normalized primitive boolean to ensure deduplication.
  */
+const getPublicCaseStudiesInternal = cache(
+  async (isDraftMode: boolean): Promise<PublicCaseStudySummary[]> => {
+    const db = getDb();
+
+    let query = db
+      .select({
+        id: caseStudies.id,
+        sourceId: caseStudies.sourceId,
+        slug: caseStudies.slug,
+        title: caseStudies.title,
+        category: caseStudies.category,
+        group: caseStudies.group,
+        groupId: caseStudies.groupId,
+        groupShort: caseStudies.groupShort,
+        academicScope: caseStudies.academicScope,
+        framework: caseStudies.framework,
+        evidenceType: caseStudies.evidenceType,
+        currencyUnit: caseStudies.currencyUnit,
+        calculationBasis: caseStudies.calculationBasis,
+        integrityStatusKey: caseStudies.integrityStatusKey,
+        description: caseStudies.description,
+        featured: caseStudies.featured,
+        status: caseStudies.status,
+        updatedAt: caseStudies.updatedAt,
+      })
+      .from(caseStudies)
+      .orderBy(asc(caseStudies.sourceId));
+
+    if (!isDraftMode) {
+      query = query.where(eq(caseStudies.status, "published")) as typeof query;
+    }
+
+    // Parallelize case study query and discrepancy lookup to eliminate sequential roundtrips
+    const [rows, discrepancies] = await Promise.all([
+      query,
+      db.select().from(caseStudyDiscrepancies),
+    ]);
+
+    const discrepancyMap = new Map<string, (typeof discrepancies)[0]>();
+    for (const disc of discrepancies) {
+      discrepancyMap.set(disc.caseStudyId, disc);
+    }
+
+    return rows.map((study) => {
+      const disc = discrepancyMap.get(study.id);
+      return {
+        ...study,
+        hasDiscrepancy: Boolean(disc),
+        discrepancyHeadline: disc?.headline,
+        discrepancySummary: disc?.summary,
+      };
+    });
+  }
+);
+
 export async function getPublicCaseStudies(options?: {
   isDraftMode?: boolean;
 }): Promise<PublicCaseStudySummary[]> {
-  const db = getDb();
-  const isDraftMode = Boolean(options?.isDraftMode);
-
-  let query = db
-    .select({
-      id: caseStudies.id,
-      sourceId: caseStudies.sourceId,
-      slug: caseStudies.slug,
-      title: caseStudies.title,
-      category: caseStudies.category,
-      group: caseStudies.group,
-      groupId: caseStudies.groupId,
-      groupShort: caseStudies.groupShort,
-      academicScope: caseStudies.academicScope,
-      framework: caseStudies.framework,
-      evidenceType: caseStudies.evidenceType,
-      currencyUnit: caseStudies.currencyUnit,
-      calculationBasis: caseStudies.calculationBasis,
-      integrityStatusKey: caseStudies.integrityStatusKey,
-      description: caseStudies.description,
-      featured: caseStudies.featured,
-      status: caseStudies.status,
-    })
-    .from(caseStudies)
-    .orderBy(asc(caseStudies.sourceId));
-
-  if (!isDraftMode) {
-    query = query.where(eq(caseStudies.status, "published")) as typeof query;
-  }
-
-  // Parallelize case study query and discrepancy lookup to eliminate sequential roundtrips
-  const [rows, discrepancies] = await Promise.all([
-    query,
-    db.select().from(caseStudyDiscrepancies),
-  ]);
-
-  const discrepancyMap = new Map<string, typeof discrepancies[0]>();
-  for (const disc of discrepancies) {
-    discrepancyMap.set(disc.caseStudyId, disc);
-  }
-
-  return rows.map((study) => {
-    const disc = discrepancyMap.get(study.id);
-    return {
-      ...study,
-      hasDiscrepancy: Boolean(disc),
-      discrepancyHeadline: disc?.headline,
-      discrepancySummary: disc?.summary,
-    };
-  });
+  return getPublicCaseStudiesInternal(Boolean(options?.isDraftMode));
 }
 
 /**
  * Retrieve a single case study by slug with all related financial schedules and discrepancy notices.
  * By default, only returns if status = 'published'.
  * When isDraftMode = true, allows previewing drafts.
+ * Wrapped in React cache with normalized primitive arguments to deduplicate across generateMetadata and Page render.
  */
+const getCaseStudyBySlugInternal = cache(
+  async (slug: string, isDraftMode: boolean): Promise<PublicCaseStudyDetail | null> => {
+    const db = getDb();
+
+    const query = db
+      .select()
+      .from(caseStudies)
+      .where(eq(caseStudies.slug, slug))
+      .limit(1);
+
+    const [study] = await query;
+
+    if (!study) {
+      return null;
+    }
+
+    // If not in draft mode and not published, treat as not found
+    if (!isDraftMode && study.status !== "published") {
+      return null;
+    }
+
+    // Fetch associated financial schedules and discrepancy disclosure in parallel
+    const [schedules, [discrepancyRow]] = await Promise.all([
+      db
+        .select({
+          id: financialSchedules.id,
+          title: financialSchedules.title,
+          headers: financialSchedules.headers,
+          rows: financialSchedules.rows,
+          notes: financialSchedules.notes,
+          sortOrder: financialSchedules.sortOrder,
+        })
+        .from(financialSchedules)
+        .where(eq(financialSchedules.caseStudyId, study.id))
+        .orderBy(asc(financialSchedules.sortOrder)),
+      db
+        .select({
+          id: caseStudyDiscrepancies.id,
+          headline: caseStudyDiscrepancies.headline,
+          summary: caseStudyDiscrepancies.summary,
+          details: caseStudyDiscrepancies.details,
+          originalValues: caseStudyDiscrepancies.originalValues,
+          formulaTested: caseStudyDiscrepancies.formulaTested,
+          statusText: caseStudyDiscrepancies.statusText,
+          preservationPolicy: caseStudyDiscrepancies.preservationPolicy,
+        })
+        .from(caseStudyDiscrepancies)
+        .where(eq(caseStudyDiscrepancies.caseStudyId, study.id))
+        .limit(1),
+    ]);
+
+    return {
+      id: study.id,
+      sourceId: study.sourceId,
+      slug: study.slug,
+      title: study.title,
+      category: study.category,
+      group: study.group,
+      groupId: study.groupId,
+      groupShort: study.groupShort,
+      academicScope: study.academicScope,
+      framework: study.framework,
+      evidenceType: study.evidenceType,
+      currencyUnit: study.currencyUnit,
+      inputsClassification: study.inputsClassification,
+      calculationBasis: study.calculationBasis,
+      integrityStatusKey: study.integrityStatusKey,
+      description: study.description,
+      details: study.details,
+      tools: study.tools,
+      imageUrl: study.imageUrl,
+      featured: study.featured,
+      overview: study.overview,
+      objectives: study.objectives,
+      methodology: study.methodology,
+      keyFindings: study.keyFindings,
+      conclusion: study.conclusion,
+      recommendations: study.recommendations,
+      auditNotes: study.auditNotes,
+      formulas: study.formulas,
+      status: study.status,
+      updatedAt: study.updatedAt,
+      hasDiscrepancy: Boolean(discrepancyRow),
+      discrepancyHeadline: discrepancyRow?.headline,
+      discrepancySummary: discrepancyRow?.summary,
+      schedules,
+      discrepancy: discrepancyRow || null,
+    };
+  }
+);
+
 export async function getCaseStudyBySlug(
   slug: string,
   options?: { isDraftMode?: boolean }
 ): Promise<PublicCaseStudyDetail | null> {
-  const db = getDb();
-  const isDraftMode = Boolean(options?.isDraftMode);
-
-  const query = db
-    .select()
-    .from(caseStudies)
-    .where(eq(caseStudies.slug, slug))
-    .limit(1);
-
-  const [study] = await query;
-
-  if (!study) {
-    return null;
-  }
-
-  // If not in draft mode and not published, treat as not found
-  if (!isDraftMode && study.status !== "published") {
-    return null;
-  }
-
-  // Fetch associated financial schedules and discrepancy disclosure in parallel
-  const [schedules, [discrepancyRow]] = await Promise.all([
-    db
-      .select({
-        id: financialSchedules.id,
-        title: financialSchedules.title,
-        headers: financialSchedules.headers,
-        rows: financialSchedules.rows,
-        notes: financialSchedules.notes,
-        sortOrder: financialSchedules.sortOrder,
-      })
-      .from(financialSchedules)
-      .where(eq(financialSchedules.caseStudyId, study.id))
-      .orderBy(asc(financialSchedules.sortOrder)),
-    db
-      .select({
-        id: caseStudyDiscrepancies.id,
-        headline: caseStudyDiscrepancies.headline,
-        summary: caseStudyDiscrepancies.summary,
-        details: caseStudyDiscrepancies.details,
-        originalValues: caseStudyDiscrepancies.originalValues,
-        formulaTested: caseStudyDiscrepancies.formulaTested,
-        statusText: caseStudyDiscrepancies.statusText,
-        preservationPolicy: caseStudyDiscrepancies.preservationPolicy,
-      })
-      .from(caseStudyDiscrepancies)
-      .where(eq(caseStudyDiscrepancies.caseStudyId, study.id))
-      .limit(1),
-  ]);
-
-  return {
-    id: study.id,
-    sourceId: study.sourceId,
-    slug: study.slug,
-    title: study.title,
-    category: study.category,
-    group: study.group,
-    groupId: study.groupId,
-    groupShort: study.groupShort,
-    academicScope: study.academicScope,
-    framework: study.framework,
-    evidenceType: study.evidenceType,
-    currencyUnit: study.currencyUnit,
-    inputsClassification: study.inputsClassification,
-    calculationBasis: study.calculationBasis,
-    integrityStatusKey: study.integrityStatusKey,
-    description: study.description,
-    details: study.details,
-    tools: study.tools,
-    imageUrl: study.imageUrl,
-    featured: study.featured,
-    overview: study.overview,
-    objectives: study.objectives,
-    methodology: study.methodology,
-    keyFindings: study.keyFindings,
-    conclusion: study.conclusion,
-    recommendations: study.recommendations,
-    auditNotes: study.auditNotes,
-    formulas: study.formulas,
-    status: study.status,
-    updatedAt: study.updatedAt,
-    hasDiscrepancy: Boolean(discrepancyRow),
-    discrepancyHeadline: discrepancyRow?.headline,
-    discrepancySummary: discrepancyRow?.summary,
-    schedules,
-    discrepancy: discrepancyRow || null,
-  };
+  return getCaseStudyBySlugInternal(slug, Boolean(options?.isDraftMode));
 }
 
 /**
  * Retrieve public competencies matrix across 4 domains.
  */
-export async function getPublicCompetencies() {
+export const getPublicCompetencies = cache(async () => {
   const db = getDb();
   return db
     .select({
@@ -312,12 +329,12 @@ export async function getPublicCompetencies() {
     .from(competencies)
     .where(eq(competencies.status, "published"))
     .orderBy(asc(competencies.sortOrder));
-}
+});
 
 /**
  * Retrieve public educational milestones.
  */
-export async function getPublicAcademicMilestones() {
+export const getPublicAcademicMilestones = cache(async () => {
   const db = getDb();
   return db
     .select({
@@ -335,12 +352,12 @@ export async function getPublicAcademicMilestones() {
     })
     .from(academicMilestones)
     .orderBy(asc(academicMilestones.sortOrder));
-}
+});
 
 /**
  * Retrieve public tech and business solutions.
  */
-export async function getPublicTechSolutions() {
+export const getPublicTechSolutions = cache(async () => {
   const db = getDb();
   return db
     .select({
@@ -362,4 +379,4 @@ export async function getPublicTechSolutions() {
     .from(techSolutions)
     .where(eq(techSolutions.contentStatus, "published"))
     .orderBy(asc(techSolutions.sortOrder));
-}
+});

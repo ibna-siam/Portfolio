@@ -48,15 +48,20 @@ async function verifyDatabase() {
   console.log(`- Competencies:           ${comps.length} records (Expected: 16)`);
   console.log(`- Academic Milestones:    ${milestones.length} records (Expected: 3)`);
   console.log(`- Tech Solutions:         ${solutions.length} records (Expected: 3)`);
-  console.log(`- Admin Users:            ${adminUsers.length} record(s) (Expected: >= 1)`);
+  console.log(
+    `- Admin Users:            ${adminUsers.length} record(s) (Expected: >= 1)`
+  );
   console.log(`- Media Assets:           ${mediaList.length} record(s) (Expected: >= 1)`);
 
   // 3. Strict Integrity & Relation Validations
   if (studies.length !== 8) throw new Error(`Case studies mismatch: ${studies.length}`);
   if (comps.length !== 16) throw new Error(`Competencies mismatch: ${comps.length}`);
-  if (milestones.length !== 3) throw new Error(`Milestones mismatch: ${milestones.length}`);
-  if (solutions.length !== 3) throw new Error(`Tech solutions mismatch: ${solutions.length}`);
-  if (discrepancies.length !== 3) throw new Error(`Discrepancies mismatch: ${discrepancies.length}`);
+  if (milestones.length !== 3)
+    throw new Error(`Milestones mismatch: ${milestones.length}`);
+  if (solutions.length !== 3)
+    throw new Error(`Tech solutions mismatch: ${solutions.length}`);
+  if (discrepancies.length !== 3)
+    throw new Error(`Discrepancies mismatch: ${discrepancies.length}`);
 
   // 4. Foreign Key Integrity Audit
   console.log("\n--> Foreign Key Integrity Audit:");
@@ -71,16 +76,22 @@ async function verifyDatabase() {
       throw new Error(`Orphaned discrepancy found: ${disc.headline}`);
     }
   }
-  console.log("✓ All 9 financial schedules and 3 discrepancies cleanly linked to valid parent case studies.");
+  console.log(
+    "✓ All 9 financial schedules and 3 discrepancies cleanly linked to valid parent case studies."
+  );
 
   // 5. Privacy Guardrail Audit (VAL-07)
   console.log("\n--> Privacy Guardrail Audit (VAL-07):");
   if (settings.length > 0) {
     const s = settings[0];
     if (s.phonePrivacyStatus !== "hidden") {
-      throw new Error(`CRITICAL: phonePrivacyStatus is '${s.phonePrivacyStatus}', expected 'hidden'`);
+      throw new Error(
+        `CRITICAL: phonePrivacyStatus is '${s.phonePrivacyStatus}', expected 'hidden'`
+      );
     }
-    console.log(`✓ Privacy Status: phonePrivacyStatus = '${s.phonePrivacyStatus}' (phone excluded from public surface).`);
+    console.log(
+      `✓ Privacy Status: phonePrivacyStatus = '${s.phonePrivacyStatus}' (phone excluded from public surface).`
+    );
   }
 
   // 6. Financial Discrepancies Audit
@@ -101,12 +112,16 @@ async function verifyDatabase() {
       throw new Error(`Invalid admin email format: ${user.email}`);
     }
     if (user.role !== "admin") {
-      throw new Error(`Non-admin user found in admin table: ${user.email} (role: ${user.role})`);
+      throw new Error(
+        `Non-admin user found in admin table: ${user.email} (role: ${user.role})`
+      );
     }
     if (!user.passwordHash || !user.passwordHash.startsWith("$2")) {
       throw new Error(`Insecure or unhashed password detected for: ${user.email}`);
     }
-    console.log(`✓ Admin: ${user.email} | Role: ${user.role} | Password Hash: bcrypt verified (cost factor: 12)`);
+    console.log(
+      `✓ Admin: ${user.email} | Role: ${user.role} | Password Hash: bcrypt verified (cost factor: 12)`
+    );
   }
 
   // 8. Media Assets Registry Audit
@@ -118,7 +133,9 @@ async function verifyDatabase() {
     if (!asset.publicId || !asset.secureUrl.startsWith("https://res.cloudinary.com/")) {
       throw new Error(`Invalid media asset URL format: ${asset.publicId}`);
     }
-    console.log(`✓ Asset: ${asset.publicId} | Format: ${asset.format} | Dimensions: ${asset.width}x${asset.height} | Bytes: ${asset.bytes}`);
+    console.log(
+      `✓ Asset: ${asset.publicId} | Format: ${asset.format} | Dimensions: ${asset.width}x${asset.height} | Bytes: ${asset.bytes}`
+    );
   }
 
   console.log("\n======================================================");

@@ -17,7 +17,8 @@ export function DraftPreviewBanner({ currentPath = "/" }: DraftPreviewBannerProp
         <div className="flex items-center gap-2">
           <FiEye className="text-ink-950 shrink-0" size={16} aria-hidden="true" />
           <span>
-            <strong>Administrator Preview Mode Active:</strong> You are viewing live database records including unpublished drafts.
+            <strong>Administrator Preview Mode Active:</strong> You are viewing live
+            database records including unpublished drafts.
           </span>
         </div>
         <Link

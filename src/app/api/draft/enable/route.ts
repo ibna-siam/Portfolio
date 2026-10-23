@@ -38,7 +38,8 @@ export async function GET(request: NextRequest) {
     return new NextResponse(
       JSON.stringify({
         error: "Invalid Path",
-        message: "The requested redirect destination is not a permitted local relative path.",
+        message:
+          "The requested redirect destination is not a permitted local relative path.",
       }),
       { status: 400, headers: { "Content-Type": "application/json" } }
     );

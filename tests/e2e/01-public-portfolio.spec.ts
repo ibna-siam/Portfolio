@@ -62,7 +62,9 @@ test.describe("Public Portfolio & Executive Claymorphism E2E", () => {
     expect(newHtmlClass).not.toBe(initialHtmlClass);
   });
 
-  test("Case studies collection page displays published studies and filter buttons", async ({ page }) => {
+  test("Case studies collection page displays published studies and filter buttons", async ({
+    page,
+  }) => {
     const response = await page.goto("/case-studies");
     expect(response?.status()).toBe(200);
 
@@ -90,7 +92,9 @@ test.describe("Public Portfolio & Executive Claymorphism E2E", () => {
   test("Published case study detail page renders narrative, tabular schedule, and disclosure (VAL-09)", async ({
     page,
   }) => {
-    const response = await page.goto("/case-studies/individual-income-tax-return-ay2023-24");
+    const response = await page.goto(
+      "/case-studies/individual-income-tax-return-ay2023-24"
+    );
     expect(response?.status()).toBe(200);
 
     // Title and metadata
@@ -110,7 +114,9 @@ test.describe("Public Portfolio & Executive Claymorphism E2E", () => {
     expect(await tabularNumsCells.count()).toBeGreaterThanOrEqual(1);
   });
 
-  test("StyleTex RMG Costing case study renders contribution margin disclosure (VAL-10)", async ({ page }) => {
+  test("StyleTex RMG Costing case study renders contribution margin disclosure (VAL-10)", async ({
+    page,
+  }) => {
     const response = await page.goto("/case-studies/styletex-rmg-costing-cvp-analysis");
     expect(response?.status()).toBe(200);
 
@@ -121,20 +127,26 @@ test.describe("Public Portfolio & Executive Claymorphism E2E", () => {
     await expect(discrepancyCard).toContainText(/380/);
   });
 
-  test("FIFA World Cup case study renders macroeconomic impact disclosure (VAL-11)", async ({ page }) => {
+  test("FIFA World Cup case study renders macroeconomic impact disclosure (VAL-11)", async ({
+    page,
+  }) => {
     const response = await page.goto("/case-studies/fifa-world-cup-macroeconomic-impact");
     expect(response?.status()).toBe(200);
 
     // Discrepancy Notice (VAL-11)
     const discrepancyCard = page.locator('[data-testid="discrepancy-notice"]');
     await expect(discrepancyCard).toBeVisible();
-    await expect(discrepancyCard).toContainText(/Macroeconomic Data Definition Divergence/i);
+    await expect(discrepancyCard).toContainText(
+      /Macroeconomic Data Definition Divergence/i
+    );
   });
 
   test("Square Pharmaceuticals case study frames 8% overhead saving as academic proposal (VAL-08)", async ({
     page,
   }) => {
-    const response = await page.goto("/case-studies/square-pharmaceuticals-financial-analysis");
+    const response = await page.goto(
+      "/case-studies/square-pharmaceuticals-financial-analysis"
+    );
     expect(response?.status()).toBe(200);
 
     const pageContent = await page.content();

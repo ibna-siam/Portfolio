@@ -1,12 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import {
-  FiDownload,
-  FiArrowRight,
-  FiLinkedin,
-  FiGithub,
-  FiMail,
-} from "react-icons/fi";
+import { FiDownload, FiArrowRight, FiLinkedin, FiGithub, FiMail } from "react-icons/fi";
 import { PublicSiteSettings } from "@/lib/public-data";
 
 interface PublicHeroProps {
@@ -43,8 +37,8 @@ export function PublicHero({ settings }: PublicHeroProps) {
     rawAvatar.startsWith("http://") || rawAvatar.startsWith("https://")
       ? rawAvatar
       : rawAvatar.startsWith("/src/assets/")
-      ? rawAvatar.replace("/src/assets/", "/assets/")
-      : rawAvatar || "/assets/siam.jpeg";
+        ? rawAvatar.replace("/src/assets/", "/assets/")
+        : rawAvatar || "/assets/siam.jpeg";
 
   return (
     <section

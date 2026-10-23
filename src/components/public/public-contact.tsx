@@ -110,9 +110,7 @@ export function PublicContact({
         );
       }
     } catch {
-      setSubmitError(
-        "Network transmission error. Please use direct email: " + email
-      );
+      setSubmitError("Network transmission error. Please use direct email: " + email);
     } finally {
       setSending(false);
     }
@@ -133,7 +131,8 @@ export function PublicContact({
             Direct Inquiries & Dossier Access
           </h2>
           <p className="text-sm sm:text-base text-ink-600 dark:text-ink-300 leading-relaxed">
-            Open to audit trainee opportunities, academic research collaborations, and accounting software projects.
+            Open to audit trainee opportunities, academic research collaborations, and
+            accounting software projects.
           </p>
         </div>
 
@@ -164,7 +163,11 @@ export function PublicContact({
                     title="Copy Email Address"
                     aria-label="Copy Email Address"
                   >
-                    {copiedEmail ? <FiCheck size={14} className="text-emerald-500" /> : <FiCopy size={14} />}
+                    {copiedEmail ? (
+                      <FiCheck size={14} className="text-emerald-500" />
+                    ) : (
+                      <FiCopy size={14} />
+                    )}
                   </button>
                 </div>
                 {copiedEmail && (
@@ -199,10 +202,15 @@ export function PublicContact({
                     className="p-3 rounded-xl bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 flex items-center justify-between text-xs text-ink-700 dark:text-ink-300 hover:border-emerald-500/30 transition-colors"
                   >
                     <span className="flex items-center gap-2 font-medium">
-                      <FiLinkedin size={15} className="text-emerald-700 dark:text-emerald-400" />
+                      <FiLinkedin
+                        size={15}
+                        className="text-emerald-700 dark:text-emerald-400"
+                      />
                       LinkedIn Professional Profile
                     </span>
-                    <span className="text-[10px] font-mono text-ink-600 dark:text-ink-400">Verified</span>
+                    <span className="text-[10px] font-mono text-ink-600 dark:text-ink-400">
+                      Verified
+                    </span>
                   </a>
                 )}
                 {githubUrl && (
@@ -213,10 +221,15 @@ export function PublicContact({
                     className="p-3 rounded-xl bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 flex items-center justify-between text-xs text-ink-700 dark:text-ink-300 hover:border-emerald-500/30 transition-colors"
                   >
                     <span className="flex items-center gap-2 font-medium">
-                      <FiGithub size={15} className="text-emerald-700 dark:text-emerald-400" />
+                      <FiGithub
+                        size={15}
+                        className="text-emerald-700 dark:text-emerald-400"
+                      />
                       GitHub Project Repository
                     </span>
-                    <span className="text-[10px] font-mono text-ink-600 dark:text-ink-400">Public Code</span>
+                    <span className="text-[10px] font-mono text-ink-600 dark:text-ink-400">
+                      Public Code
+                    </span>
                   </a>
                 )}
               </div>
@@ -235,7 +248,8 @@ export function PublicContact({
                     Message Transmitted Successfully
                   </h3>
                   <p className="text-sm text-ink-600 dark:text-ink-300 max-w-md mx-auto leading-relaxed">
-                    Thank you for your inquiry. Your message has been sent directly to Md Ibna Siam via the verified contact portal.
+                    Thank you for your inquiry. Your message has been sent directly to Md
+                    Ibna Siam via the verified contact portal.
                   </p>
                   <button
                     type="button"
@@ -334,9 +348,7 @@ export function PublicContact({
                       id="form-inquiry"
                       name="inquiryType"
                       value={form.inquiryType}
-                      onChange={(e) =>
-                        setForm({ ...form, inquiryType: e.target.value })
-                      }
+                      onChange={(e) => setForm({ ...form, inquiryType: e.target.value })}
                       className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 text-ink-900 dark:text-ink-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     >
                       {INQUIRY_OPTIONS.map((opt) => (
@@ -383,7 +395,9 @@ export function PublicContact({
                     className="w-full py-3.5 px-6 rounded-xl bg-emerald-700 hover:bg-emerald-800 dark:bg-emerald-700 dark:hover:bg-emerald-600 text-white text-xs font-semibold tracking-wide transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     <FiSend size={14} />
-                    <span>{sending ? "Transmitting Message..." : "Send Professional Inquiry"}</span>
+                    <span>
+                      {sending ? "Transmitting Message..." : "Send Professional Inquiry"}
+                    </span>
                   </button>
                 </form>
               )}

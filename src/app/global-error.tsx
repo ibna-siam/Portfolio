@@ -10,7 +10,10 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("[GLOBAL_ERROR] Caught critical root layout error:", error.digest || "No digest");
+    console.error(
+      "[GLOBAL_ERROR] Caught critical root layout error:",
+      error.digest || "No digest"
+    );
   }, [error]);
 
   return (
@@ -20,11 +23,10 @@ export default function GlobalError({
           <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 mx-auto mb-4 text-xl">
             ⚠
           </div>
-          <h1 className="text-xl font-bold text-white mb-2">
-            Application Error
-          </h1>
+          <h1 className="text-xl font-bold text-white mb-2">Application Error</h1>
           <p className="text-sm text-slate-400 mb-6 leading-relaxed">
-            A critical rendering failure occurred. Your session and portfolio data remain intact.
+            A critical rendering failure occurred. Your session and portfolio data remain
+            intact.
           </p>
           <button
             type="button"

@@ -30,19 +30,34 @@ async function runCmsPipelineTests() {
   console.log("--> 1. Database Parity & Baseline Model Checks:");
 
   const caseStudies = await db.select().from(schema.caseStudies);
-  assert(caseStudies.length >= 8, `At least 8 academic case studies exist in DB (found: ${caseStudies.length})`);
+  assert(
+    caseStudies.length >= 8,
+    `At least 8 academic case studies exist in DB (found: ${caseStudies.length})`
+  );
 
   const competencies = await db.select().from(schema.competencies);
-  assert(competencies.length === 16, `Exactly 16 competencies exist in DB (found: ${competencies.length})`);
+  assert(
+    competencies.length === 16,
+    `Exactly 16 competencies exist in DB (found: ${competencies.length})`
+  );
 
   const milestones = await db.select().from(schema.academicMilestones);
-  assert(milestones.length === 3, `Exactly 3 educational milestones exist in DB (found: ${milestones.length})`);
+  assert(
+    milestones.length === 3,
+    `Exactly 3 educational milestones exist in DB (found: ${milestones.length})`
+  );
 
   const solutions = await db.select().from(schema.techSolutions);
-  assert(solutions.length === 3, `Exactly 3 tech solutions exist in DB (found: ${solutions.length})`);
+  assert(
+    solutions.length === 3,
+    `Exactly 3 tech solutions exist in DB (found: ${solutions.length})`
+  );
 
   const discrepancies = await db.select().from(schema.caseStudyDiscrepancies);
-  assert(discrepancies.length === 3, `Exactly 3 financial discrepancy disclosures exist (found: ${discrepancies.length})`);
+  assert(
+    discrepancies.length === 3,
+    `Exactly 3 financial discrepancy disclosures exist (found: ${discrepancies.length})`
+  );
 
   // ---------------------------------------------------------------------------
   // 2. Financial Discrepancy Guardrail & Deletion Safeguard
@@ -51,27 +66,50 @@ async function runCmsPipelineTests() {
 
   // Find a study that is bound to a mandatory discrepancy
   const boundDiscrepancy = discrepancies[0];
-  assert(Boolean(boundDiscrepancy), "Found at least one financial discrepancy disclosure in DB");
+  assert(
+    Boolean(boundDiscrepancy),
+    "Found at least one financial discrepancy disclosure in DB"
+  );
 
   const boundStudy = caseStudies.find((s) => s.id === boundDiscrepancy?.caseStudyId);
-  assert(Boolean(boundStudy), `Discrepancy "${boundDiscrepancy?.headline.slice(0, 40)}..." is bound to valid Case Study: "${boundStudy?.title}"`);
+  assert(
+    Boolean(boundStudy),
+    `Discrepancy "${boundDiscrepancy?.headline.slice(0, 40)}..." is bound to valid Case Study: "${boundStudy?.title}"`
+  );
 
   // Verify deletion guardrail logic
   const hasDiscrepancyCheck = discrepancies.some((d) => d.caseStudyId === boundStudy?.id);
-  assert(hasDiscrepancyCheck === true, "Deletion safeguard detects attached discrepancy disclosure and blocks deletion");
+  assert(
+    hasDiscrepancyCheck === true,
+    "Deletion safeguard detects attached discrepancy disclosure and blocks deletion"
+  );
 
   // ---------------------------------------------------------------------------
   // 3. Tabular Financial Schedules Structure & .tabular-nums Preservation
   // ---------------------------------------------------------------------------
-  console.log("\n--> 3. Tabular Financial Schedules Structure & .tabular-nums Preservation:");
+  console.log(
+    "\n--> 3. Tabular Financial Schedules Structure & .tabular-nums Preservation:"
+  );
 
   const schedules = await db.select().from(schema.financialSchedules);
-  assert(schedules.length >= 9, `At least 9 financial schedules exist (found: ${schedules.length})`);
+  assert(
+    schedules.length >= 9,
+    `At least 9 financial schedules exist (found: ${schedules.length})`
+  );
 
   for (const s of schedules.slice(0, 3)) {
-    assert(Array.isArray(s.headers) && s.headers.length > 0, `Schedule "${s.title}" has valid headers array`);
-    assert(Array.isArray(s.rows) && s.rows.length > 0, `Schedule "${s.title}" has valid tabular rows array`);
-    assert(s.headers.length === s.rows[0].length, `Schedule "${s.title}" column counts match header length (${s.headers.length})`);
+    assert(
+      Array.isArray(s.headers) && s.headers.length > 0,
+      `Schedule "${s.title}" has valid headers array`
+    );
+    assert(
+      Array.isArray(s.rows) && s.rows.length > 0,
+      `Schedule "${s.title}" has valid tabular rows array`
+    );
+    assert(
+      s.headers.length === s.rows[0].length,
+      `Schedule "${s.title}" column counts match header length (${s.headers.length})`
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -86,7 +124,10 @@ async function runCmsPipelineTests() {
     snapshot: { title: "Draft Study", status: "draft", version: 1 },
     changeSummary: "Created initial draft",
   });
-  assert(rev1 === 1, `First revision snapshot has revisionNumber = 1 (received: ${rev1})`);
+  assert(
+    rev1 === 1,
+    `First revision snapshot has revisionNumber = 1 (received: ${rev1})`
+  );
 
   const rev2 = await recordContentRevision({
     entityType: "case_study",
@@ -94,7 +135,10 @@ async function runCmsPipelineTests() {
     snapshot: { title: "Draft Study Updated", status: "published", version: 2 },
     changeSummary: "Published study",
   });
-  assert(rev2 === 2, `Second revision snapshot has sequential revisionNumber = 2 (received: ${rev2})`);
+  assert(
+    rev2 === 2,
+    `Second revision snapshot has sequential revisionNumber = 2 (received: ${rev2})`
+  );
 
   // Verify snapshots stored in DB
   const storedRevs = await db
@@ -108,9 +152,15 @@ async function runCmsPipelineTests() {
     )
     .orderBy(desc(schema.contentRevisions.revisionNumber));
 
-  assert(storedRevs.length === 2, `Both revision snapshots persisted append-only in content_revisions`);
+  assert(
+    storedRevs.length === 2,
+    `Both revision snapshots persisted append-only in content_revisions`
+  );
   assert(storedRevs[0].revisionNumber === 2, "Latest revision is number 2");
-  assert((storedRevs[0].snapshot as { status: string }).status === "published", "Revision 2 snapshot preserves published status");
+  assert(
+    (storedRevs[0].snapshot as { status: string }).status === "published",
+    "Revision 2 snapshot preserves published status"
+  );
 
   // Cleanup test revisions
   await db
@@ -144,10 +194,15 @@ async function runCmsPipelineTests() {
 
   assert(Boolean(logged), "Activity log recorded successfully in activity_logs table");
   assert(logged?.action === "create", "Action type 'create' stored accurately");
-  assert(logged?.entityType === "case_study", "Entity type 'case_study' stored accurately");
+  assert(
+    logged?.entityType === "case_study",
+    "Entity type 'case_study' stored accurately"
+  );
 
   // Cleanup test log
-  await db.delete(schema.activityLogs).where(eq(schema.activityLogs.entityId, testLogEntityId));
+  await db
+    .delete(schema.activityLogs)
+    .where(eq(schema.activityLogs.entityId, testLogEntityId));
   assert(true, "Test activity log cleaned up cleanly");
 
   // ---------------------------------------------------------------------------
@@ -161,7 +216,10 @@ async function runCmsPipelineTests() {
     .where(eq(schema.siteSettings.id, "default"))
     .limit(1);
 
-  assert(Boolean(site?.accaTrajectory), "site_settings has valid accaTrajectory JSONB payload");
+  assert(
+    Boolean(site?.accaTrajectory),
+    "site_settings has valid accaTrajectory JSONB payload"
+  );
 
   const acca = site?.accaTrajectory as {
     qualification: string;
@@ -184,7 +242,10 @@ async function runCmsPipelineTests() {
   console.log("\n--> 7. Tech Solutions & External URL Sanitization:");
 
   for (const sol of solutions) {
-    assert(Boolean(sol.title && sol.id), `Solution "${sol.title}" has valid title and ID`);
+    assert(
+      Boolean(sol.title && sol.id),
+      `Solution "${sol.title}" has valid title and ID`
+    );
     if (sol.verifiedRepo) {
       assert(
         sol.verifiedRepo.startsWith("https://") || sol.verifiedRepo.startsWith("http://"),
@@ -207,7 +268,10 @@ async function runCmsPipelineTests() {
 
   for (const exp of expectedDomains) {
     const domainItems = competencies.filter((c) => c.domain === exp);
-    assert(domainItems.length > 0, `Domain "${exp}" has evidence-based competencies (count: ${domainItems.length})`);
+    assert(
+      domainItems.length > 0,
+      `Domain "${exp}" has evidence-based competencies (count: ${domainItems.length})`
+    );
   }
 
   // ---------------------------------------------------------------------------

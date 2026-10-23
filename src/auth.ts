@@ -38,9 +38,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // 1. Check rate limit
         const rateCheck = checkLoginRateLimit(email);
         if (!rateCheck.allowed) {
-          throw new Error(
-            `RateLimitExceeded:${rateCheck.retryAfterSeconds ?? 900}`
-          );
+          throw new Error(`RateLimitExceeded:${rateCheck.retryAfterSeconds ?? 900}`);
         }
 
         try {
@@ -63,10 +61,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return null;
           }
 
-          const isPasswordValid = await bcrypt.compare(
-            password,
-            user.passwordHash
-          );
+          const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
           if (!isPasswordValid) {
             recordFailedLoginAttempt(email);
             return null;
@@ -83,10 +78,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             role: user.role,
           };
         } catch (err: unknown) {
-          if (
-            err instanceof Error &&
-            err.message.startsWith("RateLimitExceeded:")
-          ) {
+          if (err instanceof Error && err.message.startsWith("RateLimitExceeded:")) {
             throw err;
           }
           console.error(

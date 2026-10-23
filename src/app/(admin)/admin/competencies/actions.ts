@@ -81,7 +81,9 @@ export async function upsertCompetencyAction(data: CompetencyFormData) {
       entityId: competencyId,
       snapshot: { ...data, id: competencyId },
       authorId,
-      changeSummary: isCreate ? `Created competency: "${data.name}"` : `Updated competency: "${data.name}"`,
+      changeSummary: isCreate
+        ? `Created competency: "${data.name}"`
+        : `Updated competency: "${data.name}"`,
     });
 
     // Record activity log
@@ -98,7 +100,9 @@ export async function upsertCompetencyAction(data: CompetencyFormData) {
     return {
       success: true,
       competencyId,
-      message: isCreate ? "Competency created successfully." : "Competency updated successfully.",
+      message: isCreate
+        ? "Competency created successfully."
+        : "Competency updated successfully.",
     };
   } catch (error) {
     console.error("[CompetenciesAction] upsert error:", error);

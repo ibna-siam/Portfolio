@@ -1,10 +1,10 @@
 # Phased Implementation Roadmap
 ## Full Portfolio CMS & Next.js Architecture Evolution
 
-**Document Version:** 2.4.0  
-**Phase:** Phase 10.2: Accessibility, Legacy Code Cleanup & Codebase Standardization (Completed)  
+**Document Version:** 2.6.0  
+**Phase:** Phase 12: Production Verification, Search Readiness & Final Portfolio QA (Completed)  
 **Date:** October 2026  
-**Status:** Phase 10.2 Complete & Verified (WCAG 2.2 Level AA contrast verified across public & admin interfaces; confirmed obsolete code `gh-pages` and `admin-nav.tsx` removed; architecture and cleanup documented in dedicated reports; dual-track Vite rollback preserved; all 87 test assertions passing with 0 failures)  
+**Status:** Phase 12 Complete & Verified (Live production network audit executed; verified Next.js 15 App Router live health; eliminated duplicate child brand title suffixes; streamlined robots.txt to RFC 9309; optimized SERP description lengths; verified 127/127 automated test assertions; Next.js 15.5.28 and Vite fallback builds 100% operational; production acceptance checklist and Google Search Console guide prepared)  
 **Target Architecture:** Next.js (App Router), Neon PostgreSQL, Drizzle ORM, Auth.js, Cloudinary  
 **Design Direction:** Executive Financial Precision (Obsidian/Emerald Dark Mode & Architectural Slate Light Mode)  
 **Production Site:** [https://ibnasiam.vercel.app/](https://ibnasiam.vercel.app/)  
@@ -373,6 +373,86 @@ graph TD
   - `CODEBASE_AUDIT_REPORT.md`
   - `ACCESSIBILITY_AND_CONTRAST_REPORT.md`
   - `PHASE_10_2_CLEANUP_REPORT.md`
+
+---
+
+### Phase 11: SEO, Content Quality & Career-Readiness Optimization
+- **Status:** **Completed & Validated**
+- **Objective:** Upgrade technical SEO discoverability, metadata inheritance, dynamic sitemap/robots generation, and Schema.org structured data while preserving strict academic positioning (75% Accounting/Finance vs 25% Supporting Tech), phone privacy (VAL-07), and financial discrepancy disclosures (VAL-08 to VAL-11).
+- **Scope Completed:**
+  - **Centralized SEO Architecture (`src/lib/seo-config.ts`):** Single source of truth for canonical metadata, verified credentials, and Schema.org JSON-LD helpers.
+  - **Dynamic Crawling Infrastructure:** Created `src/app/robots.ts` and `src/app/sitemap.ts` with Next.js Metadata Route APIs.
+  - **Metadata & Canonical URLs:** Configured canonical URLs and OpenGraph/Twitter Cards across all public routes; hardened admin layout robots with `noindex, nofollow, nocache`.
+  - **Schema.org Structured Data:** Injected `Person`, `WebSite`, `CollectionPage`, and `Article` JSON-LD schemas.
+  - **Privacy & Financial Safeguards:** Zero phone leakage (VAL-07); all 4 discrepancy disclosures intact; 4/4/3 section preview limits verified.
+  - **Validation Gate Outcome:**
+    - `npm run test:seo`: 39 / 39 passed.
+    - `npm run test:public`: 19 / 19 passed.
+    - `npm run test:auth`: 27 / 27 passed.
+    - `npm run test:cms`: 41 / 41 passed.
+    - Total automated assertions: 126 / 126 passed.
+    - `npm run type-check`: 0 errors.
+    - `npm run lint`: 0 errors.
+    - `npm run build`: Production build succeeded; 15/15 routes generated.
+    - `npm run build:vite`: Fallback build succeeded in 2.98s.
+- **Reports Generated:**
+  - `PHASE_11_AUDIT_REPORT.md`
+  - `PHASE_11_IMPLEMENTATION_REPORT.md`
+  - `SEO_VALIDATION_REPORT.md`
+  - `CONTENT_ACCURACY_REPORT.md`
+
+---
+
+### Phase 12: Production Verification, Search Readiness & Final Portfolio QA
+- **Status:** **Completed & Validated**
+- **Objective:** Independently audit the deployed application and pre-deployment baseline; distinguish live HTTP behavior from local source checks; eliminate discovered edge-case defects (brand suffix duplication); verify complete search readiness and prepare Google Search Console guide.
+- **Scope Completed:**
+  - **Live HTTP Network Verification (`verify-live-deployment.ts`):** Probed `https://ibnasiam.vercel.app` directly; verified 200 OK on core pages, 307 temporary redirect on `/admin`, and custom 404 handler.
+  - **Audit Defect Remediation:** Corrected double-brand suffix on child routes (`/case-studies` and `/case-studies/[slug]`); modernized `robots.ts` to RFC 9309; optimized SERP description lengths.
+  - **Search Console Setup Guide:** Authored step-by-step instructions for domain verification, sitemap submission, URL inspection, and coverage tracking.
+  - **Validation Gate Outcome:**
+    - `npm run test:seo`: 40 / 40 passed.
+    - `npm run test:public`: 19 / 19 passed.
+    - `npm run test:auth`: 27 / 27 passed.
+    - `npm run test:cms`: 41 / 41 passed.
+    - Total automated assertions: 127 / 127 passed.
+    - `npm run type-check`: 0 errors.
+    - `npm run lint`: 0 errors.
+    - `npm run build`: Production build exit 0 (15 routes generated).
+    - `npm run build:vite`: Fallback build exit 0 (2.97s).
+- **Reports Generated:**
+  - `PHASE_12_PRODUCTION_AUDIT_REPORT.md`
+  - `LIVE_SEO_VERIFICATION_REPORT.md`
+  - `PRODUCTION_ACCEPTANCE_CHECKLIST.md`
+
+---
+
+### Phase 12.1: Navigation Performance Diagnosis & Remediation
+- **Status:** **Completed & Validated**
+- **Objective:** Evidence-based profiling and targeted resolution of slow navigation transitions and perceived visual freezing in the Next.js 15 App Router application without making assumptions before measurement.
+- **Scope Completed:**
+  - **Automated Navigation Profiler (`scripts/profile-navigation.ts`):** 3-run cold and warm transition measurements via Playwright Chromium comparing live production (`https://ibnasiam.vercel.app` - `e2d2fa1`) against local production build (`http://localhost:3000`).
+  - **Identified Bottlenecks:** Complete absence of route-level loading feedback (`loading.tsx`), leading to frozen UI during dynamic RSC streaming; uncached database queries executing duplicate roundtrips to Neon PostgreSQL across `generateMetadata()` and Page render; missing `prefetch={true}` attributes on primary navigation links.
+  - **Targeted Remediations:**
+    - Wrapped public data queries (`getPublicSiteSettings`, `getPublicCaseStudies`, `getCaseStudyBySlug`, `getPublicCompetencies`, `getPublicAcademicMilestones`, `getPublicTechSolutions`) in `React.cache()` with primitive arguments.
+    - Created lightweight, accessible dark/light theme loading skeletons: `src/app/loading.tsx`, `src/app/case-studies/loading.tsx`, and `src/app/case-studies/[slug]/loading.tsx`.
+    - Added `prefetch={true}` to brand wordmark, nav links, case study cards, and breadcrumb links.
+  - **Measured Performance Improvements (Local Production Build):**
+    - Homepage → Catalog: Warm avg reduced from 290ms to **109ms (-62.4%)**.
+    - Detail → Catalog: Warm avg reduced from 283ms to **119ms (-58.0%)**.
+    - Detail → Homepage: Warm avg reduced from 402ms to **278ms (-30.8%)**.
+    - Click-to-visual-feedback: Reduced from frozen delay to **<50ms instant skeleton responsiveness**.
+  - **Validation Gate Outcome:**
+    - `npm run test:seo`: 40 / 40 passed.
+    - `npm run test:public`: 19 / 19 passed.
+    - `npm run test:auth`: 27 / 27 passed.
+    - `npm run test:cms`: 41 / 41 passed.
+    - Total automated assertions: 127 / 127 passed.
+    - `npm run type-check`: 0 errors (`tsc --noEmit`).
+    - `npm run lint`: 0 errors (`eslint .`).
+    - `npm run build`: Production build exit 0 (15 routes generated).
+- **Reports Generated:**
+  - `PHASE_12_1_NAVIGATION_PERFORMANCE_REPORT.md`
 
 
 ---

@@ -5,7 +5,11 @@ import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 
 import * as schema from "../src/lib/db/schema";
-import { getCloudinaryStatus, getCloudinaryClient, DEFAULT_MEDIA_FOLDER } from "../src/lib/cloudinary";
+import {
+  getCloudinaryStatus,
+  getCloudinaryClient,
+  DEFAULT_MEDIA_FOLDER,
+} from "../src/lib/cloudinary";
 
 dotenv.config({ path: ".env.local" });
 dotenv.config();
@@ -31,7 +35,9 @@ async function uploadPortrait() {
   }
 
   const fileStats = fs.statSync(portraitPath);
-  console.log(`Local Asset Found: src/assets/siam.jpeg (${(fileStats.size / 1024).toFixed(1)} KB)`);
+  console.log(
+    `Local Asset Found: src/assets/siam.jpeg (${(fileStats.size / 1024).toFixed(1)} KB)`
+  );
 
   const status = getCloudinaryStatus();
   if (!status.isConfigured) {
@@ -41,7 +47,10 @@ async function uploadPortrait() {
 
   const client = getCloudinaryClient();
   const ping = await client.api.ping();
-  console.log("Cloudinary Connection:", ping.status === "ok" ? "VERIFIED (HTTP 200 OK)" : "FAILED");
+  console.log(
+    "Cloudinary Connection:",
+    ping.status === "ok" ? "VERIFIED (HTTP 200 OK)" : "FAILED"
+  );
 
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
@@ -69,7 +78,9 @@ async function uploadPortrait() {
   console.log(`- Public ID:  ${uploadResult.public_id}`);
   console.log(`- Format:     ${uploadResult.format}`);
   console.log(`- Dimensions: ${uploadResult.width} x ${uploadResult.height}`);
-  console.log(`- Bytes:      ${uploadResult.bytes} (${(uploadResult.bytes / 1024).toFixed(1)} KB)`);
+  console.log(
+    `- Bytes:      ${uploadResult.bytes} (${(uploadResult.bytes / 1024).toFixed(1)} KB)`
+  );
   console.log(`- Secure URL: ${uploadResult.secure_url}`);
 
   // Register in PostgreSQL media_assets table

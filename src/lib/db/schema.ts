@@ -40,25 +40,33 @@ export const siteSettings = pgTable("site_settings", {
   publicEmail: varchar("public_email", { length: 255 }).notNull(),
   // Private phone number stored for admin record only; strict guardrail VAL-07: NEVER expose on public UI
   privatePhone: varchar("private_phone", { length: 50 }),
-  phonePrivacyStatus: varchar("phone_privacy_status", { length: 50 }).default("hidden").notNull(),
+  phonePrivacyStatus: varchar("phone_privacy_status", { length: 50 })
+    .default("hidden")
+    .notNull(),
   resumeUrl: text("resume_url"),
   avatarUrl: text("avatar_url"),
-  socialLinks: jsonb("social_links").$type<{
-    github?: string;
-    linkedin?: string;
-    twitter?: string;
-    facebook?: string;
-  }>().notNull(),
+  socialLinks: jsonb("social_links")
+    .$type<{
+      github?: string;
+      linkedin?: string;
+      twitter?: string;
+      facebook?: string;
+    }>()
+    .notNull(),
   aboutSummary: text("about_summary").notNull(),
-  aboutHighlights: jsonb("about_highlights").$type<Array<{ label: string; value: string }>>().notNull(),
-  accaTrajectory: jsonb("acca_trajectory").$type<{
-    qualification: string;
-    credentialBody: string;
-    trajectoryType: string;
-    statusLabel: string;
-    integrityNotice: string;
-    strategicFocus: string[];
-  }>().notNull(),
+  aboutHighlights: jsonb("about_highlights")
+    .$type<Array<{ label: string; value: string }>>()
+    .notNull(),
+  accaTrajectory: jsonb("acca_trajectory")
+    .$type<{
+      qualification: string;
+      credentialBody: string;
+      trajectoryType: string;
+      statusLabel: string;
+      integrityNotice: string;
+      strategicFocus: string[];
+    }>()
+    .notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
@@ -103,12 +111,18 @@ export const caseStudies = pgTable(
     featured: boolean("featured").default(false).notNull(),
     overview: text("overview").notNull(),
     objectives: jsonb("objectives").$type<string[]>().notNull(),
-    methodology: jsonb("methodology").$type<Array<{ heading: string; body: string }>>().notNull(),
+    methodology: jsonb("methodology")
+      .$type<Array<{ heading: string; body: string }>>()
+      .notNull(),
     keyFindings: jsonb("key_findings").$type<string[]>().notNull(),
     conclusion: text("conclusion").notNull(),
     recommendations: jsonb("recommendations").$type<string[]>().notNull(),
-    auditNotes: jsonb("audit_notes").$type<Array<{ topic: string; finding: string; status: string }>>().notNull(),
-    formulas: jsonb("formulas").$type<Array<{ name: string; formula: string }>>().notNull(),
+    auditNotes: jsonb("audit_notes")
+      .$type<Array<{ topic: string; finding: string; status: string }>>()
+      .notNull(),
+    formulas: jsonb("formulas")
+      .$type<Array<{ name: string; formula: string }>>()
+      .notNull(),
     status: varchar("status", { length: 20 }).default("published").notNull(), // 'draft' | 'preview' | 'published' | 'archived'
     version: integer("version").default(1).notNull(),
     publishedAt: timestamp("published_at", { withTimezone: true }),
@@ -140,9 +154,7 @@ export const financialSchedules = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
-  (table) => [
-    index("financial_schedules_case_study_idx").on(table.caseStudyId),
-  ]
+  (table) => [index("financial_schedules_case_study_idx").on(table.caseStudyId)]
 );
 
 // -----------------------------------------------------------------------------
@@ -165,9 +177,7 @@ export const caseStudyDiscrepancies = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
-  (table) => [
-    uniqueIndex("discrepancies_case_study_idx").on(table.caseStudyId),
-  ]
+  (table) => [uniqueIndex("discrepancies_case_study_idx").on(table.caseStudyId)]
 );
 
 // -----------------------------------------------------------------------------
@@ -210,18 +220,20 @@ export const academicMilestones = pgTable(
     period: varchar("period", { length: 50 }).notNull(),
     overview: text("overview").notNull(),
     disciplines: jsonb("disciplines").$type<string[]>().notNull(),
-    connectedStudies: jsonb("connected_studies").$type<Array<{
-      id: number;
-      title: string;
-      discipline: string;
-    }>>().notNull(),
+    connectedStudies: jsonb("connected_studies")
+      .$type<
+        Array<{
+          id: number;
+          title: string;
+          discipline: string;
+        }>
+      >()
+      .notNull(),
     sortOrder: integer("sort_order").default(0).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
-  (table) => [
-    index("academic_milestones_sort_idx").on(table.sortOrder),
-  ]
+  (table) => [index("academic_milestones_sort_idx").on(table.sortOrder)]
 );
 
 // -----------------------------------------------------------------------------
@@ -244,13 +256,13 @@ export const techSolutions = pgTable(
     verifiedDemo: text("verified_demo"),
     linkText: varchar("link_text", { length: 100 }).notNull(),
     sortOrder: integer("sort_order").default(0).notNull(),
-    contentStatus: varchar("content_status", { length: 20 }).default("published").notNull(),
+    contentStatus: varchar("content_status", { length: 20 })
+      .default("published")
+      .notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
-  (table) => [
-    index("tech_solutions_sort_idx").on(table.sortOrder),
-  ]
+  (table) => [index("tech_solutions_sort_idx").on(table.sortOrder)]
 );
 
 // -----------------------------------------------------------------------------
@@ -271,9 +283,7 @@ export const mediaAssets = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
-  (table) => [
-    uniqueIndex("media_assets_public_id_idx").on(table.publicId),
-  ]
+  (table) => [uniqueIndex("media_assets_public_id_idx").on(table.publicId)]
 );
 
 // -----------------------------------------------------------------------------
@@ -291,9 +301,7 @@ export const contentRevisions = pgTable(
     changeSummary: text("change_summary"),
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
-  (table) => [
-    index("content_revisions_entity_idx").on(table.entityType, table.entityId),
-  ]
+  (table) => [index("content_revisions_entity_idx").on(table.entityType, table.entityId)]
 );
 
 // -----------------------------------------------------------------------------

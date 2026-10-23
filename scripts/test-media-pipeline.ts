@@ -52,11 +52,16 @@ async function runMediaPipelineTests() {
   const status = getCloudinaryStatus();
   if (!status.isConfigured) {
     assert(
-      status.isConfigured === false && typeof status.error === "string" && status.error.includes("Missing:"),
+      status.isConfigured === false &&
+        typeof status.error === "string" &&
+        status.error.includes("Missing:"),
       "Graceful fallback when Cloudinary credentials are not yet provisioned"
     );
   } else {
-    assert(status.isConfigured === true, "Cloudinary is fully configured in local environment");
+    assert(
+      status.isConfigured === true,
+      "Cloudinary is fully configured in local environment"
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -69,9 +74,18 @@ async function runMediaPipelineTests() {
   const formatsList: readonly string[] = ALLOWED_IMAGE_FORMATS;
   assert(!formatsList.includes("svg"), "Strictly rejects SVG (active vector format)");
   assert(!formatsList.includes("exe"), "Strictly rejects binary executable formats");
-  assert(!formatsList.includes("pdf"), "Strictly rejects PDF documents in image pipeline");
-  assert(MAX_UPLOAD_BYTES === 5 * 1024 * 1024, "Enforces strict 5 MB max file upload boundary");
-  assert(DEFAULT_MEDIA_FOLDER === "portfolio/media", "Locks uploads strictly to 'portfolio/media' namespace");
+  assert(
+    !formatsList.includes("pdf"),
+    "Strictly rejects PDF documents in image pipeline"
+  );
+  assert(
+    MAX_UPLOAD_BYTES === 5 * 1024 * 1024,
+    "Enforces strict 5 MB max file upload boundary"
+  );
+  assert(
+    DEFAULT_MEDIA_FOLDER === "portfolio/media",
+    "Locks uploads strictly to 'portfolio/media' namespace"
+  );
 
   // ---------------------------------------------------------------------------
   // TEST SUITE 3: Cryptographic Signature Generation & Tamper Rejection (MED-03)
@@ -86,21 +100,30 @@ async function runMediaPipelineTests() {
     testSecret
   );
 
-  assert(typeof expectedSignature === "string" && expectedSignature.length > 20, "Generates valid HMAC-SHA signature");
+  assert(
+    typeof expectedSignature === "string" && expectedSignature.length > 20,
+    "Generates valid HMAC-SHA signature"
+  );
 
   // Tamper detection: modifying folder produces mismatch
   const tamperedFolderSignature = cloudinary.utils.api_sign_request(
     { folder: "evil_root_folder", timestamp: testTimestamp },
     testSecret
   );
-  assert(tamperedFolderSignature !== expectedSignature, "Folder tampering alters cryptographic signature");
+  assert(
+    tamperedFolderSignature !== expectedSignature,
+    "Folder tampering alters cryptographic signature"
+  );
 
   // Tamper detection: modifying timestamp produces mismatch
   const tamperedTimeSignature = cloudinary.utils.api_sign_request(
     { folder: testFolder, timestamp: testTimestamp + 999 },
     testSecret
   );
-  assert(tamperedTimeSignature !== expectedSignature, "Timestamp tampering alters cryptographic signature");
+  assert(
+    tamperedTimeSignature !== expectedSignature,
+    "Timestamp tampering alters cryptographic signature"
+  );
 
   // Response signature verification simulation
   const mockPublicId = "portfolio/media/test_asset_uuid";
@@ -110,17 +133,24 @@ async function runMediaPipelineTests() {
     testSecret
   );
 
-  const isMatched = validResponseSig === cloudinary.utils.api_sign_request(
-    { public_id: mockPublicId, version: mockVersion },
-    testSecret
-  );
+  const isMatched =
+    validResponseSig ===
+    cloudinary.utils.api_sign_request(
+      { public_id: mockPublicId, version: mockVersion },
+      testSecret
+    );
   assert(isMatched === true, "Authentic Cloudinary upload signature is verified");
 
-  const isForgedMatched = "forged_client_signature_abc" === cloudinary.utils.api_sign_request(
-    { public_id: mockPublicId, version: mockVersion },
-    testSecret
+  const isForgedMatched =
+    "forged_client_signature_abc" ===
+    cloudinary.utils.api_sign_request(
+      { public_id: mockPublicId, version: mockVersion },
+      testSecret
+    );
+  assert(
+    isForgedMatched === false,
+    "Forged client response signature is strictly rejected"
   );
-  assert(isForgedMatched === false, "Forged client response signature is strictly rejected");
 
   // ---------------------------------------------------------------------------
   // TEST SUITE 4: PostgreSQL Database Registration & Conflict-Aware Upsert (MED-04)
@@ -151,8 +181,14 @@ async function runMediaPipelineTests() {
     })
     .returning();
 
-  assert(!!createdAsset && createdAsset.publicId === testPublicId, "Inserts media asset with verified metadata");
-  assert(createdAsset.format === "webp" && createdAsset.bytes === 250000, "Persists format and file size accurately");
+  assert(
+    !!createdAsset && createdAsset.publicId === testPublicId,
+    "Inserts media asset with verified metadata"
+  );
+  assert(
+    createdAsset.format === "webp" && createdAsset.bytes === 250000,
+    "Persists format and file size accurately"
+  );
 
   // Second insert with same publicId: updates altText safely (upsert retry safety)
   const [updatedAsset] = await db
@@ -177,7 +213,8 @@ async function runMediaPipelineTests() {
     .returning();
 
   assert(
-    updatedAsset.id === createdAsset.id && updatedAsset.altText === "Updated Alt Text (Retry Safe)",
+    updatedAsset.id === createdAsset.id &&
+      updatedAsset.altText === "Updated Alt Text (Retry Safe)",
     "Duplicate registration is retry-safe and updates in-place without primary key collision"
   );
 
@@ -214,13 +251,24 @@ async function runMediaPipelineTests() {
   // TEST SUITE 6: Server-Side Role Enforcement Simulation (MED-06)
   // ---------------------------------------------------------------------------
   console.log("\n--> 6. Server Role Authorization Enforcement for Media Operations:");
-  function simulateMediaAuthorization(session: { user?: { role?: string } } | null): boolean {
+  function simulateMediaAuthorization(
+    session: { user?: { role?: string } } | null
+  ): boolean {
     return !!session?.user && session.user.role === "admin";
   }
 
-  assert(simulateMediaAuthorization(null) === false, "Unauthenticated request is rejected from media operations");
-  assert(simulateMediaAuthorization({ user: { role: "guest" } }) === false, "Non-admin ('guest') is rejected from media operations");
-  assert(simulateMediaAuthorization({ user: { role: "admin" } }) === true, "Admin session is authorized for media operations");
+  assert(
+    simulateMediaAuthorization(null) === false,
+    "Unauthenticated request is rejected from media operations"
+  );
+  assert(
+    simulateMediaAuthorization({ user: { role: "guest" } }) === false,
+    "Non-admin ('guest') is rejected from media operations"
+  );
+  assert(
+    simulateMediaAuthorization({ user: { role: "admin" } }) === true,
+    "Admin session is authorized for media operations"
+  );
 
   console.log("\n=======================================================");
   console.log(`  RESULTS: ${passed} PASSED | ${failed} FAILED`);

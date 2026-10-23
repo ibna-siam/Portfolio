@@ -69,17 +69,13 @@ export async function loginAction(
           };
         default:
           return {
-            error:
-              "Authentication failed. Please verify your credentials and try again.",
+            error: "Authentication failed. Please verify your credentials and try again.",
           };
       }
     }
 
     // 4. Handle RateLimit error thrown from authorize callback
-    if (
-      error instanceof Error &&
-      error.message.startsWith("RateLimitExceeded:")
-    ) {
+    if (error instanceof Error && error.message.startsWith("RateLimitExceeded:")) {
       const parts = error.message.split(":");
       const secs = parseInt(parts[1] || "900", 10);
       const mins = Math.ceil(secs / 60);
@@ -94,8 +90,7 @@ export async function loginAction(
     );
 
     return {
-      error:
-        "An unexpected error occurred during sign-in. Please try again later.",
+      error: "An unexpected error occurred during sign-in. Please try again later.",
     };
   }
 }

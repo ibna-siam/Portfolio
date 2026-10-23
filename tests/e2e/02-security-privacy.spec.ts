@@ -104,7 +104,9 @@ test.describe("Security, Privacy & Authorization Boundaries E2E", () => {
     ];
 
     for (const target of maliciousTargets) {
-      const response = await request.get(`/api/draft/enable?redirect=${encodeURIComponent(target)}`);
+      const response = await request.get(
+        `/api/draft/enable?redirect=${encodeURIComponent(target)}`
+      );
       // Must not redirect to the evil domain; should be rejected or redirected to login
       const location = response.headers()["location"] || "";
       expect(location).not.toContain("evil.com");

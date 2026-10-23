@@ -38,7 +38,10 @@ export function CaseStudiesClient({ initialStudies }: CaseStudiesClientProps) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
   const [isPending, startTransition] = useTransition();
-  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [feedback, setFeedback] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
   const [studyToDelete, setStudyToDelete] = useState<CaseStudyListItem | null>(null);
 
   const filteredStudies = studies.filter((study) => {
@@ -48,8 +51,7 @@ export function CaseStudiesClient({ initialStudies }: CaseStudiesClientProps) {
       study.slug.toLowerCase().includes(search.toLowerCase()) ||
       study.groupShort.toLowerCase().includes(search.toLowerCase());
 
-    const matchesStatus =
-      statusFilter === "all" ? true : study.status === statusFilter;
+    const matchesStatus = statusFilter === "all" ? true : study.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
@@ -141,7 +143,9 @@ export function CaseStudiesClient({ initialStudies }: CaseStudiesClientProps) {
       {filteredStudies.length === 0 ? (
         <div className="py-20 text-center bg-white dark:bg-ink-900/60 border border-ink-200 dark:border-ink-800 rounded-2xl p-8 shadow-sm">
           <FiBookOpen className="w-12 h-12 mx-auto mb-3 text-ink-400 dark:text-ink-600 opacity-40" />
-          <p className="text-base font-semibold text-ink-800 dark:text-ink-200">No case studies match your query</p>
+          <p className="text-base font-semibold text-ink-800 dark:text-ink-200">
+            No case studies match your query
+          </p>
           <p className="text-xs text-ink-600 dark:text-ink-400 mt-1 max-w-sm mx-auto">
             Try adjusting your search criteria or create a new research case study.
           </p>
@@ -184,19 +188,22 @@ export function CaseStudiesClient({ initialStudies }: CaseStudiesClientProps) {
                 </div>
 
                 <h2 className="text-base font-display font-bold text-ink-900 dark:text-ink-50 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">
-                  <Link href={`/admin/case-studies/${study.id}/edit`}>
-                    {study.title}
-                  </Link>
+                  <Link href={`/admin/case-studies/${study.id}/edit`}>{study.title}</Link>
                 </h2>
 
                 <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-ink-600 dark:text-ink-400">
-                  <span className="text-ink-800 dark:text-ink-200 font-medium">{study.category}</span>
+                  <span className="text-ink-800 dark:text-ink-200 font-medium">
+                    {study.category}
+                  </span>
                   <span className="text-ink-400 dark:text-ink-500">/</span>
                   <span className="text-ink-600 dark:text-ink-400">/{study.slug}</span>
                   <span className="text-ink-400 dark:text-ink-500">/</span>
                   <span className="inline-flex items-center gap-1 text-ink-700 dark:text-ink-300">
                     <FiTable className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
-                    <span className="tabular-nums font-semibold">{study.scheduleCount}</span> schedules
+                    <span className="tabular-nums font-semibold">
+                      {study.scheduleCount}
+                    </span>{" "}
+                    schedules
                   </span>
                   <span className="text-ink-400 dark:text-ink-500">/</span>
                   <span className="inline-flex items-center gap-1 text-ink-600 dark:text-ink-400">
@@ -244,7 +251,9 @@ export function CaseStudiesClient({ initialStudies }: CaseStudiesClientProps) {
                       ? "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 border-amber-200 dark:border-amber-500/30"
                       : "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 border-emerald-200 dark:border-emerald-500/30"
                   }`}
-                  title={study.status === "published" ? "Unpublish to draft" : "Publish live"}
+                  title={
+                    study.status === "published" ? "Unpublish to draft" : "Publish live"
+                  }
                 >
                   <span>{study.status === "published" ? "Unpublish" : "Publish"}</span>
                 </button>
@@ -298,14 +307,21 @@ export function CaseStudiesClient({ initialStudies }: CaseStudiesClientProps) {
                 <FiTrash2 className="w-5 h-5" />
               </div>
               <div className="text-xs text-ink-600 dark:text-ink-400">
-                Are you sure you want to permanently delete this academic case study? This action cannot be undone.
+                Are you sure you want to permanently delete this academic case study? This
+                action cannot be undone.
               </div>
             </div>
 
             <div className="bg-ink-50 dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl p-4 text-xs font-mono space-y-2">
-              <div className="text-ink-800 dark:text-ink-200 font-semibold">{studyToDelete.title}</div>
-              <div className="text-ink-600 dark:text-ink-400">Slug: /{studyToDelete.slug}</div>
-              <div className="text-ink-600 dark:text-ink-400">Schedules: {studyToDelete.scheduleCount}</div>
+              <div className="text-ink-800 dark:text-ink-200 font-semibold">
+                {studyToDelete.title}
+              </div>
+              <div className="text-ink-600 dark:text-ink-400">
+                Slug: /{studyToDelete.slug}
+              </div>
+              <div className="text-ink-600 dark:text-ink-400">
+                Schedules: {studyToDelete.scheduleCount}
+              </div>
             </div>
 
             {studyToDelete.hasDiscrepancy && (
@@ -313,7 +329,9 @@ export function CaseStudiesClient({ initialStudies }: CaseStudiesClientProps) {
                 <FiAlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="font-bold">Financial Integrity Warning: </span>
-                  This case study is bound to a mandatory academic disclosure record. The deletion guardrail will block deletion to preserve historical financial integrity.
+                  This case study is bound to a mandatory academic disclosure record. The
+                  deletion guardrail will block deletion to preserve historical financial
+                  integrity.
                 </div>
               </div>
             )}

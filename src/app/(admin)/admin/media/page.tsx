@@ -9,7 +9,8 @@ import { MediaClient } from "./media-client";
 
 export const metadata: Metadata = {
   title: "Media Library | Portfolio CMS Admin",
-  description: "Cloudinary media storage and PostgreSQL asset register for Md Ibna Siam CMS.",
+  description:
+    "Cloudinary media storage and PostgreSQL asset register for Md Ibna Siam CMS.",
   robots: {
     index: false,
     follow: false,
@@ -51,10 +52,7 @@ export default async function AdminMediaPage() {
       userName={session.user?.name}
       title="Media Library"
       description="Cloudinary asset storage, document figures, and verified credential attachments."
-      breadcrumbs={[
-        { label: "Overview", href: "/admin" },
-        { label: "Media Library" },
-      ]}
+      breadcrumbs={[{ label: "Overview", href: "/admin" }, { label: "Media Library" }]}
     >
       <MediaClient initialAssets={assets} configStatus={configStatus} />
     </AdminShell>

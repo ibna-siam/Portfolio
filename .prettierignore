@@ -1,0 +1,7 @@
+node_modules
+.next
+dist
+drizzle
+.vercel
+package-lock.json
+*.md

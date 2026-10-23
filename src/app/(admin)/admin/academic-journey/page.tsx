@@ -67,10 +67,7 @@ export default async function AdminAcademicJourneyPage() {
       userName={session.user?.name}
       title="Academic Journey & Trajectory"
       description="Manage educational degrees, institutional milestones, and verified ACCA professional qualification trajectory."
-      breadcrumbs={[
-        { label: "Overview", href: "/admin" },
-        { label: "Academic Journey" },
-      ]}
+      breadcrumbs={[{ label: "Overview", href: "/admin" }, { label: "Academic Journey" }]}
     >
       <JourneyClient initialMilestones={milestones} initialAcca={acca} />
     </AdminShell>

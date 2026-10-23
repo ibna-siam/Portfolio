@@ -6,7 +6,13 @@ export default {
     extend: {
       fontFamily: {
         display: ["'Playfair Display'", "Georgia", "serif"],
-        body: ["'DM Sans'", "'Inter'", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        body: [
+          "'DM Sans'",
+          "'Inter'",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "sans-serif",
+        ],
         mono: ["'JetBrains Mono'", "'SFMono-Regular'", "Menlo", "monospace"],
       },
       colors: {

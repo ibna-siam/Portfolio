@@ -49,6 +49,7 @@ export function PublicNav() {
         {/* Brand Wordmark */}
         <Link
           href="/"
+          prefetch={true}
           className="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-lg py-1 px-1.5"
         >
           <span className="font-display font-bold text-lg sm:text-xl text-ink-900 dark:text-ink-50 tracking-tight group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
@@ -60,14 +61,12 @@ export function PublicNav() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav
-          className="hidden md:flex items-center gap-1"
-          aria-label="Main Navigation"
-        >
+        <nav className="hidden md:flex items-center gap-1" aria-label="Main Navigation">
           {NAV_LINKS.map(({ label, href }) => (
             <Link
               key={label}
               href={href}
+              prefetch={true}
               className="px-3.5 py-2 text-sm font-medium rounded-lg text-ink-600 dark:text-ink-300 hover:text-ink-900 dark:hover:text-white hover:bg-ink-100 dark:hover:bg-ink-900 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
             >
               {label}
@@ -81,6 +80,7 @@ export function PublicNav() {
 
           <Link
             href="/admin"
+            prefetch={false}
             className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-medium text-ink-600 dark:text-ink-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-ink-100 dark:hover:bg-ink-900 transition-colors border border-transparent hover:border-ink-200 dark:hover:border-ink-800"
             aria-label="Admin Portal"
             title="Administrator Portal"
@@ -109,6 +109,7 @@ export function PublicNav() {
             <Link
               key={label}
               href={href}
+              prefetch={true}
               onClick={() => setMobileMenuOpen(false)}
               className="block px-3 py-2 text-sm font-medium rounded-lg text-ink-700 dark:text-ink-200 hover:bg-ink-100 dark:hover:bg-ink-900 transition-colors"
             >
@@ -124,7 +125,9 @@ export function PublicNav() {
               <FiShield size={13} />
               <span>Admin Portal</span>
             </Link>
-            <span className="text-[11px] font-mono text-ink-600 dark:text-ink-400">DIU ID: 252-58-083</span>
+            <span className="text-[11px] font-mono text-ink-600 dark:text-ink-400">
+              DIU ID: 252-58-083
+            </span>
           </div>
         </div>
       )}

@@ -41,10 +41,7 @@ export default async function AdminCompetenciesPage() {
       userName={session.user?.name}
       title="Competencies Matrix"
       description="Accounting, audit, taxation, and financial technology capabilities across 4 core domains."
-      breadcrumbs={[
-        { label: "Overview", href: "/admin" },
-        { label: "Competencies" },
-      ]}
+      breadcrumbs={[{ label: "Overview", href: "/admin" }, { label: "Competencies" }]}
     >
       <CompetenciesClient initialCompetencies={competencies} />
     </AdminShell>

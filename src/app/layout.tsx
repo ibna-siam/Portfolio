@@ -2,16 +2,41 @@ import type { Metadata } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "../index.css";
 
+import { siteConfig } from "@/lib/seo-config";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: "Md Ibna Siam — Accounting & Finance Portfolio | ACCA Pathway",
-    template: "%s | Md Ibna Siam",
+    default: siteConfig.title,
+    template: siteConfig.titleTemplate,
   },
-  description:
-    "Academic accounting & finance portfolio of Md Ibna Siam (Daffodil International University). Practical financial reporting, managerial costing, taxation compliance, and analytical modeling.",
+  description: siteConfig.description,
+  keywords: siteConfig.keywords,
+  authors: [{ name: siteConfig.name, url: siteConfig.url }],
+  creator: siteConfig.name,
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteConfig.url,
+    siteName: siteConfig.title,
+    title: siteConfig.title,
+    description: siteConfig.description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.title,
+    description: siteConfig.description,
+  },
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

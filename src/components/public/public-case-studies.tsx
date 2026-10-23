@@ -17,7 +17,9 @@ interface PublicCaseStudiesProps {
 }
 
 export function PublicCaseStudies({ caseStudies }: PublicCaseStudiesProps) {
-  const [activeGroup, setActiveGroup] = useState<"all" | "accounting" | "macroeconomics">("all");
+  const [activeGroup, setActiveGroup] = useState<"all" | "accounting" | "macroeconomics">(
+    "all"
+  );
   const [isExpanded, setIsExpanded] = useState(false);
 
   const filtered = caseStudies.filter((item) => {
@@ -51,7 +53,9 @@ export function PublicCaseStudies({ caseStudies }: PublicCaseStudiesProps) {
             Financial Case Studies & Applied Analysis
           </h2>
           <p className="text-sm sm:text-base text-ink-600 dark:text-ink-300 leading-relaxed">
-            Detailed examinations of audited financial statements, operational cost models, taxation schedules under the Bangladesh Income Tax Act 2023, and macroeconomic dynamics.
+            Detailed examinations of audited financial statements, operational cost
+            models, taxation schedules under the Bangladesh Income Tax Act 2023, and
+            macroeconomic dynamics.
           </p>
         </div>
 
@@ -160,7 +164,9 @@ export function PublicCaseStudies({ caseStudies }: PublicCaseStudiesProps) {
 
                 {/* Title */}
                 <h3 className="font-display font-bold text-xl sm:text-2xl text-ink-900 dark:text-ink-50 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-snug">
-                  <Link href={`/case-studies/${study.slug}`}>{study.title}</Link>
+                  <Link href={`/case-studies/${study.slug}`} prefetch={true}>
+                    {study.title}
+                  </Link>
                 </h3>
 
                 {/* Framework & Scope */}
@@ -196,6 +202,7 @@ export function PublicCaseStudies({ caseStudies }: PublicCaseStudiesProps) {
                 </span>
                 <Link
                   href={`/case-studies/${study.slug}`}
+                  prefetch={true}
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 group-hover:translate-x-1 transition-transform"
                 >
                   <span>Inspect Case Study</span>
@@ -232,6 +239,7 @@ export function PublicCaseStudies({ caseStudies }: PublicCaseStudiesProps) {
 
           <Link
             href="/case-studies"
+            prefetch={true}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-medium text-ink-700 dark:text-ink-300 bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 shadow-xs hover:bg-ink-50 dark:hover:bg-ink-800 hover:text-ink-900 dark:hover:text-ink-100 transition-colors"
           >
             <FiFolder size={15} className="text-emerald-700 dark:text-emerald-400" />

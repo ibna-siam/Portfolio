@@ -59,7 +59,11 @@ export function sanitizeCallbackUrl(rawUrl: string | null | undefined): string {
   }
 
   // Must not contain URL scheme delimiters
-  if (trimmed.includes("://") || trimmed.includes("javascript:") || trimmed.includes("data:")) {
+  if (
+    trimmed.includes("://") ||
+    trimmed.includes("javascript:") ||
+    trimmed.includes("data:")
+  ) {
     return "/admin";
   }
 

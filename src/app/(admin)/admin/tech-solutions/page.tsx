@@ -46,10 +46,7 @@ export default async function AdminTechSolutionsPage() {
       userName={session.user?.name}
       title="Tech Solutions"
       description="Practical software systems, calculation engines, and digital workflows supporting financial operations."
-      breadcrumbs={[
-        { label: "Overview", href: "/admin" },
-        { label: "Tech Solutions" },
-      ]}
+      breadcrumbs={[{ label: "Overview", href: "/admin" }, { label: "Tech Solutions" }]}
     >
       <SolutionsClient initialSolutions={solutions} />
     </AdminShell>

@@ -29,7 +29,9 @@ export function PublicAbout({ settings }: PublicAboutProps) {
             Professional Profile
           </h2>
           <p className="text-sm sm:text-base text-ink-600 dark:text-ink-300 leading-relaxed">
-            An accounting undergraduate developing practical analytical capabilities across financial reporting, managerial costing, taxation compliance, and business decision support.
+            An accounting undergraduate developing practical analytical capabilities
+            across financial reporting, managerial costing, taxation compliance, and
+            business decision support.
           </p>
         </div>
 
@@ -38,13 +40,23 @@ export function PublicAbout({ settings }: PublicAboutProps) {
           <div className="lg:col-span-7 space-y-6">
             <div className="text-ink-600 dark:text-ink-300 leading-relaxed space-y-4 text-sm sm:text-base">
               <p className="text-base sm:text-lg text-ink-800 dark:text-ink-100 font-medium leading-relaxed">
-                I am an undergraduate accounting student at Daffodil International University, focused on mastering corporate financial reporting, cost accounting, and tax compliance.
+                I am an undergraduate accounting student at Daffodil International
+                University, focused on mastering corporate financial reporting, cost
+                accounting, and tax compliance.
               </p>
               <p className="leading-relaxed">
-                My academic coursework and case studies emphasize practical accounting frameworks—including International Financial Reporting Standards (IFRS), Bangladesh Accounting Standards (BAS), and the Bangladesh Income Tax Act 2023. Through structured financial modeling, I examine audited statements, evaluate cost-volume-profit relationships, and build operational master budgets.
+                My academic coursework and case studies emphasize practical accounting
+                frameworks—including International Financial Reporting Standards (IFRS),
+                Bangladesh Accounting Standards (BAS), and the Bangladesh Income Tax Act
+                2023. Through structured financial modeling, I examine audited statements,
+                evaluate cost-volume-profit relationships, and build operational master
+                budgets.
               </p>
               <p className="leading-relaxed">
-                I view technology and automation as essential multipliers for accounting precision. By integrating spreadsheet automation, financial software, and structured dashboard workflows, I focus on turning complex transactions into reliable, reproducible managerial intelligence.
+                I view technology and automation as essential multipliers for accounting
+                precision. By integrating spreadsheet automation, financial software, and
+                structured dashboard workflows, I focus on turning complex transactions
+                into reliable, reproducible managerial intelligence.
               </p>
             </div>
 
@@ -91,7 +103,9 @@ export function PublicAbout({ settings }: PublicAboutProps) {
                   <span className="text-emerald-700 dark:text-emerald-400 font-semibold uppercase tracking-wider text-[11px]">
                     Academic Highlight
                   </span>
-                  <span className="text-ink-600 dark:text-ink-300 font-medium">Verified</span>
+                  <span className="text-ink-600 dark:text-ink-300 font-medium">
+                    Verified
+                  </span>
                 </div>
                 <h4 className="font-display font-bold text-base text-ink-900 dark:text-ink-50">
                   {item.label}

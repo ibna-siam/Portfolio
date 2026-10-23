@@ -113,7 +113,9 @@ export async function upsertTechSolutionAction(data: TechSolutionFormData) {
       entityId: cleanId,
       snapshot: { ...data, id: cleanId },
       authorId,
-      changeSummary: isCreate ? `Created solution: "${data.title}"` : `Updated solution: "${data.title}"`,
+      changeSummary: isCreate
+        ? `Created solution: "${data.title}"`
+        : `Updated solution: "${data.title}"`,
     });
 
     // Record activity log
@@ -129,7 +131,9 @@ export async function upsertTechSolutionAction(data: TechSolutionFormData) {
 
     return {
       success: true,
-      message: isCreate ? "Tech solution created successfully." : "Tech solution updated successfully.",
+      message: isCreate
+        ? "Tech solution created successfully."
+        : "Tech solution updated successfully.",
     };
   } catch (error) {
     console.error("[TechSolutionsAction] upsert error:", error);

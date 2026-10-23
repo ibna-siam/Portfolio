@@ -129,7 +129,9 @@ export function MediaPickerModal({
           {filteredAssets.length === 0 ? (
             <div className="py-16 text-center text-ink-600 dark:text-ink-400">
               <FiImage className="w-12 h-12 mx-auto mb-3 opacity-40 text-ink-400 dark:text-ink-500" />
-              <p className="text-sm font-medium text-ink-800 dark:text-ink-200">No media assets found</p>
+              <p className="text-sm font-medium text-ink-800 dark:text-ink-200">
+                No media assets found
+              </p>
               <p className="text-xs text-ink-600 dark:text-ink-400 mt-1 max-w-sm mx-auto">
                 {assets.length === 0
                   ? "Your media library is empty. Upload images in the Media Library to use them here."

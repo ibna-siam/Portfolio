@@ -18,13 +18,18 @@ test.describe("Accessibility (a11y) & WCAG 2.1 AA Audit", () => {
     );
 
     if (criticalViolations.length > 0) {
-      console.warn("Axe Violations on Homepage:", JSON.stringify(criticalViolations, null, 2));
+      console.warn(
+        "Axe Violations on Homepage:",
+        JSON.stringify(criticalViolations, null, 2)
+      );
     }
 
     expect(criticalViolations).toEqual([]);
   });
 
-  test("Case studies collection page passes automated axe-core audit", async ({ page }) => {
+  test("Case studies collection page passes automated axe-core audit", async ({
+    page,
+  }) => {
     await page.goto("/case-studies");
     await page.waitForLoadState("domcontentloaded");
 
@@ -80,7 +85,11 @@ test.describe("Accessibility (a11y) & WCAG 2.1 AA Audit", () => {
   });
 
   test("Semantic Heading Hierarchy: Exactly one h1 per page", async ({ page }) => {
-    const routes = ["/", "/case-studies", "/case-studies/individual-income-tax-return-ay2023-24"];
+    const routes = [
+      "/",
+      "/case-studies",
+      "/case-studies/individual-income-tax-return-ay2023-24",
+    ];
     for (const route of routes) {
       await page.goto(route);
       const h1Count = await page.locator("h1").count();

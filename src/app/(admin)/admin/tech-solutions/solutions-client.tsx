@@ -1,13 +1,7 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
-import {
-  FiPlus,
-  FiEdit3,
-  FiTrash2,
-  FiExternalLink,
-  FiCheckCircle,
-} from "react-icons/fi";
+import { FiPlus, FiEdit3, FiTrash2, FiExternalLink, FiCheckCircle } from "react-icons/fi";
 import {
   upsertTechSolutionAction,
   deleteTechSolutionAction,
@@ -40,7 +34,10 @@ interface SolutionsClientProps {
 export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
   const [solutions, setSolutions] = useState<TechSolutionItem[]>(initialSolutions);
   const [isPending, startTransition] = useTransition();
-  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [feedback, setFeedback] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   // Edit/New modal state
   const [editingItem, setEditingItem] = useState<Partial<TechSolutionItem> | null>(null);
@@ -83,8 +80,14 @@ export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
         problem: editingItem.problem || "",
         solution: editingItem.solution || "",
         userRole: editingItem.userRole || "Lead Architect",
-        techStack: techStackText.split(",").map((s) => s.trim()).filter(Boolean),
-        features: featuresText.split("\n").map((s) => s.trim()).filter(Boolean),
+        techStack: techStackText
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        features: featuresText
+          .split("\n")
+          .map((s) => s.trim())
+          .filter(Boolean),
         verifiedRepo: editingItem.verifiedRepo || null,
         verifiedDemo: editingItem.verifiedDemo || null,
         linkText: editingItem.linkText || "View Repository",
@@ -98,7 +101,9 @@ export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
         setSolutions((prev) => {
           const exists = prev.some((s) => s.id === payload.id);
           if (exists) {
-            return prev.map((s) => (s.id === payload.id ? ({ ...s, ...payload } as TechSolutionItem) : s));
+            return prev.map((s) =>
+              s.id === payload.id ? ({ ...s, ...payload } as TechSolutionItem) : s
+            );
           } else {
             return [...prev, payload as TechSolutionItem];
           }
@@ -118,7 +123,10 @@ export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
         setSolutions((prev) => prev.filter((s) => s.id !== id));
         setFeedback({ type: "success", message: res.message || "Solution deleted." });
       } else {
-        setFeedback({ type: "error", message: res.error || "Failed to delete solution." });
+        setFeedback({
+          type: "error",
+          message: res.error || "Failed to delete solution.",
+        });
       }
     });
   };
@@ -151,7 +159,10 @@ export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
           }`}
         >
           <span>{feedback.message}</span>
-          <button onClick={() => setFeedback(null)} className="underline text-xs ml-4 cursor-pointer">
+          <button
+            onClick={() => setFeedback(null)}
+            className="underline text-xs ml-4 cursor-pointer"
+          >
             Dismiss
           </button>
         </div>
@@ -177,8 +188,12 @@ export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
                     Role: {item.userRole}
                   </span>
                 </div>
-                <h3 className="font-display font-bold text-lg text-ink-900 dark:text-ink-50">{item.title}</h3>
-                <p className="text-xs font-mono text-ink-600 dark:text-ink-400">ID: {item.id}</p>
+                <h3 className="font-display font-bold text-lg text-ink-900 dark:text-ink-50">
+                  {item.title}
+                </h3>
+                <p className="text-xs font-mono text-ink-600 dark:text-ink-400">
+                  ID: {item.id}
+                </p>
               </div>
 
               <div className="flex items-center gap-2">
@@ -206,14 +221,18 @@ export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
                 <span className="font-mono text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider block">
                   Problem Addressed
                 </span>
-                <p className="text-ink-700 dark:text-ink-300 leading-relaxed">{item.problem}</p>
+                <p className="text-ink-700 dark:text-ink-300 leading-relaxed">
+                  {item.problem}
+                </p>
               </div>
 
               <div className="bg-ink-50 dark:bg-ink-950/60 p-4 rounded-xl border border-ink-200 dark:border-ink-800/80 space-y-1">
                 <span className="font-mono text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider block">
                   Engineered Solution
                 </span>
-                <p className="text-ink-700 dark:text-ink-300 leading-relaxed">{item.solution}</p>
+                <p className="text-ink-700 dark:text-ink-300 leading-relaxed">
+                  {item.solution}
+                </p>
               </div>
             </div>
 
@@ -225,7 +244,10 @@ export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
                 </span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                   {item.features.map((feat, idx) => (
-                    <div key={idx} className="flex items-start gap-2 text-ink-700 dark:text-ink-300">
+                    <div
+                      key={idx}
+                      className="flex items-start gap-2 text-ink-700 dark:text-ink-300"
+                    >
                       <FiCheckCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                       <span>{feat}</span>
                     </div>
@@ -280,7 +302,9 @@ export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
       <Modal
         isOpen={!!editingItem}
         onClose={() => setEditingItem(null)}
-        title={editingItem?.title ? `Edit Solution: ${editingItem.title}` : "New Tech Solution"}
+        title={
+          editingItem?.title ? `Edit Solution: ${editingItem.title}` : "New Tech Solution"
+        }
         description="Configure software architecture, problem formulation, solution methodology, and repository links."
         maxWidth="2xl"
         footer={
@@ -304,14 +328,22 @@ export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
         }
       >
         {editingItem && (
-          <form id="tech-solution-form" onSubmit={handleSaveModal} className="space-y-4 text-xs font-mono">
+          <form
+            id="tech-solution-form"
+            onSubmit={handleSaveModal}
+            className="space-y-4 text-xs font-mono"
+          >
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">System ID (Slug) *</label>
+                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                  System ID (Slug) *
+                </label>
                 <input
                   type="text"
                   required
-                  disabled={Boolean(editingItem.id && solutions.some((s) => s.id === editingItem.id))}
+                  disabled={Boolean(
+                    editingItem.id && solutions.some((s) => s.id === editingItem.id)
+                  )}
                   value={editingItem.id || ""}
                   onChange={(e) => setEditingItem({ ...editingItem, id: e.target.value })}
                   placeholder="financial-portfolio-engine"
@@ -320,12 +352,16 @@ export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
               </div>
 
               <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Title *</label>
+                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                  Title *
+                </label>
                 <input
                   type="text"
                   required
                   value={editingItem.title || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, title: e.target.value })}
+                  onChange={(e) =>
+                    setEditingItem({ ...editingItem, title: e.target.value })
+                  }
                   placeholder="Financial Statement Ratio Engine"
                   className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3.5 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
                 />
@@ -334,22 +370,30 @@ export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Category</label>
+                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                  Category
+                </label>
                 <input
                   type="text"
                   value={editingItem.category || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, category: e.target.value })}
+                  onChange={(e) =>
+                    setEditingItem({ ...editingItem, category: e.target.value })
+                  }
                   placeholder="Financial Engineering"
                   className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">User Role</label>
+                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                  User Role
+                </label>
                 <input
                   type="text"
                   value={editingItem.userRole || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, userRole: e.target.value })}
+                  onChange={(e) =>
+                    setEditingItem({ ...editingItem, userRole: e.target.value })
+                  }
                   placeholder="Lead Architect & Systems Designer"
                   className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
                 />
@@ -357,22 +401,30 @@ export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
             </div>
 
             <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Problem Statement</label>
+              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                Problem Statement
+              </label>
               <textarea
                 rows={2}
                 value={editingItem.problem || ""}
-                onChange={(e) => setEditingItem({ ...editingItem, problem: e.target.value })}
+                onChange={(e) =>
+                  setEditingItem({ ...editingItem, problem: e.target.value })
+                }
                 placeholder="Manual spreadsheet models lead to discrepancy risks..."
                 className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl p-3 text-ink-900 dark:text-ink-100 font-sans focus:outline-none focus:border-emerald-500/60 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Engineered Solution</label>
+              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                Engineered Solution
+              </label>
               <textarea
                 rows={2}
                 value={editingItem.solution || ""}
-                onChange={(e) => setEditingItem({ ...editingItem, solution: e.target.value })}
+                onChange={(e) =>
+                  setEditingItem({ ...editingItem, solution: e.target.value })
+                }
                 placeholder="Automated calculation engine with tabular verification..."
                 className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl p-3 text-ink-900 dark:text-ink-100 font-sans focus:outline-none focus:border-emerald-500/60 transition-colors"
               />
@@ -406,22 +458,30 @@ export function SolutionsClient({ initialSolutions }: SolutionsClientProps) {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Verified Repository URL</label>
+                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                  Verified Repository URL
+                </label>
                 <input
                   type="url"
                   value={editingItem.verifiedRepo || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, verifiedRepo: e.target.value })}
+                  onChange={(e) =>
+                    setEditingItem({ ...editingItem, verifiedRepo: e.target.value })
+                  }
                   placeholder="https://github.com/ibna-siam/..."
                   className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Link Display Text</label>
+                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                  Link Display Text
+                </label>
                 <input
                   type="text"
                   value={editingItem.linkText || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, linkText: e.target.value })}
+                  onChange={(e) =>
+                    setEditingItem({ ...editingItem, linkText: e.target.value })
+                  }
                   placeholder="View Repository"
                   className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
                 />

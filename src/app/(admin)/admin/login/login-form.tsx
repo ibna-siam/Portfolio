@@ -2,7 +2,14 @@
 
 import React, { useActionState, useState } from "react";
 import { loginAction, type LoginActionState } from "./actions";
-import { FiLock, FiMail, FiEye, FiEyeOff, FiShield, FiAlertTriangle } from "react-icons/fi";
+import {
+  FiLock,
+  FiMail,
+  FiEye,
+  FiEyeOff,
+  FiShield,
+  FiAlertTriangle,
+} from "react-icons/fi";
 
 interface LoginFormProps {
   initialCallbackUrl?: string;
@@ -13,11 +20,12 @@ export function LoginForm({ initialCallbackUrl, initialError }: LoginFormProps) 
   const [showPassword, setShowPassword] = useState(false);
 
   const initialState: LoginActionState = {
-    error: initialError === "AccessDenied"
-      ? "Access denied. Administrator privileges are required to enter this area."
-      : initialError === "UnauthorizedRole"
-      ? "Your account does not possess the required administrator role."
-      : undefined,
+    error:
+      initialError === "AccessDenied"
+        ? "Access denied. Administrator privileges are required to enter this area."
+        : initialError === "UnauthorizedRole"
+          ? "Your account does not possess the required administrator role."
+          : undefined,
   };
 
   const [state, formAction, isPending] = useActionState(loginAction, initialState);
@@ -25,11 +33,7 @@ export function LoginForm({ initialCallbackUrl, initialError }: LoginFormProps) 
   return (
     <form action={formAction} className="space-y-5" noValidate>
       {/* Hidden input to securely preserve the sanitized callback destination */}
-      <input
-        type="hidden"
-        name="callbackUrl"
-        value={initialCallbackUrl || "/admin"}
-      />
+      <input type="hidden" name="callbackUrl" value={initialCallbackUrl || "/admin"} />
 
       {/* Accessible Error Banner */}
       {state?.error && (

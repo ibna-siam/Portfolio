@@ -18,7 +18,10 @@ import {
   FiFileText,
   FiLayers,
 } from "react-icons/fi";
-import { MediaPickerModal, MediaPickerAsset } from "@/components/admin/media-picker-modal";
+import {
+  MediaPickerModal,
+  MediaPickerAsset,
+} from "@/components/admin/media-picker-modal";
 import {
   upsertCaseStudyAction,
   CaseStudyFormData,
@@ -58,7 +61,10 @@ export function CaseStudyEditor({
 }: CaseStudyEditorProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [feedback, setFeedback] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
   const [isMediaPickerOpen, setIsMediaPickerOpen] = useState(false);
 
   // Form State
@@ -70,12 +76,15 @@ export function CaseStudyEditor({
     group: initialData?.group || "Applied Accounting Case Study",
     groupId: initialData?.groupId || "accounting",
     groupShort: initialData?.groupShort || "Accounting",
-    academicScope: initialData?.academicScope || "Financial Analysis & Managerial Costing",
+    academicScope:
+      initialData?.academicScope || "Financial Analysis & Managerial Costing",
     framework: initialData?.framework || "IFRS / Bangladesh Income Tax Act 2023",
     evidenceType: initialData?.evidenceType || "Coursework & Empirical Case Data",
     currencyUnit: initialData?.currencyUnit || "BDT (Bangladeshi Taka)",
-    inputsClassification: initialData?.inputsClassification || "Verified Coursework Model",
-    calculationBasis: initialData?.calculationBasis || "Standard CVP & Financial Statement Ratios",
+    inputsClassification:
+      initialData?.inputsClassification || "Verified Coursework Model",
+    calculationBasis:
+      initialData?.calculationBasis || "Standard CVP & Financial Statement Ratios",
     integrityStatusKey: initialData?.integrityStatusKey || "STANDARD",
     secondaryStatusKey: initialData?.secondaryStatusKey || "",
     description: initialData?.description || "",
@@ -100,9 +109,15 @@ export function CaseStudyEditor({
   // Dynamic Array Helper (for comma/newline separated lists)
   const [detailsText, setDetailsText] = useState((formData.details || []).join("\n"));
   const [toolsText, setToolsText] = useState((formData.tools || []).join(", "));
-  const [objectivesText, setObjectivesText] = useState((formData.objectives || []).join("\n"));
-  const [keyFindingsText, setKeyFindingsText] = useState((formData.keyFindings || []).join("\n"));
-  const [recommendationsText, setRecommendationsText] = useState((formData.recommendations || []).join("\n"));
+  const [objectivesText, setObjectivesText] = useState(
+    (formData.objectives || []).join("\n")
+  );
+  const [keyFindingsText, setKeyFindingsText] = useState(
+    (formData.keyFindings || []).join("\n")
+  );
+  const [recommendationsText, setRecommendationsText] = useState(
+    (formData.recommendations || []).join("\n")
+  );
 
   // Schedules state
   const [schedules, setSchedules] = useState<ScheduleInput[]>(initialSchedules);
@@ -163,7 +178,9 @@ export function CaseStudyEditor({
 
   const handleRemoveScheduleRow = (scheduleIndex: number, rowIndex: number) => {
     const updated = [...schedules];
-    updated[scheduleIndex].rows = updated[scheduleIndex].rows.filter((_, i) => i !== rowIndex);
+    updated[scheduleIndex].rows = updated[scheduleIndex].rows.filter(
+      (_, i) => i !== rowIndex
+    );
     setSchedules(updated);
   };
 
@@ -190,7 +207,9 @@ export function CaseStudyEditor({
 
   const handleAddScheduleColumn = (scheduleIndex: number) => {
     const updated = [...schedules];
-    updated[scheduleIndex].headers.push(`Column ${updated[scheduleIndex].headers.length + 1}`);
+    updated[scheduleIndex].headers.push(
+      `Column ${updated[scheduleIndex].headers.length + 1}`
+    );
     for (const row of updated[scheduleIndex].rows) {
       row.push("-");
     }
@@ -200,9 +219,13 @@ export function CaseStudyEditor({
   const handleRemoveScheduleColumn = (scheduleIndex: number, colIndex: number) => {
     const updated = [...schedules];
     if (updated[scheduleIndex].headers.length <= 1) return;
-    updated[scheduleIndex].headers = updated[scheduleIndex].headers.filter((_, i) => i !== colIndex);
+    updated[scheduleIndex].headers = updated[scheduleIndex].headers.filter(
+      (_, i) => i !== colIndex
+    );
     for (let r = 0; r < updated[scheduleIndex].rows.length; r++) {
-      updated[scheduleIndex].rows[r] = updated[scheduleIndex].rows[r].filter((_, i) => i !== colIndex);
+      updated[scheduleIndex].rows[r] = updated[scheduleIndex].rows[r].filter(
+        (_, i) => i !== colIndex
+      );
     }
     setSchedules(updated);
   };
@@ -215,11 +238,26 @@ export function CaseStudyEditor({
       const payload: CaseStudyFormData = {
         ...formData,
         status: statusToSet,
-        details: detailsText.split("\n").map((s) => s.trim()).filter(Boolean),
-        tools: toolsText.split(",").map((s) => s.trim()).filter(Boolean),
-        objectives: objectivesText.split("\n").map((s) => s.trim()).filter(Boolean),
-        keyFindings: keyFindingsText.split("\n").map((s) => s.trim()).filter(Boolean),
-        recommendations: recommendationsText.split("\n").map((s) => s.trim()).filter(Boolean),
+        details: detailsText
+          .split("\n")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        tools: toolsText
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        objectives: objectivesText
+          .split("\n")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        keyFindings: keyFindingsText
+          .split("\n")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        recommendations: recommendationsText
+          .split("\n")
+          .map((s) => s.trim())
+          .filter(Boolean),
         financialSchedules: schedules,
       };
 
@@ -251,7 +289,9 @@ export function CaseStudyEditor({
             <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 mb-1">
               <FiBookOpen className="w-3.5 h-3.5" />
               <span>
-                {initialData?.id ? `Edit Case Study #${initialData.id.slice(0, 8)}` : "Create New Case Study"}
+                {initialData?.id
+                  ? `Edit Case Study #${initialData.id.slice(0, 8)}`
+                  : "Create New Case Study"}
               </span>
             </div>
             <h1 className="font-display text-2xl font-bold text-ink-900 dark:text-ink-50">
@@ -324,20 +364,32 @@ export function CaseStudyEditor({
             </span>
           </div>
           <p className="text-xs text-amber-900 dark:text-amber-200/90 leading-relaxed">
-            This study is bound to a verified mathematical discrepancy disclosure in accordance with
-            portfolio integrity guardrails (VAL-09, VAL-10, VAL-11). The disclosure below must
-            remain preserved and cannot be silently deleted or reconciled without documented owner approval.
+            This study is bound to a verified mathematical discrepancy disclosure in
+            accordance with portfolio integrity guardrails (VAL-09, VAL-10, VAL-11). The
+            disclosure below must remain preserved and cannot be silently deleted or
+            reconciled without documented owner approval.
           </p>
           <div className="bg-amber-500/5 dark:bg-ink-950/80 border border-amber-500/20 rounded-xl p-4 font-mono text-xs space-y-2">
-            <div className="text-amber-700 dark:text-amber-300 font-semibold">{discrepancy.headline}</div>
-            <div className="text-ink-600 dark:text-ink-400">
-              <span className="text-ink-800 dark:text-ink-300 font-semibold">Formula Tested:</span> {discrepancy.formulaTested}
+            <div className="text-amber-700 dark:text-amber-300 font-semibold">
+              {discrepancy.headline}
             </div>
             <div className="text-ink-600 dark:text-ink-400">
-              <span className="text-ink-800 dark:text-ink-300 font-semibold">Values:</span> {discrepancy.originalValues}
+              <span className="text-ink-800 dark:text-ink-300 font-semibold">
+                Formula Tested:
+              </span>{" "}
+              {discrepancy.formulaTested}
             </div>
             <div className="text-ink-600 dark:text-ink-400">
-              <span className="text-ink-800 dark:text-ink-300 font-semibold">Policy:</span> {discrepancy.preservationPolicy}
+              <span className="text-ink-800 dark:text-ink-300 font-semibold">
+                Values:
+              </span>{" "}
+              {discrepancy.originalValues}
+            </div>
+            <div className="text-ink-600 dark:text-ink-400">
+              <span className="text-ink-800 dark:text-ink-300 font-semibold">
+                Policy:
+              </span>{" "}
+              {discrepancy.preservationPolicy}
             </div>
           </div>
         </div>
@@ -392,7 +444,8 @@ export function CaseStudyEditor({
                       setFormData({
                         ...formData,
                         groupId: e.target.value,
-                        groupShort: e.target.value === "accounting" ? "Accounting" : "Research",
+                        groupShort:
+                          e.target.value === "accounting" ? "Accounting" : "Research",
                         group:
                           e.target.value === "accounting"
                             ? "Applied Accounting Case Study"
@@ -402,7 +455,9 @@ export function CaseStudyEditor({
                     className="w-full bg-ink-50/70 dark:bg-ink-950 border border-ink-300 dark:border-ink-800 rounded-xl px-3.5 py-2.5 text-xs text-ink-900 dark:text-ink-100 shadow-xs dark:shadow-clay-inset-dark focus:outline-none focus:border-emerald-500/60"
                   >
                     <option value="accounting">Accounting (Applied Case Study)</option>
-                    <option value="macroeconomics">Macroeconomics (Research Study)</option>
+                    <option value="macroeconomics">
+                      Macroeconomics (Research Study)
+                    </option>
                   </select>
                 </div>
               </div>
@@ -440,7 +495,9 @@ export function CaseStudyEditor({
                 <textarea
                   rows={3}
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   placeholder="Summary description of the coursework scope..."
                   className="w-full bg-ink-50/70 dark:bg-ink-950 border border-ink-300 dark:border-ink-800 rounded-xl p-3 text-xs text-ink-900 dark:text-ink-100 font-sans shadow-xs dark:shadow-clay-inset-dark focus:outline-none focus:border-emerald-500/60"
                 />
@@ -463,7 +520,9 @@ export function CaseStudyEditor({
                 <input
                   type="text"
                   value={formData.framework}
-                  onChange={(e) => setFormData({ ...formData, framework: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, framework: e.target.value })
+                  }
                   placeholder="e.g. Bangladesh Income Tax Act 2023 / IFRS"
                   className="w-full bg-ink-50/70 dark:bg-ink-950 border border-ink-300 dark:border-ink-800 rounded-xl px-3.5 py-2.5 text-xs text-ink-900 dark:text-ink-100 shadow-xs dark:shadow-clay-inset-dark focus:outline-none focus:border-emerald-500/60"
                 />
@@ -476,7 +535,9 @@ export function CaseStudyEditor({
                 <input
                   type="text"
                   value={formData.currencyUnit}
-                  onChange={(e) => setFormData({ ...formData, currencyUnit: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, currencyUnit: e.target.value })
+                  }
                   placeholder="BDT (Bangladeshi Taka)"
                   className="w-full bg-ink-50/70 dark:bg-ink-950 border border-ink-300 dark:border-ink-800 rounded-xl px-3.5 py-2.5 text-xs text-ink-900 dark:text-ink-100 shadow-xs dark:shadow-clay-inset-dark focus:outline-none focus:border-emerald-500/60"
                 />
@@ -489,7 +550,9 @@ export function CaseStudyEditor({
                 <input
                   type="text"
                   value={formData.evidenceType}
-                  onChange={(e) => setFormData({ ...formData, evidenceType: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, evidenceType: e.target.value })
+                  }
                   placeholder="Coursework & Empirical Case Data"
                   className="w-full bg-ink-50/70 dark:bg-ink-950 border border-ink-300 dark:border-ink-800 rounded-xl px-3.5 py-2.5 text-xs text-ink-900 dark:text-ink-100 shadow-xs dark:shadow-clay-inset-dark focus:outline-none focus:border-emerald-500/60"
                 />
@@ -502,7 +565,9 @@ export function CaseStudyEditor({
                 <input
                   type="text"
                   value={formData.calculationBasis}
-                  onChange={(e) => setFormData({ ...formData, calculationBasis: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, calculationBasis: e.target.value })
+                  }
                   placeholder="Statutory Slab Assessment"
                   className="w-full bg-ink-50/70 dark:bg-ink-950 border border-ink-300 dark:border-ink-800 rounded-xl px-3.5 py-2.5 text-xs text-ink-900 dark:text-ink-100 shadow-xs dark:shadow-clay-inset-dark focus:outline-none focus:border-emerald-500/60"
                 />
@@ -586,7 +651,8 @@ export function CaseStudyEditor({
                   <span>Financial Tabular Schedules</span>
                 </h2>
                 <p className="text-xs text-ink-600 dark:text-ink-400 mt-0.5">
-                  Structured monetary and variance tables formatted with .tabular-nums precision
+                  Structured monetary and variance tables formatted with .tabular-nums
+                  precision
                 </p>
               </div>
 
@@ -602,7 +668,8 @@ export function CaseStudyEditor({
 
             {schedules.length === 0 ? (
               <div className="py-8 text-center bg-ink-50 dark:bg-ink-950/60 border border-dashed border-ink-300 dark:border-ink-800 rounded-xl text-xs text-ink-600 dark:text-ink-400">
-                No financial schedules attached to this case study. Click &quot;Add Schedule&quot; to build a schedule.
+                No financial schedules attached to this case study. Click &quot;Add
+                Schedule&quot; to build a schedule.
               </div>
             ) : (
               <div className="space-y-6">
@@ -620,7 +687,9 @@ export function CaseStudyEditor({
                         <input
                           type="text"
                           value={schedule.title}
-                          onChange={(e) => handleUpdateScheduleTitle(sIndex, e.target.value)}
+                          onChange={(e) =>
+                            handleUpdateScheduleTitle(sIndex, e.target.value)
+                          }
                           className="w-full bg-white dark:bg-ink-900 border border-ink-300 dark:border-ink-800 rounded-lg px-3 py-1.5 text-xs text-ink-900 dark:text-ink-100 font-semibold focus:outline-none focus:border-emerald-500/60"
                         />
                       </div>
@@ -657,20 +726,29 @@ export function CaseStudyEditor({
                         <thead>
                           <tr className="bg-ink-100 dark:bg-ink-900 border-b border-ink-200 dark:border-ink-800">
                             {schedule.headers.map((header, cIndex) => (
-                              <th key={cIndex} className="p-2 border-r border-ink-200 dark:border-ink-800/80 relative group">
+                              <th
+                                key={cIndex}
+                                className="p-2 border-r border-ink-200 dark:border-ink-800/80 relative group"
+                              >
                                 <div className="flex items-center gap-1">
                                   <input
                                     type="text"
                                     value={header}
                                     onChange={(e) =>
-                                      handleUpdateScheduleHeader(sIndex, cIndex, e.target.value)
+                                      handleUpdateScheduleHeader(
+                                        sIndex,
+                                        cIndex,
+                                        e.target.value
+                                      )
                                     }
                                     className="w-full bg-transparent text-emerald-600 dark:text-emerald-400 font-mono font-bold text-[11px] focus:outline-none"
                                   />
                                   {schedule.headers.length > 1 && (
                                     <button
                                       type="button"
-                                      onClick={() => handleRemoveScheduleColumn(sIndex, cIndex)}
+                                      onClick={() =>
+                                        handleRemoveScheduleColumn(sIndex, cIndex)
+                                      }
                                       className="opacity-0 group-hover:opacity-100 text-ink-400 hover:text-red-500 text-[10px] px-1"
                                       title="Remove column"
                                     >
@@ -685,14 +763,25 @@ export function CaseStudyEditor({
                         </thead>
                         <tbody className="divide-y divide-ink-200 dark:divide-ink-800/60 font-mono tabular-nums text-xs">
                           {schedule.rows.map((row, rIndex) => (
-                            <tr key={rIndex} className="hover:bg-ink-100/60 dark:hover:bg-ink-900/50">
+                            <tr
+                              key={rIndex}
+                              className="hover:bg-ink-100/60 dark:hover:bg-ink-900/50"
+                            >
                               {row.map((cell, cIndex) => (
-                                <td key={cIndex} className="p-2 border-r border-ink-200 dark:border-ink-800/40">
+                                <td
+                                  key={cIndex}
+                                  className="p-2 border-r border-ink-200 dark:border-ink-800/40"
+                                >
                                   <input
                                     type="text"
                                     value={cell}
                                     onChange={(e) =>
-                                      handleUpdateScheduleCell(sIndex, rIndex, cIndex, e.target.value)
+                                      handleUpdateScheduleCell(
+                                        sIndex,
+                                        rIndex,
+                                        cIndex,
+                                        e.target.value
+                                      )
                                     }
                                     className="w-full bg-transparent text-ink-800 dark:text-ink-200 focus:outline-none focus:text-ink-950 dark:focus:text-white"
                                   />
@@ -722,7 +811,9 @@ export function CaseStudyEditor({
                       <input
                         type="text"
                         value={schedule.notes || ""}
-                        onChange={(e) => handleUpdateScheduleNotes(sIndex, e.target.value)}
+                        onChange={(e) =>
+                          handleUpdateScheduleNotes(sIndex, e.target.value)
+                        }
                         placeholder="e.g. Figures derived from audited financial disclosures."
                         className="w-full bg-white dark:bg-ink-900 border border-ink-300 dark:border-ink-800 rounded-lg px-3 py-1.5 text-xs text-ink-700 dark:text-ink-300 focus:outline-none"
                       />
@@ -756,10 +847,14 @@ export function CaseStudyEditor({
                 <input
                   type="checkbox"
                   checked={formData.featured}
-                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, featured: e.target.checked })
+                  }
                   className="rounded border-ink-300 dark:border-ink-700 bg-white dark:bg-ink-950 text-emerald-500 focus:ring-emerald-500/30"
                 />
-                <span className="text-ink-800 dark:text-ink-200">Featured Research Study</span>
+                <span className="text-ink-800 dark:text-ink-200">
+                  Featured Research Study
+                </span>
               </label>
 
               <div className="pt-2 border-t border-ink-200 dark:border-ink-800 space-y-2">
@@ -825,7 +920,9 @@ export function CaseStudyEditor({
             ) : (
               <div className="text-center py-6 border border-dashed border-ink-300 dark:border-ink-800 rounded-xl bg-ink-50/50 dark:bg-ink-950/40">
                 <FiImage className="w-8 h-8 mx-auto text-ink-500 dark:text-ink-400 mb-2 opacity-50" />
-                <p className="text-xs text-ink-600 dark:text-ink-400 mb-3">No image attached</p>
+                <p className="text-xs text-ink-600 dark:text-ink-400 mb-3">
+                  No image attached
+                </p>
                 <button
                   type="button"
                   onClick={() => setIsMediaPickerOpen(true)}

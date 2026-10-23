@@ -7,7 +7,10 @@ import * as schema from "../src/lib/db/schema";
 import { personal, about, projects } from "../src/data/portfolioData.js";
 import { CASE_STUDY_METADATA } from "../src/data/caseStudyIntegrity.js";
 import { competencies as rawCompetencies } from "../src/data/competenciesData.js";
-import { ACADEMIC_MILESTONES, PROFESSIONAL_TRAJECTORY } from "../src/data/academicJourneyData.js";
+import {
+  ACADEMIC_MILESTONES,
+  PROFESSIONAL_TRAJECTORY,
+} from "../src/data/academicJourneyData.js";
 import { TECH_SOLUTIONS } from "../src/data/techSolutionsData.js";
 
 // Load environment variables (.env.local, .env)
@@ -82,7 +85,9 @@ function logHeader(title: string) {
 }
 
 async function runSeed() {
-  logHeader(`STARTING DATABASE SEED ${isDryRun ? "[DRY RUN — NO WRITES]" : "[LIVE EXECUTION]"}`);
+  logHeader(
+    `STARTING DATABASE SEED ${isDryRun ? "[DRY RUN — NO WRITES]" : "[LIVE EXECUTION]"}`
+  );
 
   // 1. Mandatory Preflight Validation
   const connectionString = process.env.DATABASE_URL;
@@ -97,17 +102,27 @@ async function runSeed() {
     throw new Error(`Expected exactly 8 case studies, found ${projects?.length || 0}`);
   }
   if (!Array.isArray(rawCompetencies) || rawCompetencies.length !== 16) {
-    throw new Error(`Expected exactly 16 competencies, found ${rawCompetencies?.length || 0}`);
+    throw new Error(
+      `Expected exactly 16 competencies, found ${rawCompetencies?.length || 0}`
+    );
   }
   if (!Array.isArray(ACADEMIC_MILESTONES) || ACADEMIC_MILESTONES.length !== 3) {
-    throw new Error(`Expected exactly 3 academic milestones, found ${ACADEMIC_MILESTONES?.length || 0}`);
+    throw new Error(
+      `Expected exactly 3 academic milestones, found ${ACADEMIC_MILESTONES?.length || 0}`
+    );
   }
   if (!Array.isArray(TECH_SOLUTIONS) || TECH_SOLUTIONS.length !== 3) {
-    throw new Error(`Expected exactly 3 tech solutions, found ${TECH_SOLUTIONS?.length || 0}`);
+    throw new Error(
+      `Expected exactly 3 tech solutions, found ${TECH_SOLUTIONS?.length || 0}`
+    );
   }
 
-  console.log("✓ Source data verified: 8 case studies, 16 competencies, 3 milestones, 3 solutions.");
-  console.log("✓ Strict privacy guardrail VAL-07: Phone number marked as private admin field (hidden from public displays).");
+  console.log(
+    "✓ Source data verified: 8 case studies, 16 competencies, 3 milestones, 3 solutions."
+  );
+  console.log(
+    "✓ Strict privacy guardrail VAL-07: Phone number marked as private admin field (hidden from public displays)."
+  );
 
   const sql = neon(connectionString);
   const db = drizzle(sql, { schema });
@@ -175,7 +190,9 @@ async function runSeed() {
   // ---------------------------------------------------------------------------
   console.log("\n--> Processing Case Studies (8 Studies)...");
   for (const proj of projects) {
-    const meta = (CASE_STUDY_METADATA as unknown as Record<number, CaseStudyMeta>)[proj.id];
+    const meta = (CASE_STUDY_METADATA as unknown as Record<number, CaseStudyMeta>)[
+      proj.id
+    ];
     if (!meta) {
       throw new Error(`Missing CASE_STUDY_METADATA for project ID ${proj.id}`);
     }
@@ -266,7 +283,9 @@ async function runSeed() {
                 .where(eq(schema.financialSchedules.caseStudyId, caseStudyDbId))
                 .limit(10);
 
-              const matchedSchedule = existingSchedule.find((s) => s.title === tableData.title);
+              const matchedSchedule = existingSchedule.find(
+                (s) => s.title === tableData.title
+              );
               if (!matchedSchedule) {
                 await db.insert(schema.financialSchedules).values({
                   caseStudyId: caseStudyDbId,
@@ -295,7 +314,10 @@ async function runSeed() {
             }
           } catch (err: unknown) {
             stats.financialSchedules.failed++;
-            console.error(`    x Schedule "${tableData.title}" failed:`, (err as Error).message);
+            console.error(
+              `    x Schedule "${tableData.title}" failed:`,
+              (err as Error).message
+            );
           }
         }
       }
@@ -326,7 +348,9 @@ async function runSeed() {
             if (existingDisc.length === 0) {
               await db.insert(schema.caseStudyDiscrepancies).values(discPayload);
               stats.caseStudyDiscrepancies.created++;
-              console.log(`    ! Discrepancy registered: [${disc.headline.slice(0, 50)}...]`);
+              console.log(
+                `    ! Discrepancy registered: [${disc.headline.slice(0, 50)}...]`
+              );
             } else {
               await db
                 .update(schema.caseStudyDiscrepancies)
@@ -511,23 +535,39 @@ async function runSeed() {
 
   logHeader("FINANCIAL DISCREPANCY RECONCILIATION SUMMARY");
   console.log("1. Individual Income Tax Return (AY 2023-24):");
-  console.log("   - Preserved: Narrative BDT 19,250 payable / BDT 1,750 refund alongside table BDT (11,750) net refund.");
-  console.log("   - Formula verified: Gross Tax (68,750) - Rebate (32,000) - TDS (48,500) = (11,750) Refund.");
+  console.log(
+    "   - Preserved: Narrative BDT 19,250 payable / BDT 1,750 refund alongside table BDT (11,750) net refund."
+  );
+  console.log(
+    "   - Formula verified: Gross Tax (68,750) - Rebate (32,000) - TDS (48,500) = (11,750) Refund."
+  );
   console.log("2. StyleTex RMG Costing & CVP Analysis:");
-  console.log("   - Preserved: Table row BDT 420 (28%) contribution margin alongside calculated BDT 380 (25.33%).");
-  console.log("   - Formula verified: Selling Price (1,500) - Variable Cost (1,120) = BDT 380 per unit.");
+  console.log(
+    "   - Preserved: Table row BDT 420 (28%) contribution margin alongside calculated BDT 380 (25.33%)."
+  );
+  console.log(
+    "   - Formula verified: Selling Price (1,500) - Variable Cost (1,120) = BDT 380 per unit."
+  );
   console.log("3. FIFA World Cup Economic Impact:");
-  console.log("   - Preserved: Narrative BDT 24,500 crore total impact alongside table direct impact of BDT 43,420 crore.");
-  console.log("   - Conflict verified: Total direct impact exceeds total economic contribution (definitional conflict).");
+  console.log(
+    "   - Preserved: Narrative BDT 24,500 crore total impact alongside table direct impact of BDT 43,420 crore."
+  );
+  console.log(
+    "   - Conflict verified: Total direct impact exceeds total economic contribution (definitional conflict)."
+  );
   console.log("4. Square Pharmaceuticals Ltd.:");
-  console.log("   - Preserved: 'saving an estimated 8% overhead' clarified as academic estimation in audit notes.");
+  console.log(
+    "   - Preserved: 'saving an estimated 8% overhead' clarified as academic estimation in audit notes."
+  );
 
   const totalFailed = Object.values(stats).reduce((acc, s) => acc + s.failed, 0);
   if (totalFailed > 0) {
     console.error(`\nCRITICAL: Seed execution completed with ${totalFailed} errors.`);
     process.exit(1);
   } else {
-    console.log(`\n✓ SEED SCRIPT EXECUTED SUCCESSFULLY (${isDryRun ? "DRY RUN COMPLETE" : "ALL RECORDS SYNCED"}).`);
+    console.log(
+      `\n✓ SEED SCRIPT EXECUTED SUCCESSFULLY (${isDryRun ? "DRY RUN COMPLETE" : "ALL RECORDS SYNCED"}).`
+    );
   }
 }
 

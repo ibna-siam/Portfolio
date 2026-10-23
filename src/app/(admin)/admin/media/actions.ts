@@ -54,8 +54,7 @@ export async function getUploadSignatureAction(): Promise<
     console.error("[MEDIA_ACTION] Failed to generate upload signature:", err);
     return {
       success: false,
-      error:
-        err instanceof Error ? err.message : "Failed to generate upload signature.",
+      error: err instanceof Error ? err.message : "Failed to generate upload signature.",
     };
   }
 }
@@ -83,7 +82,12 @@ export async function registerMediaAssetAction(
     await requireAdmin();
 
     // 1. Structural validation
-    if (!payload.public_id || !payload.version || !payload.signature || !payload.secure_url) {
+    if (
+      !payload.public_id ||
+      !payload.version ||
+      !payload.signature ||
+      !payload.secure_url
+    ) {
       return { success: false, error: "Incomplete upload response payload." };
     }
 
@@ -120,10 +124,14 @@ export async function registerMediaAssetAction(
     );
 
     if (!isValidSignature) {
-      console.error("[MEDIA_SECURITY] Rejected unverified or tampered Cloudinary payload:", payload.public_id);
+      console.error(
+        "[MEDIA_SECURITY] Rejected unverified or tampered Cloudinary payload:",
+        payload.public_id
+      );
       return {
         success: false,
-        error: "Security verification failed: Returned Cloudinary upload signature is invalid.",
+        error:
+          "Security verification failed: Returned Cloudinary upload signature is invalid.",
       };
     }
 
@@ -163,8 +171,7 @@ export async function registerMediaAssetAction(
     console.error("[MEDIA_ACTION] Failed to register media asset:", err);
     return {
       success: false,
-      error:
-        err instanceof Error ? err.message : "Database registration failed.",
+      error: err instanceof Error ? err.message : "Database registration failed.",
     };
   }
 }
@@ -236,7 +243,8 @@ export async function deleteMediaAssetAction(id: string): Promise<ServerActionRe
       ) {
         return {
           success: false,
-          error: "Deletion blocked: This asset is currently referenced by published Site Profile settings.",
+          error:
+            "Deletion blocked: This asset is currently referenced by published Site Profile settings.",
         };
       }
     }

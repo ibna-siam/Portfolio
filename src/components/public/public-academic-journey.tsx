@@ -45,7 +45,9 @@ export function PublicAcademicJourney({
             Academic Journey & Professional Development
           </h2>
           <p className="text-sm sm:text-base text-ink-600 dark:text-ink-300 leading-relaxed">
-            Undergraduate accounting education at Daffodil International University, foundational business studies, and future professional qualification trajectory.
+            Undergraduate accounting education at Daffodil International University,
+            foundational business studies, and future professional qualification
+            trajectory.
           </p>
         </div>
 
@@ -171,7 +173,10 @@ export function PublicAcademicJourney({
                   key={paper}
                   className="p-2.5 rounded-xl bg-ink-50 dark:bg-ink-950/70 border border-ink-200 dark:border-ink-800 text-ink-700 dark:text-ink-300 flex items-center gap-2 font-mono text-[11px]"
                 >
-                  <FiTarget size={13} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <FiTarget
+                    size={13}
+                    className="text-emerald-600 dark:text-emerald-400 shrink-0"
+                  />
                   <span>{paper}</span>
                 </div>
               ))}
@@ -180,7 +185,10 @@ export function PublicAcademicJourney({
 
           {/* Integrity Guardrail Notice */}
           <div className="p-3.5 rounded-xl bg-ink-50 dark:bg-ink-950/90 border border-ink-200 dark:border-ink-800/80 flex items-start gap-2.5 text-xs text-ink-600 dark:text-ink-400">
-            <FiShield size={14} className="text-emerald-700 dark:text-emerald-400 shrink-0 mt-0.5" />
+            <FiShield
+              size={14}
+              className="text-emerald-700 dark:text-emerald-400 shrink-0 mt-0.5"
+            />
             <p className="leading-relaxed text-[11px] font-mono">
               <strong>Academic Integrity Policy:</strong> {accaTrajectory.integrityNotice}
             </p>

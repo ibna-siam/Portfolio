@@ -56,7 +56,8 @@ export default async function AdminDashboardPage() {
       title: "Case Studies CMS",
       count: studiesCount?.count || 8,
       unit: "Studies",
-      description: "Research papers, tabular financial schedules, and discrepancy disclosures.",
+      description:
+        "Research papers, tabular financial schedules, and discrepancy disclosures.",
       href: "/admin/case-studies",
       icon: FiBookOpen,
       badge: "Primary Module",
@@ -74,7 +75,8 @@ export default async function AdminDashboardPage() {
       title: "Academic Journey",
       count: milestonesCount?.count || 3,
       unit: "Milestones",
-      description: "Verified institutional education and ACCA qualification career roadmap.",
+      description:
+        "Verified institutional education and ACCA qualification career roadmap.",
       href: "/admin/academic-journey",
       icon: FiCalendar,
       badge: "ACCA Trajectory",
@@ -83,7 +85,8 @@ export default async function AdminDashboardPage() {
       title: "Tech Solutions",
       count: solutionsCount?.count || 3,
       unit: "Systems",
-      description: "Financial engineering tools, ratio calculators, and inventory ERP ledgers.",
+      description:
+        "Financial engineering tools, ratio calculators, and inventory ERP ledgers.",
       href: "/admin/tech-solutions",
       icon: FiCpu,
       badge: "Supporting",
@@ -92,7 +95,8 @@ export default async function AdminDashboardPage() {
       title: "Media Library",
       count: mediaCount?.count || 1,
       unit: "Assets",
-      description: "Digital assets, document figures, and verified credential attachments.",
+      description:
+        "Digital assets, document figures, and verified credential attachments.",
       href: "/admin/media",
       icon: FiImage,
       badge: "Cloud Storage",
@@ -109,13 +113,14 @@ export default async function AdminDashboardPage() {
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-semibold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
             <FiLock className="w-3.5 h-3.5" />
-            <span>Role: {(session.user as { role?: string }).role?.toUpperCase() || "ADMIN"}</span>
+            <span>
+              Role: {(session.user as { role?: string }).role?.toUpperCase() || "ADMIN"}
+            </span>
           </span>
         </div>
       }
     >
       <div className="space-y-8 animate-fade-up">
-
         {/* CMS Modules Grid */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -226,22 +231,26 @@ export default async function AdminDashboardPage() {
 
           {recentLogs.length === 0 ? (
             <p className="text-xs text-ink-600 dark:text-ink-400 py-3">
-              No recent activity recorded. Activity logs are recorded on all create, update, and publish operations.
+              No recent activity recorded. Activity logs are recorded on all create,
+              update, and publish operations.
             </p>
           ) : (
             <div className="divide-y divide-ink-100 dark:divide-ink-800/80">
               {recentLogs.map((log) => (
-                <div key={log.id} className="py-3 flex items-center justify-between text-xs font-mono">
+                <div
+                  key={log.id}
+                  className="py-3 flex items-center justify-between text-xs font-mono"
+                >
                   <div className="flex items-center gap-3">
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${
                         log.action === "create"
                           ? "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/20"
                           : log.action === "publish"
-                          ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20"
-                          : log.action === "delete"
-                          ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/20"
-                          : "bg-ink-100 dark:bg-ink-950 text-ink-700 dark:text-ink-300 border-ink-200 dark:border-ink-800"
+                            ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20"
+                            : log.action === "delete"
+                              ? "bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border-red-200 dark:border-red-500/20"
+                              : "bg-ink-100 dark:bg-ink-950 text-ink-700 dark:text-ink-300 border-ink-200 dark:border-ink-800"
                       }`}
                     >
                       {log.action}

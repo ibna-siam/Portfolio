@@ -11,7 +11,9 @@ import { v2 as cloudinary } from "cloudinary";
 
 // Runtime safety check to prevent inclusion in client bundles
 if (typeof window !== "undefined") {
-  throw new Error("CRITICAL: Cloudinary server module cannot be imported in client-side runtime.");
+  throw new Error(
+    "CRITICAL: Cloudinary server module cannot be imported in client-side runtime."
+  );
 }
 
 export interface CloudinaryConfigStatus {
@@ -58,7 +60,8 @@ export function getCloudinaryClient() {
   const status = getCloudinaryStatus();
   if (!status.isConfigured || !status.cloudName || !status.apiKey) {
     throw new Error(
-      status.error || "Cloudinary configuration is incomplete. Please set credentials in .env."
+      status.error ||
+        "Cloudinary configuration is incomplete. Please set credentials in .env."
     );
   }
 
@@ -93,7 +96,8 @@ export function generateSignedUploadParams(targetFolder: string = DEFAULT_MEDIA_
   const timestamp = Math.round(Date.now() / 1000);
 
   // Strictly enforce folder namespace (prevents directory traversal or arbitrary folder uploads)
-  const safeFolder = targetFolder === DEFAULT_MEDIA_FOLDER ? DEFAULT_MEDIA_FOLDER : DEFAULT_MEDIA_FOLDER;
+  const safeFolder =
+    targetFolder === DEFAULT_MEDIA_FOLDER ? DEFAULT_MEDIA_FOLDER : DEFAULT_MEDIA_FOLDER;
 
   const paramsToSign = {
     folder: safeFolder,
@@ -153,7 +157,10 @@ export function verifyCloudinaryResponseSignature(
     );
     return returnedSignature === expected;
   } catch (err) {
-    console.error("[CLOUDINARY] Signature verification failed:", err instanceof Error ? err.message : err);
+    console.error(
+      "[CLOUDINARY] Signature verification failed:",
+      err instanceof Error ? err.message : err
+    );
     return false;
   }
 }

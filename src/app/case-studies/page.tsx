@@ -11,9 +11,25 @@ import { FiChevronRight, FiHome } from "react-icons/fi";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Academic Financial Case Studies — Md Ibna Siam",
+  title: "Academic Financial Case Studies",
   description:
     "Empirical case studies in financial reporting, corporate ratio analysis, Bangladesh Income Tax Act 2023 calculations, CVP cost accounting, and master budgeting.",
+  alternates: {
+    canonical: "/case-studies",
+  },
+  openGraph: {
+    title: "Academic Financial Case Studies | Md Ibna Siam",
+    description:
+      "Empirical case studies in financial reporting, corporate ratio analysis, Bangladesh Income Tax Act 2023 calculations, CVP cost accounting, and master budgeting.",
+    url: "/case-studies",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Academic Financial Case Studies — Md Ibna Siam",
+    description:
+      "Empirical case studies in financial reporting, corporate ratio analysis, Bangladesh Income Tax Act 2023 calculations, CVP cost accounting, and master budgeting.",
+  },
 };
 
 export default async function CaseStudiesCollectionPage() {
@@ -28,8 +44,26 @@ export default async function CaseStudiesCollectionPage() {
     return null;
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Academic Financial Case Studies — Md Ibna Siam",
+    description:
+      "Empirical case studies in financial reporting, corporate ratio analysis, Bangladesh Income Tax Act 2023 calculations, CVP cost accounting, and master budgeting.",
+    url: "https://ibnasiam.vercel.app/case-studies",
+    author: {
+      "@type": "Person",
+      name: "Md Ibna Siam",
+      url: "https://ibnasiam.vercel.app",
+    },
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-ink-50 dark:bg-ink-950 text-ink-900 dark:text-ink-100 transition-colors duration-300">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {isEnabled && <DraftPreviewBanner currentPath="/case-studies" />}
 
       <PublicNav />
@@ -43,6 +77,7 @@ export default async function CaseStudiesCollectionPage() {
           >
             <Link
               href="/"
+              prefetch={true}
               className="flex items-center gap-1 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
             >
               <FiHome size={13} />
@@ -63,7 +98,10 @@ export default async function CaseStudiesCollectionPage() {
               Academic Case Studies & Research
             </h1>
             <p className="text-sm sm:text-base text-ink-600 dark:text-ink-300 leading-relaxed">
-              Eight comprehensive academic studies covering Dhaka Stock Exchange (DSE) ratio analysis, Bangladesh Income Tax Act 2023 individual assessments, garment factory CVP models, SME master budgeting, retail internal control audits, and macroeconomic impact evaluations.
+              Eight comprehensive academic studies covering Dhaka Stock Exchange (DSE)
+              ratio analysis, Bangladesh Income Tax Act 2023 individual assessments,
+              garment factory CVP models, SME master budgeting, retail internal control
+              audits, and macroeconomic impact evaluations.
             </p>
           </div>
         </div>

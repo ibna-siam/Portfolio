@@ -28,22 +28,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function PreviewCaseStudyPage({ params }: PreviewCaseStudyPageProps) {
+export default async function PreviewCaseStudyPage({
+  params,
+}: PreviewCaseStudyPageProps) {
   const session = await requireAdmin();
   const { id } = await params;
   const db = getDb();
 
   // Parallelize queries for fast rendering
-  const [
-    [study],
-    schedules,
-    [discrepancy],
-  ] = await Promise.all([
-    db
-      .select()
-      .from(schema.caseStudies)
-      .where(eq(schema.caseStudies.id, id))
-      .limit(1),
+  const [[study], schedules, [discrepancy]] = await Promise.all([
+    db.select().from(schema.caseStudies).where(eq(schema.caseStudies.id, id)).limit(1),
 
     db
       .select()
@@ -103,7 +97,6 @@ export default async function PreviewCaseStudyPage({ params }: PreviewCaseStudyP
       }
     >
       <div className="max-w-4xl mx-auto space-y-8 animate-fade-up">
-
         {/* Paper Header Card */}
         <header className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-3xl p-6 sm:p-8 shadow-sm dark:shadow-clay-card-dark space-y-4">
           <div className="flex flex-wrap items-center gap-2">
@@ -138,19 +131,27 @@ export default async function PreviewCaseStudyPage({ params }: PreviewCaseStudyP
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-ink-200 dark:border-ink-800 text-xs font-mono">
             <div className="bg-ink-50 dark:bg-ink-950/60 p-3 rounded-xl border border-ink-200 dark:border-ink-800/80">
               <span className="text-[10px] text-ink-500 block">FRAMEWORK</span>
-              <span className="text-ink-800 dark:text-ink-200 font-semibold">{study.framework}</span>
+              <span className="text-ink-800 dark:text-ink-200 font-semibold">
+                {study.framework}
+              </span>
             </div>
             <div className="bg-ink-50 dark:bg-ink-950/60 p-3 rounded-xl border border-ink-200 dark:border-ink-800/80">
               <span className="text-[10px] text-ink-500 block">CURRENCY</span>
-              <span className="text-ink-800 dark:text-ink-200 font-semibold">{study.currencyUnit}</span>
+              <span className="text-ink-800 dark:text-ink-200 font-semibold">
+                {study.currencyUnit}
+              </span>
             </div>
             <div className="bg-ink-50 dark:bg-ink-950/60 p-3 rounded-xl border border-ink-200 dark:border-ink-800/80">
               <span className="text-[10px] text-ink-500 block">EVIDENCE</span>
-              <span className="text-ink-800 dark:text-ink-200 font-semibold">{study.evidenceType}</span>
+              <span className="text-ink-800 dark:text-ink-200 font-semibold">
+                {study.evidenceType}
+              </span>
             </div>
             <div className="bg-ink-50 dark:bg-ink-950/60 p-3 rounded-xl border border-ink-200 dark:border-ink-800/80">
               <span className="text-[10px] text-ink-500 block">BASIS</span>
-              <span className="text-ink-800 dark:text-ink-200 font-semibold">{study.calculationBasis}</span>
+              <span className="text-ink-800 dark:text-ink-200 font-semibold">
+                {study.calculationBasis}
+              </span>
             </div>
           </div>
         </header>
@@ -165,13 +166,21 @@ export default async function PreviewCaseStudyPage({ params }: PreviewCaseStudyP
               </span>
             </div>
             <div className="bg-amber-500/5 dark:bg-ink-950/90 border border-amber-500/20 rounded-xl p-4 text-xs font-mono space-y-2">
-              <div className="text-amber-700 dark:text-amber-300 font-bold">{discrepancy.headline}</div>
+              <div className="text-amber-700 dark:text-amber-300 font-bold">
+                {discrepancy.headline}
+              </div>
               <div className="text-ink-700 dark:text-ink-300">{discrepancy.summary}</div>
               <div className="text-ink-600 dark:text-ink-400 pt-2 border-t border-amber-500/20 dark:border-ink-800">
-                <span className="text-ink-800 dark:text-ink-200 font-semibold">Formula Tested:</span> {discrepancy.formulaTested}
+                <span className="text-ink-800 dark:text-ink-200 font-semibold">
+                  Formula Tested:
+                </span>{" "}
+                {discrepancy.formulaTested}
               </div>
               <div className="text-ink-600 dark:text-ink-400">
-                <span className="text-ink-800 dark:text-ink-200 font-semibold">Preservation Policy:</span> {discrepancy.preservationPolicy}
+                <span className="text-ink-800 dark:text-ink-200 font-semibold">
+                  Preservation Policy:
+                </span>{" "}
+                {discrepancy.preservationPolicy}
               </div>
             </div>
           </section>
@@ -191,26 +200,31 @@ export default async function PreviewCaseStudyPage({ params }: PreviewCaseStudyP
         )}
 
         {/* Methodology Sections */}
-        {study.methodology && Array.isArray(study.methodology) && study.methodology.length > 0 && (
-          <section className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-2xl p-6 shadow-sm dark:shadow-clay-card-dark space-y-4">
-            <h2 className="font-display font-bold text-lg text-ink-900 dark:text-ink-100 flex items-center gap-2">
-              <FiLayers className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-              <span>Research Methodology & Empirical Models</span>
-            </h2>
-            <div className="space-y-4">
-              {study.methodology.map((m, idx) => (
-                <div key={idx} className="bg-ink-50 dark:bg-ink-950/60 border border-ink-200 dark:border-ink-800 p-4 rounded-xl space-y-1">
-                  <h3 className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
-                    {m.heading}
-                  </h3>
-                  <p className="text-xs text-ink-600 dark:text-ink-300 font-sans leading-relaxed">
-                    {m.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+        {study.methodology &&
+          Array.isArray(study.methodology) &&
+          study.methodology.length > 0 && (
+            <section className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-2xl p-6 shadow-sm dark:shadow-clay-card-dark space-y-4">
+              <h2 className="font-display font-bold text-lg text-ink-900 dark:text-ink-100 flex items-center gap-2">
+                <FiLayers className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                <span>Research Methodology & Empirical Models</span>
+              </h2>
+              <div className="space-y-4">
+                {study.methodology.map((m, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-ink-50 dark:bg-ink-950/60 border border-ink-200 dark:border-ink-800 p-4 rounded-xl space-y-1"
+                  >
+                    <h3 className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
+                      {m.heading}
+                    </h3>
+                    <p className="text-xs text-ink-600 dark:text-ink-300 font-sans leading-relaxed">
+                      {m.body}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
         {/* Tabular Financial Schedules */}
         {schedules.length > 0 && (
@@ -252,7 +266,10 @@ export default async function PreviewCaseStudyPage({ params }: PreviewCaseStudyP
                     </thead>
                     <tbody className="divide-y divide-ink-200 dark:divide-ink-800/60 font-mono tabular-nums text-xs">
                       {schedule.rows.map((row, rIdx) => (
-                        <tr key={rIdx} className="hover:bg-ink-100/60 dark:hover:bg-ink-900/40">
+                        <tr
+                          key={rIdx}
+                          className="hover:bg-ink-100/60 dark:hover:bg-ink-900/40"
+                        >
                           {row.map((cell, cIdx) => (
                             <td
                               key={cIdx}
@@ -280,38 +297,53 @@ export default async function PreviewCaseStudyPage({ params }: PreviewCaseStudyP
         {/* Key Findings & Audit Notes */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Key Findings */}
-          {study.keyFindings && Array.isArray(study.keyFindings) && study.keyFindings.length > 0 && (
-            <section className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-2xl p-6 shadow-sm dark:shadow-clay-card-dark space-y-3">
-              <h3 className="font-display font-bold text-base text-ink-900 dark:text-ink-100">Key Empirical Findings</h3>
-              <ul className="space-y-2 text-xs text-ink-600 dark:text-ink-300 font-sans list-disc list-inside">
-                {study.keyFindings.map((finding, idx) => (
-                  <li key={idx} className="leading-relaxed">
-                    {finding}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+          {study.keyFindings &&
+            Array.isArray(study.keyFindings) &&
+            study.keyFindings.length > 0 && (
+              <section className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-2xl p-6 shadow-sm dark:shadow-clay-card-dark space-y-3">
+                <h3 className="font-display font-bold text-base text-ink-900 dark:text-ink-100">
+                  Key Empirical Findings
+                </h3>
+                <ul className="space-y-2 text-xs text-ink-600 dark:text-ink-300 font-sans list-disc list-inside">
+                  {study.keyFindings.map((finding, idx) => (
+                    <li key={idx} className="leading-relaxed">
+                      {finding}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
           {/* Audit Notes */}
-          {study.auditNotes && Array.isArray(study.auditNotes) && study.auditNotes.length > 0 && (
-            <section className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-2xl p-6 shadow-sm dark:shadow-clay-card-dark space-y-3">
-              <h3 className="font-display font-bold text-base text-ink-900 dark:text-ink-100">Audit & Control Notes</h3>
-              <div className="space-y-2">
-                {study.auditNotes.map((note, idx) => (
-                  <div key={idx} className="p-3 rounded-xl bg-ink-50 dark:bg-ink-950/80 border border-ink-200 dark:border-ink-800 text-xs font-mono space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{note.topic}</span>
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-ink-100 dark:bg-ink-900 text-ink-600 dark:text-ink-400 border border-ink-200 dark:border-ink-800">
-                        {note.status}
-                      </span>
+          {study.auditNotes &&
+            Array.isArray(study.auditNotes) &&
+            study.auditNotes.length > 0 && (
+              <section className="bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-800 rounded-2xl p-6 shadow-sm dark:shadow-clay-card-dark space-y-3">
+                <h3 className="font-display font-bold text-base text-ink-900 dark:text-ink-100">
+                  Audit & Control Notes
+                </h3>
+                <div className="space-y-2">
+                  {study.auditNotes.map((note, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 rounded-xl bg-ink-50 dark:bg-ink-950/80 border border-ink-200 dark:border-ink-800 text-xs font-mono space-y-1"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                          {note.topic}
+                        </span>
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-ink-100 dark:bg-ink-900 text-ink-600 dark:text-ink-400 border border-ink-200 dark:border-ink-800">
+                          {note.status}
+                        </span>
+                      </div>
+                      <p className="text-ink-600 dark:text-ink-300 font-sans">
+                        {note.finding}
+                      </p>
                     </div>
-                    <p className="text-ink-600 dark:text-ink-300 font-sans">{note.finding}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
+                  ))}
+                </div>
+              </section>
+            )}
         </div>
       </div>
     </AdminShell>

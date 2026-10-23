@@ -44,8 +44,14 @@ async function runTestSuite() {
   });
 
   await it("Strictly excludes privatePhone from public settings payload (VAL-07)", async () => {
-    const settings = (await getPublicSiteSettings()) as unknown as Record<string, unknown>;
-    assert(settings.privatePhone === undefined, "privatePhone must NOT be present in public payload");
+    const settings = (await getPublicSiteSettings()) as unknown as Record<
+      string,
+      unknown
+    >;
+    assert(
+      settings.privatePhone === undefined,
+      "privatePhone must NOT be present in public payload"
+    );
     assert(settings.phone === undefined, "phone must NOT be present in public payload");
   });
 
@@ -79,9 +85,15 @@ async function runTestSuite() {
 
   await it("Public listing flags case studies with active discrepancy disclosures", async () => {
     const publicStudies = await getPublicCaseStudies({ isDraftMode: false });
-    const taxStudy = publicStudies.find((s) => s.slug === "individual-income-tax-return-ay2023-24");
+    const taxStudy = publicStudies.find(
+      (s) => s.slug === "individual-income-tax-return-ay2023-24"
+    );
     assert(taxStudy !== undefined, "Tax return study should be present");
-    assert.strictEqual(taxStudy.hasDiscrepancy, true, "Tax study should have hasDiscrepancy=true");
+    assert.strictEqual(
+      taxStudy.hasDiscrepancy,
+      true,
+      "Tax study should have hasDiscrepancy=true"
+    );
     assert(taxStudy.discrepancyHeadline !== undefined, "Should have discrepancyHeadline");
   });
 
@@ -124,12 +136,16 @@ async function runTestSuite() {
   await it("Identifies Square Pharma 8% overhead saving as academic proposal (VAL-08)", async () => {
     const study = await getCaseStudyBySlug("square-pharmaceuticals-financial-analysis");
     assert(study !== null, "Square Pharma study should exist");
-    const proposalNote = study.auditNotes.find((n) =>
-      n.finding.toLowerCase().includes("academic proposal") ||
-      n.finding.toLowerCase().includes("academic estimate") ||
-      n.topic.toLowerCase().includes("overhead")
+    const proposalNote = study.auditNotes.find(
+      (n) =>
+        n.finding.toLowerCase().includes("academic proposal") ||
+        n.finding.toLowerCase().includes("academic estimate") ||
+        n.topic.toLowerCase().includes("overhead")
     );
-    assert(proposalNote !== undefined, "Must document 8% overhead saving as an academic proposal");
+    assert(
+      proposalNote !== undefined,
+      "Must document 8% overhead saving as an academic proposal"
+    );
   });
 
   console.log("\n--> 4. Tabular Financial Schedules & .tabular-nums Invariants:");
@@ -153,7 +169,10 @@ async function runTestSuite() {
         }
       }
     }
-    assert(scheduleCount >= 9, `Expected at least 9 schedules across all studies, found ${scheduleCount}`);
+    assert(
+      scheduleCount >= 9,
+      `Expected at least 9 schedules across all studies, found ${scheduleCount}`
+    );
   });
 
   console.log("\n--> 5. Supporting Content Modules (Competencies, Milestones, Tech):");
@@ -161,15 +180,25 @@ async function runTestSuite() {
     const comps = await getPublicCompetencies();
     assert.strictEqual(comps.length, 16, "Must retrieve exactly 16 competencies");
     const domains = new Set(comps.map((c) => c.domain));
-    assert(domains.has("Financial Accounting"), "Must include Financial Accounting domain");
-    assert(domains.has("Managerial Accounting"), "Must include Managerial Accounting domain");
+    assert(
+      domains.has("Financial Accounting"),
+      "Must include Financial Accounting domain"
+    );
+    assert(
+      domains.has("Managerial Accounting"),
+      "Must include Managerial Accounting domain"
+    );
     assert(domains.has("Taxation & Audit"), "Must include Taxation & Audit domain");
     assert(domains.has("Software & Tech"), "Must include Software & Tech domain");
   });
 
   await it("Retrieves 3 confirmed educational milestones", async () => {
     const milestones = await getPublicAcademicMilestones();
-    assert.strictEqual(milestones.length, 3, "Must retrieve exactly 3 academic milestones");
+    assert.strictEqual(
+      milestones.length,
+      3,
+      "Must retrieve exactly 3 academic milestones"
+    );
     assert(
       milestones[0].degree.includes("Bachelor of Business Administration") ||
         milestones[0].degree.includes("BBA"),
@@ -183,7 +212,8 @@ async function runTestSuite() {
     for (const sol of solutions) {
       if (sol.verifiedRepo) {
         assert(
-          sol.verifiedRepo.startsWith("http://") || sol.verifiedRepo.startsWith("https://"),
+          sol.verifiedRepo.startsWith("http://") ||
+            sol.verifiedRepo.startsWith("https://"),
           `Repository URL must use safe http/https scheme: ${sol.verifiedRepo}`
         );
       }
@@ -246,13 +276,19 @@ async function runTestSuite() {
     assert.strictEqual(isLocalRelative("/"), true);
   });
 
-  console.log("\n--> 8. Public Section Preview Display Limits Regression Tests (Phase 10.1):");
+  console.log(
+    "\n--> 8. Public Section Preview Display Limits Regression Tests (Phase 10.1):"
+  );
   await it("Enforces exact initial visible limit of 4 on Case Studies preview", () => {
     const mockStudies = Array.from({ length: 10 }, (_, i) => ({ id: `cs-${i}` }));
     const INITIAL_LIMIT = 4;
     const initialSlice = mockStudies.slice(0, INITIAL_LIMIT);
     const remainingCount = Math.max(0, mockStudies.length - INITIAL_LIMIT);
-    assert.strictEqual(initialSlice.length, 4, "Initial visible case studies must be exactly 4");
+    assert.strictEqual(
+      initialSlice.length,
+      4,
+      "Initial visible case studies must be exactly 4"
+    );
     assert.strictEqual(remainingCount, 6, "Remaining count must be length - 4");
   });
 
@@ -261,7 +297,11 @@ async function runTestSuite() {
     const INITIAL_LIMIT = 4;
     const initialSlice = mockCompetencies.slice(0, INITIAL_LIMIT);
     const remainingCount = Math.max(0, mockCompetencies.length - INITIAL_LIMIT);
-    assert.strictEqual(initialSlice.length, 4, "Initial visible competencies must be exactly 4");
+    assert.strictEqual(
+      initialSlice.length,
+      4,
+      "Initial visible competencies must be exactly 4"
+    );
     assert.strictEqual(remainingCount, 5, "Remaining count must be length - 4");
   });
 
@@ -270,7 +310,11 @@ async function runTestSuite() {
     const INITIAL_LIMIT = 3;
     const initialSlice = mockSolutions.slice(0, INITIAL_LIMIT);
     const remainingCount = Math.max(0, mockSolutions.length - INITIAL_LIMIT);
-    assert.strictEqual(initialSlice.length, 3, "Initial visible tech solutions must be exactly 3");
+    assert.strictEqual(
+      initialSlice.length,
+      3,
+      "Initial visible tech solutions must be exactly 3"
+    );
     assert.strictEqual(remainingCount, 4, "Remaining count must be length - 3");
   });
 

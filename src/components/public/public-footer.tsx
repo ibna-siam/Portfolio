@@ -45,9 +45,9 @@ export function PublicFooter({ email, linkedinUrl, githubUrl }: PublicFooterProp
               </span>
             </div>
             <p className="text-xs text-ink-300 max-w-md leading-relaxed">
-              Undergraduate student at Daffodil International University preparing
-              for professional qualification (ACCA trajectory). Focused on financial
-              reporting precision, managerial analysis, and technology-driven accounting systems.
+              Undergraduate student at Daffodil International University preparing for
+              professional qualification (ACCA trajectory). Focused on financial reporting
+              precision, managerial analysis, and technology-driven accounting systems.
             </p>
             <div className="text-[11px] text-ink-300 font-mono">
               Academic ID: 252-58-083 • Department of Accounting • Dhaka, Bangladesh

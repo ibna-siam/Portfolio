@@ -76,9 +76,7 @@ export function AdminShell({
   const navSections = [
     {
       heading: "Workspace",
-      items: [
-        { label: "Overview", href: "/admin", icon: FiGrid },
-      ],
+      items: [{ label: "Overview", href: "/admin", icon: FiGrid }],
     },
     {
       heading: "Portfolio Content",
@@ -91,9 +89,7 @@ export function AdminShell({
     },
     {
       heading: "Media",
-      items: [
-        { label: "Media Library", href: "/admin/media", icon: FiImage },
-      ],
+      items: [{ label: "Media Library", href: "/admin/media", icon: FiImage }],
     },
   ];
 
@@ -127,7 +123,9 @@ export function AdminShell({
                 >
                   <Icon
                     className={`w-4 h-4 shrink-0 ${
-                      active ? "text-emerald-700 dark:text-emerald-400" : "text-ink-500 dark:text-ink-400"
+                      active
+                        ? "text-emerald-700 dark:text-emerald-400"
+                        : "text-ink-500 dark:text-ink-400"
                     }`}
                   />
                   <span>{item.label}</span>
@@ -178,7 +176,9 @@ export function AdminShell({
               <FiExternalLink className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>View Public Site</span>
             </div>
-            <span className="text-[10px] font-mono text-ink-600 dark:text-ink-400">Live ↗</span>
+            <span className="text-[10px] font-mono text-ink-600 dark:text-ink-400">
+              Live ↗
+            </span>
           </Link>
 
           <div className="flex items-center justify-between pt-1">
@@ -203,7 +203,11 @@ export function AdminShell({
       {/* MOBILE SIDEBAR DRAWER                                                     */}
       {/* ========================================================================= */}
       {isMobileDrawerOpen && (
-        <div className="lg:hidden fixed inset-0 z-50 animate-fade-in" role="dialog" aria-modal="true">
+        <div
+          className="lg:hidden fixed inset-0 z-50 animate-fade-in"
+          role="dialog"
+          aria-modal="true"
+        >
           {/* Backdrop */}
           <div
             className="fixed inset-0 bg-ink-950/60 backdrop-blur-xs transition-opacity"
@@ -222,7 +226,9 @@ export function AdminShell({
                   <span className="font-display font-bold text-ink-900 dark:text-ink-100 text-sm">
                     Md Ibna Siam
                   </span>
-                  <span className="block text-[10px] font-mono text-ink-600 dark:text-ink-400">Portfolio CMS</span>
+                  <span className="block text-[10px] font-mono text-ink-600 dark:text-ink-400">
+                    Portfolio CMS
+                  </span>
                 </div>
               </div>
               <button
@@ -248,7 +254,9 @@ export function AdminShell({
                   <FiExternalLink className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>View Public Site</span>
                 </div>
-                <span className="text-[10px] font-mono text-ink-600 dark:text-ink-400">Live ↗</span>
+                <span className="text-[10px] font-mono text-ink-600 dark:text-ink-400">
+                  Live ↗
+                </span>
               </Link>
             </div>
           </div>
@@ -274,7 +282,10 @@ export function AdminShell({
 
             {/* Breadcrumb Path */}
             <div className="hidden sm:flex items-center gap-1.5 text-xs font-mono text-ink-600 dark:text-ink-400">
-              <Link href="/admin" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">
+              <Link
+                href="/admin"
+                className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+              >
                 Admin
               </Link>
               {breadcrumbs && breadcrumbs.length > 0 ? (
@@ -282,18 +293,25 @@ export function AdminShell({
                   <React.Fragment key={idx}>
                     <FiChevronRight className="w-3 h-3 text-ink-400 dark:text-ink-500" />
                     {crumb.href ? (
-                      <Link href={crumb.href} className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors">
+                      <Link
+                        href={crumb.href}
+                        className="hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+                      >
                         {crumb.label}
                       </Link>
                     ) : (
-                      <span className="text-ink-900 dark:text-ink-100 font-semibold">{crumb.label}</span>
+                      <span className="text-ink-900 dark:text-ink-100 font-semibold">
+                        {crumb.label}
+                      </span>
                     )}
                   </React.Fragment>
                 ))
               ) : (
                 <>
                   <FiChevronRight className="w-3 h-3 text-ink-400 dark:text-ink-500" />
-                  <span className="text-ink-900 dark:text-ink-100 font-semibold">{title}</span>
+                  <span className="text-ink-900 dark:text-ink-100 font-semibold">
+                    {title}
+                  </span>
                 </>
               )}
             </div>
@@ -308,7 +326,9 @@ export function AdminShell({
             {userEmail && (
               <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-ink-100 dark:bg-ink-800/80 border border-ink-200 dark:border-ink-700/60 text-xs">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="font-medium text-ink-800 dark:text-ink-200">{userName || "Admin"}</span>
+                <span className="font-medium text-ink-800 dark:text-ink-200">
+                  {userName || "Admin"}
+                </span>
               </div>
             )}
 

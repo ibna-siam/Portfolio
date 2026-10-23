@@ -2,10 +2,8 @@ import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import {
-  getPublicSiteSettings,
-  getCaseStudyBySlug,
-} from "@/lib/public-data";
+import { getPublicSiteSettings, getCaseStudyBySlug } from "@/lib/public-data";
+import { getArticleStructuredData } from "@/lib/seo-config";
 import { PublicNav } from "@/components/public/public-nav";
 import { PublicFooter } from "@/components/public/public-footer";
 import { FinancialScheduleTable } from "@/components/public/financial-schedule-table";
@@ -38,19 +36,37 @@ export async function generateMetadata({
 
   if (!study) {
     return {
-      title: "Case Study Not Found — Md Ibna Siam",
+      title: "Case Study Not Found",
     };
   }
 
   return {
-    title: `${study.title} — Case Study | Md Ibna Siam`,
+    title: `${study.title} — Case Study`,
     description: study.description.slice(0, 160),
+    alternates: {
+      canonical: `/case-studies/${study.slug}`,
+    },
+    openGraph: {
+      title: `${study.title} — Case Study | Md Ibna Siam`,
+      description: study.description.slice(0, 160),
+      url: `/case-studies/${study.slug}`,
+      type: "article",
+      publishedTime: study.updatedAt
+        ? new Date(study.updatedAt).toISOString()
+        : undefined,
+      modifiedTime: study.updatedAt ? new Date(study.updatedAt).toISOString() : undefined,
+      authors: ["Md Ibna Siam"],
+      section: study.category,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${study.title} — Case Study | Md Ibna Siam`,
+      description: study.description.slice(0, 160),
+    },
   };
 }
 
-export default async function CaseStudyDetailPage({
-  params,
-}: CaseStudyPageProps) {
+export default async function CaseStudyDetailPage({ params }: CaseStudyPageProps) {
   const { slug } = await params;
   const { isEnabled } = await draftMode();
 
@@ -63,11 +79,15 @@ export default async function CaseStudyDetailPage({
     notFound();
   }
 
+  const articleJsonLd = getArticleStructuredData(study);
+
   return (
     <div className="min-h-screen flex flex-col bg-ink-50 dark:bg-ink-950 text-ink-900 dark:text-ink-100 transition-colors duration-300">
-      {isEnabled && (
-        <DraftPreviewBanner currentPath={`/case-studies/${study.slug}`} />
-      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      {isEnabled && <DraftPreviewBanner currentPath={`/case-studies/${study.slug}`} />}
 
       <PublicNav />
 
@@ -80,19 +100,29 @@ export default async function CaseStudyDetailPage({
           >
             <Link
               href="/"
+              prefetch={true}
               className="flex items-center gap-1 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
             >
               <FiHome size={13} aria-hidden="true" />
               <span>Home</span>
             </Link>
-            <FiChevronRight size={12} className="text-ink-400 dark:text-ink-500" aria-hidden="true" />
+            <FiChevronRight
+              size={12}
+              className="text-ink-400 dark:text-ink-500"
+              aria-hidden="true"
+            />
             <Link
               href="/case-studies"
+              prefetch={true}
               className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
             >
               Case Studies
             </Link>
-            <FiChevronRight size={12} className="text-ink-400 dark:text-ink-500" aria-hidden="true" />
+            <FiChevronRight
+              size={12}
+              className="text-ink-400 dark:text-ink-500"
+              aria-hidden="true"
+            />
             <span className="text-ink-900 dark:text-ink-100 font-semibold truncate max-w-xs">
               {study.title}
             </span>
@@ -141,9 +171,7 @@ export default async function CaseStudyDetailPage({
           </header>
 
           {/* Academic Financial Discrepancy Disclosure (if bound) */}
-          {study.discrepancy && (
-            <DiscrepancyNotice discrepancy={study.discrepancy} />
-          )}
+          {study.discrepancy && <DiscrepancyNotice discrepancy={study.discrepancy} />}
 
           {/* Section 1: Overview & Objectives */}
           <section className="space-y-4">
@@ -183,7 +211,8 @@ export default async function CaseStudyDetailPage({
                 <h2>Financial Schedules & Calculations</h2>
               </div>
               <p className="text-xs sm:text-sm text-ink-600 dark:text-ink-400">
-                Empirical schedules prepared according to relevant accounting standards with tabular numeral alignment.
+                Empirical schedules prepared according to relevant accounting standards
+                with tabular numeral alignment.
               </p>
 
               <div className="space-y-6">
@@ -317,9 +346,7 @@ export default async function CaseStudyDetailPage({
                         <td className="px-4 py-3 font-semibold text-ink-900 dark:text-ink-100 whitespace-nowrap">
                           {note.topic}
                         </td>
-                        <td className="px-4 py-3 leading-relaxed">
-                          {note.finding}
-                        </td>
+                        <td className="px-4 py-3 leading-relaxed">{note.finding}</td>
                         <td className="px-4 py-3 whitespace-nowrap font-mono text-[11px]">
                           <span className="px-2 py-0.5 rounded bg-ink-100 dark:bg-ink-800 text-ink-700 dark:text-ink-300 border border-ink-200 dark:border-ink-700">
                             {note.status}
@@ -337,6 +364,7 @@ export default async function CaseStudyDetailPage({
           <div className="pt-8 border-t border-ink-200 dark:border-ink-800 flex justify-between items-center">
             <Link
               href="/case-studies"
+              prefetch={true}
               className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline"
             >
               <FiArrowLeft size={14} />

@@ -18,25 +18,38 @@ import { PublicContact } from "@/components/public/public-contact";
 import { PublicFooter } from "@/components/public/public-footer";
 import { DraftPreviewBanner } from "@/components/public/draft-preview-banner";
 
+import {
+  siteConfig,
+  getPersonStructuredData,
+  getWebSiteStructuredData,
+} from "@/lib/seo-config";
+
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Md Ibna Siam — Accounting & Finance Portfolio | ACCA Pathway",
-  description:
-    "Undergraduate accounting portfolio of Md Ibna Siam (Daffodil International University). Practical financial reporting, managerial costing, Bangladesh Income Tax Act 2023 compliance, and financial technology solutions.",
+  title: siteConfig.title,
+  description: siteConfig.description,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: siteConfig.title,
+    description: siteConfig.description,
+    url: "/",
+    type: "website",
+  },
 };
 
 export default async function HomePage() {
   const { isEnabled } = await draftMode();
 
-  const [settings, caseStudies, competencies, milestones, solutions] =
-    await Promise.all([
-      getPublicSiteSettings(),
-      getPublicCaseStudies({ isDraftMode: isEnabled }),
-      getPublicCompetencies(),
-      getPublicAcademicMilestones(),
-      getPublicTechSolutions(),
-    ]);
+  const [settings, caseStudies, competencies, milestones, solutions] = await Promise.all([
+    getPublicSiteSettings(),
+    getPublicCaseStudies({ isDraftMode: isEnabled }),
+    getPublicCompetencies(),
+    getPublicAcademicMilestones(),
+    getPublicTechSolutions(),
+  ]);
 
   if (!settings) {
     return (
@@ -51,8 +64,17 @@ export default async function HomePage() {
     );
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [getPersonStructuredData(settings.socialLinks), getWebSiteStructuredData()],
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-ink-50 dark:bg-ink-950 text-ink-900 dark:text-ink-100 transition-colors duration-300">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {isEnabled && <DraftPreviewBanner currentPath="/" />}
 
       <PublicNav />

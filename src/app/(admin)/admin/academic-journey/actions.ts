@@ -111,10 +111,14 @@ export async function updateAccaTrajectoryAction(data: AccaTrajectoryFormData) {
   try {
     // GUARDRAIL CHECK: Ensure ACCA is not claimed as a completed qualification
     const lowerStatus = (data.statusLabel + " " + data.trajectoryType).toLowerCase();
-    if (lowerStatus.includes("completed member") || lowerStatus.includes("fellow member")) {
+    if (
+      lowerStatus.includes("completed member") ||
+      lowerStatus.includes("fellow member")
+    ) {
       return {
         success: false,
-        error: "ACCA must remain designated as a career trajectory / planned credential. Completed membership cannot be claimed without verified certificate.",
+        error:
+          "ACCA must remain designated as a career trajectory / planned credential. Completed membership cannot be claimed without verified certificate.",
       };
     }
 

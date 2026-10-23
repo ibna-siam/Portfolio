@@ -5,7 +5,7 @@
 **Production Site:** [https://ibnasiam.vercel.app/](https://ibnasiam.vercel.app/)  
 **Target Identity:** Md Ibna Siam — Accounting & Finance Student, Daffodil International University (Academic ID: 252-58-083)  
 **Career Target:** ACCA (Association of Chartered Certified Accountants) Pathway  
-**Current Architecture Status:** Phase 10.2 Accessibility, Legacy Code Cleanup & Codebase Standardization Complete (WCAG 2.2 AA contrast verified across public and Admin interfaces; confirmed obsolete code `gh-pages` and `admin-nav.tsx` safely removed; dual-track Vite rollback preserved; 87/87 tests passing; Next.js production build and Vite build 100% operational).  
+**Current Architecture Status:** Phase 12.2 Legacy Codebase Decommissioning & Global Formatting Complete (Legacy Vite SPA artifacts and unused React components decommissioned; Next.js 15.5.28 App Router consolidated as primary framework; Prettier code formatting standardized; 127/127 automated test assertions and Next.js production build 100% operational).  
 **Planned Target Architecture:** Full-Stack Portfolio CMS (Next.js App Router + Neon PostgreSQL + Drizzle ORM + Auth.js + Cloudinary)  
 **Design Direction:** Executive Financial Precision (Dual-Theme: Obsidian/Emerald Dark Mode & Architectural Soft-Slate Light Mode)  
 
@@ -25,15 +25,14 @@ The platform is designed to present Siam's authentic profile to corporate audit 
 
 ## 2. Verified Current Architecture (Baseline)
 
-The current codebase is an active, production-ready client-side single-page application (SPA) deployed on Vercel at `https://ibnasiam.vercel.app/`.
+The codebase has been fully consolidated onto Next.js 15 App Router with full-stack capabilities, server data caching, and unified Prettier code styling.
 
 ### 2.1 Current Tech Stack & Dependencies
-- **UI Framework:** React 19 (`react` 19.2.6, `react-dom` 19.2.6) — verified natively compatible with Next.js 15+
-- **Build System & Bundler:** Vite 8.0.12 (with `@vitejs/plugin-react` 6.0.1)
-  - Configured with `base: '/'` in `vite.config.js`
-  - Output directory: `dist/`
-  - Zero server-side runtime code (pure client-side static asset compilation)
-  - Production build measurement: compiles in **2.54s** (JS: **487.95 kB** / **145.26 kB gzip**; CSS: **42.64 kB** / **7.74 kB gzip**)
+- **Framework & App Architecture:** Next.js 15.5.28 (App Router) with React 19 (`react` 19.2.6, `react-dom` 19.2.6) and TypeScript 5.9.3
+- **Database & ORM:** Neon Serverless PostgreSQL with Drizzle ORM
+- **Authentication & Media:** Auth.js (NextAuth v5 beta) and Cloudinary API
+- **Code Quality & Formatting:** ESLint 10 + Prettier 3.9 (standardized style guide)
+- **Decommissioned:** Legacy Vite build system (`vite.config.js`, `index.html`, `dist/`, legacy `src/components/*.jsx`) cleanly removed.
 - **Styling:** Tailwind CSS 3.4.19 & PostCSS 8.5.15
   - Color palette: `ink` (Slate/Navy foundation), `emerald` (financial growth primary), `amber` (variance/warning alerts)
   - Typography: Google Fonts loaded via preconnect in `index.html` (`Playfair Display`, `DM Sans`, `JetBrains Mono`)
@@ -223,9 +222,13 @@ The target architecture elevates the existing portfolio into a full-stack, datab
 app/
 ├── (public)/
 │   ├── layout.tsx              # Public shell (Navbar, Footer, Claymorphism background)
+│   ├── loading.tsx             # Root route instant loading fallback with shimmer accent (Phase 12.1)
 │   ├── page.tsx                # Homepage (Hero, Ribbon, About, Skills, Studies, Tech, Journey, Contact)
 │   ├── case-studies/
+│   │   ├── loading.tsx         # Catalog route instant loading fallback (Phase 12.1)
+│   │   ├── page.tsx            # Case studies catalog page
 │   │   └── [slug]/
+│   │       ├── loading.tsx     # Case study detail route instant loading fallback (Phase 12.1)
 │   │       └── page.tsx        # Deep-linkable server-rendered case study detail page
 │   └── api/
 │       ├── draft/route.ts      # Next.js Draft Mode enable/preview handler

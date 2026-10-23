@@ -38,7 +38,10 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
   const [milestones, setMilestones] = useState<MilestoneItem[]>(initialMilestones);
   const [acca, setAcca] = useState<AccaTrajectoryFormData>(initialAcca);
   const [isPending, startTransition] = useTransition();
-  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [feedback, setFeedback] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   // Milestone edit state
   const [editingMilestone, setEditingMilestone] = useState<MilestoneItem | null>(null);
@@ -70,7 +73,10 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
         status: editingMilestone.status,
         period: editingMilestone.period,
         overview: editingMilestone.overview,
-        disciplines: disciplinesText.split(",").map((d) => d.trim()).filter(Boolean),
+        disciplines: disciplinesText
+          .split(",")
+          .map((d) => d.trim())
+          .filter(Boolean),
         sortOrder: editingMilestone.sortOrder,
       };
 
@@ -82,7 +88,10 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
         );
         setEditingMilestone(null);
       } else {
-        setFeedback({ type: "error", message: res.error || "Failed to update milestone." });
+        setFeedback({
+          type: "error",
+          message: res.error || "Failed to update milestone.",
+        });
       }
     });
   };
@@ -93,23 +102,31 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
     startTransition(async () => {
       const payload: AccaTrajectoryFormData = {
         ...accaForm,
-        strategicFocus: strategicFocusText.split("\n").map((f) => f.trim()).filter(Boolean),
+        strategicFocus: strategicFocusText
+          .split("\n")
+          .map((f) => f.trim())
+          .filter(Boolean),
       };
 
       const res = await updateAccaTrajectoryAction(payload);
       if (res.success) {
-        setFeedback({ type: "success", message: res.message || "ACCA trajectory updated." });
+        setFeedback({
+          type: "success",
+          message: res.message || "ACCA trajectory updated.",
+        });
         setAcca(payload);
         setIsEditingAcca(false);
       } else {
-        setFeedback({ type: "error", message: res.error || "Failed to update ACCA trajectory." });
+        setFeedback({
+          type: "error",
+          message: res.error || "Failed to update ACCA trajectory.",
+        });
       }
     });
   };
 
   return (
     <div className="space-y-8">
-
       {/* Feedback Banner */}
       {feedback && (
         <div
@@ -121,7 +138,10 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
           }`}
         >
           <span>{feedback.message}</span>
-          <button onClick={() => setFeedback(null)} className="underline text-xs ml-4 cursor-pointer">
+          <button
+            onClick={() => setFeedback(null)}
+            className="underline text-xs ml-4 cursor-pointer"
+          >
             Dismiss
           </button>
         </div>
@@ -216,7 +236,9 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
                       {m.status}
                     </span>
                   </div>
-                  <h3 className="font-display font-bold text-lg text-ink-900 dark:text-ink-50">{m.degree}</h3>
+                  <h3 className="font-display font-bold text-lg text-ink-900 dark:text-ink-50">
+                    {m.degree}
+                  </h3>
                   <p className="text-xs font-mono text-ink-600 dark:text-ink-400">
                     {m.institution} · {m.campus} · Major: {m.major}
                   </p>
@@ -232,7 +254,9 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
                 </button>
               </div>
 
-              <p className="text-xs text-ink-600 dark:text-ink-300 font-sans leading-relaxed">{m.overview}</p>
+              <p className="text-xs text-ink-600 dark:text-ink-300 font-sans leading-relaxed">
+                {m.overview}
+              </p>
 
               {m.disciplines && m.disciplines.length > 0 && (
                 <div className="pt-3 border-t border-ink-100 dark:border-ink-800/80 flex flex-wrap gap-1.5">
@@ -255,7 +279,11 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
       <Modal
         isOpen={!!editingMilestone}
         onClose={() => setEditingMilestone(null)}
-        title={editingMilestone ? `Edit Milestone: ${editingMilestone.degree}` : "Edit Milestone"}
+        title={
+          editingMilestone
+            ? `Edit Milestone: ${editingMilestone.degree}`
+            : "Edit Milestone"
+        }
         description="Configure institution, degree classification, duration, and key disciplines."
         maxWidth="lg"
         footer={
@@ -279,9 +307,15 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
         }
       >
         {editingMilestone && (
-          <form id="milestone-form" onSubmit={handleSaveMilestone} className="space-y-4 text-xs font-mono">
+          <form
+            id="milestone-form"
+            onSubmit={handleSaveMilestone}
+            className="space-y-4 text-xs font-mono"
+          >
             <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Degree / Certificate Name</label>
+              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                Degree / Certificate Name
+              </label>
               <input
                 type="text"
                 required
@@ -295,20 +329,27 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Institution</label>
+                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                  Institution
+                </label>
                 <input
                   type="text"
                   required
                   value={editingMilestone.institution}
                   onChange={(e) =>
-                    setEditingMilestone({ ...editingMilestone, institution: e.target.value })
+                    setEditingMilestone({
+                      ...editingMilestone,
+                      institution: e.target.value,
+                    })
                   }
                   className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Campus / City</label>
+                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                  Campus / City
+                </label>
                 <input
                   type="text"
                   required
@@ -323,7 +364,9 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Major / Discipline</label>
+                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                  Major / Discipline
+                </label>
                 <input
                   type="text"
                   required
@@ -336,7 +379,9 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
               </div>
 
               <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Time Period</label>
+                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                  Time Period
+                </label>
                 <input
                   type="text"
                   required
@@ -350,7 +395,9 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
             </div>
 
             <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Status Label</label>
+              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                Status Label
+              </label>
               <input
                 type="text"
                 required
@@ -363,7 +410,9 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
             </div>
 
             <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Academic Overview</label>
+              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                Academic Overview
+              </label>
               <textarea
                 rows={3}
                 value={editingMilestone.overview}
@@ -417,33 +466,47 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
           </div>
         }
       >
-        <form id="acca-form" onSubmit={handleSaveAcca} className="space-y-4 text-xs font-mono">
+        <form
+          id="acca-form"
+          onSubmit={handleSaveAcca}
+          className="space-y-4 text-xs font-mono"
+        >
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Qualification</label>
+              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                Qualification
+              </label>
               <input
                 type="text"
                 required
                 value={accaForm.qualification}
-                onChange={(e) => setAccaForm({ ...accaForm, qualification: e.target.value })}
+                onChange={(e) =>
+                  setAccaForm({ ...accaForm, qualification: e.target.value })
+                }
                 className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Credential Body</label>
+              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                Credential Body
+              </label>
               <input
                 type="text"
                 required
                 value={accaForm.credentialBody}
-                onChange={(e) => setAccaForm({ ...accaForm, credentialBody: e.target.value })}
+                onChange={(e) =>
+                  setAccaForm({ ...accaForm, credentialBody: e.target.value })
+                }
                 className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Status Label</label>
+            <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+              Status Label
+            </label>
             <input
               type="text"
               required
@@ -455,11 +518,15 @@ export function JourneyClient({ initialMilestones, initialAcca }: JourneyClientP
           </div>
 
           <div>
-            <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Ethical Integrity Notice</label>
+            <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+              Ethical Integrity Notice
+            </label>
             <textarea
               rows={2}
               value={accaForm.integrityNotice}
-              onChange={(e) => setAccaForm({ ...accaForm, integrityNotice: e.target.value })}
+              onChange={(e) =>
+                setAccaForm({ ...accaForm, integrityNotice: e.target.value })
+              }
               className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl p-3 text-ink-900 dark:text-ink-100 font-sans focus:outline-none focus:border-emerald-500/60 transition-colors"
             />
           </div>

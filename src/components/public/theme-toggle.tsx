@@ -16,7 +16,10 @@ function subscribeTheme(callback: () => void) {
     }
   });
 
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
   window.addEventListener("storage", callback);
 
   return () => {
@@ -26,7 +29,9 @@ function subscribeTheme(callback: () => void) {
 }
 
 function getThemeSnapshot() {
-  return typeof document !== "undefined" && document.documentElement.classList.contains("dark");
+  return (
+    typeof document !== "undefined" && document.documentElement.classList.contains("dark")
+  );
 }
 
 function getServerSnapshot() {
@@ -71,7 +76,11 @@ export function ThemeToggle() {
       aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
       title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
     >
-      {isDark ? <FiSun size={16} aria-hidden="true" /> : <FiMoon size={16} aria-hidden="true" />}
+      {isDark ? (
+        <FiSun size={16} aria-hidden="true" />
+      ) : (
+        <FiMoon size={16} aria-hidden="true" />
+      )}
     </button>
   );
 }

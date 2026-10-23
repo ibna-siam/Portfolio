@@ -61,7 +61,9 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
             Accounting & Analytical Competencies
           </h2>
           <p className="text-sm sm:text-base text-ink-600 dark:text-ink-300 leading-relaxed">
-            A structured matrix of financial accounting, managerial costing, regulatory compliance, and spreadsheet-based financial modeling grounded in academic coursework and empirical case studies.
+            A structured matrix of financial accounting, managerial costing, regulatory
+            compliance, and spreadsheet-based financial modeling grounded in academic
+            coursework and empirical case studies.
           </p>
         </div>
 
@@ -76,9 +78,8 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
             const count =
               cat.id === "All"
                 ? competencies.length
-                : competencies.filter(
-                    (c) => c.category === cat.id || c.domain === cat.id
-                  ).length;
+                : competencies.filter((c) => c.category === cat.id || c.domain === cat.id)
+                    .length;
 
             return (
               <button
@@ -109,7 +110,10 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
         </div>
 
         {/* Competencies Grid (Initially Max 2 Items) */}
-        <div id="competencies-grid" className="grid sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-5">
+        <div
+          id="competencies-grid"
+          className="grid sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-5"
+        >
           {displayedCompetencies.map((item) => (
             <div
               key={item.id}
@@ -122,7 +126,10 @@ export function PublicCompetencies({ competencies }: PublicCompetenciesProps) {
                     {item.domain}
                   </span>
                   <span className="inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-500/20 font-medium">
-                    <FiCheckCircle size={11} className="text-emerald-600 dark:text-emerald-400" />
+                    <FiCheckCircle
+                      size={11}
+                      className="text-emerald-600 dark:text-emerald-400"
+                    />
                     {item.evidenceLabel}
                   </span>
                 </div>

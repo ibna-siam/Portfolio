@@ -40,17 +40,38 @@ async function runAuthSecurityTests() {
   // TEST SUITE 1: Open-Redirect & Return URL Sanitization (SEC-01)
   // ---------------------------------------------------------------------------
   console.log("--> 1. Open-Redirect Vulnerability Tests (sanitizeCallbackUrl):");
-  assert(sanitizeCallbackUrl("https://evil.com") === "/admin", "Rejects external absolute URLs (https://evil.com)");
-  assert(sanitizeCallbackUrl("http://attacker.com/steal") === "/admin", "Rejects external HTTP URLs");
-  assert(sanitizeCallbackUrl("//attacker.com") === "/admin", "Rejects protocol-relative URLs (//attacker.com)");
-  assert(sanitizeCallbackUrl("/\\attacker.com") === "/admin", "Rejects backslash evasions (/\\attacker.com)");
-  assert(sanitizeCallbackUrl("javascript:alert(1)") === "/admin", "Rejects javascript: URIs");
+  assert(
+    sanitizeCallbackUrl("https://evil.com") === "/admin",
+    "Rejects external absolute URLs (https://evil.com)"
+  );
+  assert(
+    sanitizeCallbackUrl("http://attacker.com/steal") === "/admin",
+    "Rejects external HTTP URLs"
+  );
+  assert(
+    sanitizeCallbackUrl("//attacker.com") === "/admin",
+    "Rejects protocol-relative URLs (//attacker.com)"
+  );
+  assert(
+    sanitizeCallbackUrl("/\\attacker.com") === "/admin",
+    "Rejects backslash evasions (/\\attacker.com)"
+  );
+  assert(
+    sanitizeCallbackUrl("javascript:alert(1)") === "/admin",
+    "Rejects javascript: URIs"
+  );
   assert(sanitizeCallbackUrl("data:text/html,evil") === "/admin", "Rejects data: URIs");
   assert(sanitizeCallbackUrl(null) === "/admin", "Handles null callback cleanly");
-  assert(sanitizeCallbackUrl(undefined) === "/admin", "Handles undefined callback cleanly");
+  assert(
+    sanitizeCallbackUrl(undefined) === "/admin",
+    "Handles undefined callback cleanly"
+  );
   assert(sanitizeCallbackUrl("") === "/admin", "Handles empty string callback cleanly");
   assert(sanitizeCallbackUrl("/admin") === "/admin", "Preserves valid /admin route");
-  assert(sanitizeCallbackUrl("/admin/settings") === "/admin/settings", "Preserves valid deep /admin route");
+  assert(
+    sanitizeCallbackUrl("/admin/settings") === "/admin/settings",
+    "Preserves valid deep /admin route"
+  );
 
   // ---------------------------------------------------------------------------
   // TEST SUITE 2: Server-Side Rate Limiter & Brute-Force Shield (SEC-02)
@@ -60,12 +81,18 @@ async function runAuthSecurityTests() {
   const testId = "security-test@example.com";
 
   const initialCheck = checkLoginRateLimit(testId);
-  assert(initialCheck.allowed === true && initialCheck.remainingAttempts === 5, "Initial state allows 5 attempts");
+  assert(
+    initialCheck.allowed === true && initialCheck.remainingAttempts === 5,
+    "Initial state allows 5 attempts"
+  );
 
   recordFailedLoginAttempt(testId);
   recordFailedLoginAttempt(testId);
   const midCheck = checkLoginRateLimit(testId);
-  assert(midCheck.allowed === true && midCheck.remainingAttempts === 3, "2 failed attempts decrement remaining to 3");
+  assert(
+    midCheck.allowed === true && midCheck.remainingAttempts === 3,
+    "2 failed attempts decrement remaining to 3"
+  );
 
   recordFailedLoginAttempt(testId);
   recordFailedLoginAttempt(testId);
@@ -73,11 +100,17 @@ async function runAuthSecurityTests() {
   assert(lockResult.isLocked === true, "5th failed attempt activates account lockout");
 
   const lockedCheck = checkLoginRateLimit(testId);
-  assert(lockedCheck.allowed === false && (lockedCheck.retryAfterSeconds ?? 0) > 0, "Locked identifier is blocked with retry countdown");
+  assert(
+    lockedCheck.allowed === false && (lockedCheck.retryAfterSeconds ?? 0) > 0,
+    "Locked identifier is blocked with retry countdown"
+  );
 
   resetLoginAttempts(testId);
   const resetCheck = checkLoginRateLimit(testId);
-  assert(resetCheck.allowed === true && resetCheck.remainingAttempts === 5, "Successful authentication resets attempt count to 5");
+  assert(
+    resetCheck.allowed === true && resetCheck.remainingAttempts === 5,
+    "Successful authentication resets attempt count to 5"
+  );
 
   // ---------------------------------------------------------------------------
   // TEST SUITE 3: Database User Schema & Credential Confidentiality (SEC-03)
@@ -94,9 +127,18 @@ async function runAuthSecurityTests() {
   assert(adminUsers.length >= 1, "At least one administrator account exists in database");
 
   const admin = adminUsers[0];
-  assert(admin.role === "admin", `Administrator has role='admin' (found: '${admin.role}')`);
-  assert(!!admin.passwordHash && admin.passwordHash.startsWith("$2"), "Password is stored exclusively as bcrypt hash ($2)");
-  assert(!!admin.passwordHash && !admin.passwordHash.includes(" "), "Password hash contains no corrupted formatting");
+  assert(
+    admin.role === "admin",
+    `Administrator has role='admin' (found: '${admin.role}')`
+  );
+  assert(
+    !!admin.passwordHash && admin.passwordHash.startsWith("$2"),
+    "Password is stored exclusively as bcrypt hash ($2)"
+  );
+  assert(
+    !!admin.passwordHash && !admin.passwordHash.includes(" "),
+    "Password hash contains no corrupted formatting"
+  );
 
   // Verify sanitized user projection never exposes passwordHash
   const sanitizedUser = {
@@ -105,7 +147,10 @@ async function runAuthSecurityTests() {
     name: admin.name,
     role: admin.role,
   };
-  assert(!("passwordHash" in sanitizedUser), "Sanitized user object completely excludes passwordHash");
+  assert(
+    !("passwordHash" in sanitizedUser),
+    "Sanitized user object completely excludes passwordHash"
+  );
 
   // ---------------------------------------------------------------------------
   // TEST SUITE 4: Role-Based Access Control Simulation (SEC-04)
@@ -126,13 +171,14 @@ async function runAuthSecurityTests() {
 
   assert(
     simulateServerAuthorization(null).authorized === false &&
-    simulateServerAuthorization(null).redirectTarget === "/admin/login",
+      simulateServerAuthorization(null).redirectTarget === "/admin/login",
     "Unauthenticated visitor is denied and redirected to /admin/login"
   );
 
   assert(
     simulateServerAuthorization({ user: { role: "guest" } }).authorized === false &&
-    simulateServerAuthorization({ user: { role: "guest" } }).redirectTarget === "/admin/login?error=AccessDenied",
+      simulateServerAuthorization({ user: { role: "guest" } }).redirectTarget ===
+        "/admin/login?error=AccessDenied",
     "Authenticated non-admin ('guest') is denied access with AccessDenied notice"
   );
 

@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Performance & Runtime Validation", () => {
-  test("Homepage loads within acceptable lab performance thresholds", async ({ page }) => {
+  test("Homepage loads within acceptable lab performance thresholds", async ({
+    page,
+  }) => {
     const failedRequests: string[] = [];
     page.on("requestfailed", (req) => {
       // Ignore external analytics/speed insights or favicon failures
@@ -18,12 +20,18 @@ test.describe("Performance & Runtime Validation", () => {
 
     // Performance timing extraction from browser
     const performanceMetrics = await page.evaluate(() => {
-      const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
+      const navEntry = performance.getEntriesByType(
+        "navigation"
+      )[0] as PerformanceNavigationTiming;
       const paintEntries = performance.getEntriesByType("paint");
-      const fcp = paintEntries.find((entry) => entry.name === "first-contentful-paint")?.startTime || 0;
+      const fcp =
+        paintEntries.find((entry) => entry.name === "first-contentful-paint")
+          ?.startTime || 0;
 
       return {
-        domContentLoaded: navEntry ? navEntry.domContentLoadedEventEnd - navEntry.startTime : 0,
+        domContentLoaded: navEntry
+          ? navEntry.domContentLoadedEventEnd - navEntry.startTime
+          : 0,
         loadComplete: navEntry ? navEntry.loadEventEnd - navEntry.startTime : 0,
         fcp,
       };
@@ -41,7 +49,9 @@ test.describe("Performance & Runtime Validation", () => {
     expect(failedRequests).toHaveLength(0);
   });
 
-  test("Case studies collection loads cleanly with zero asset failures", async ({ page }) => {
+  test("Case studies collection loads cleanly with zero asset failures", async ({
+    page,
+  }) => {
     const failedRequests: string[] = [];
     page.on("requestfailed", (req) => {
       if (!req.url().includes("vercel-insights") && !req.url().includes("favicon.ico")) {
@@ -54,7 +64,9 @@ test.describe("Performance & Runtime Validation", () => {
     expect(failedRequests).toHaveLength(0);
   });
 
-  test("Case study detail page loads cleanly with zero asset failures", async ({ page }) => {
+  test("Case study detail page loads cleanly with zero asset failures", async ({
+    page,
+  }) => {
     const failedRequests: string[] = [];
     page.on("requestfailed", (req) => {
       if (!req.url().includes("vercel-insights") && !req.url().includes("favicon.ico")) {

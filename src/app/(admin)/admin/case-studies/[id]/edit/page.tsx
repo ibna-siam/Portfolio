@@ -25,66 +25,57 @@ export default async function EditCaseStudyPage({ params }: EditCaseStudyPagePro
   const db = getDb();
 
   // Parallelize database queries for optimum response time
-  const [
-    [study],
-    rawSchedules,
-    [discrepancy],
-    rawRevisions,
-    rawMedia,
-  ] = await Promise.all([
-    // Retrieve case study
-    db
-      .select()
-      .from(schema.caseStudies)
-      .where(eq(schema.caseStudies.id, id))
-      .limit(1),
+  const [[study], rawSchedules, [discrepancy], rawRevisions, rawMedia] =
+    await Promise.all([
+      // Retrieve case study
+      db.select().from(schema.caseStudies).where(eq(schema.caseStudies.id, id)).limit(1),
 
-    // Retrieve financial schedules
-    db
-      .select()
-      .from(schema.financialSchedules)
-      .where(eq(schema.financialSchedules.caseStudyId, id))
-      .orderBy(schema.financialSchedules.sortOrder),
+      // Retrieve financial schedules
+      db
+        .select()
+        .from(schema.financialSchedules)
+        .where(eq(schema.financialSchedules.caseStudyId, id))
+        .orderBy(schema.financialSchedules.sortOrder),
 
-    // Retrieve discrepancy disclosure if one is attached
-    db
-      .select()
-      .from(schema.caseStudyDiscrepancies)
-      .where(eq(schema.caseStudyDiscrepancies.caseStudyId, id))
-      .limit(1),
+      // Retrieve discrepancy disclosure if one is attached
+      db
+        .select()
+        .from(schema.caseStudyDiscrepancies)
+        .where(eq(schema.caseStudyDiscrepancies.caseStudyId, id))
+        .limit(1),
 
-    // Retrieve revision history
-    db
-      .select({
-        revisionNumber: schema.contentRevisions.revisionNumber,
-        changeSummary: schema.contentRevisions.changeSummary,
-        createdAt: schema.contentRevisions.createdAt,
-      })
-      .from(schema.contentRevisions)
-      .where(
-        and(
-          eq(schema.contentRevisions.entityType, "case_study"),
-          eq(schema.contentRevisions.entityId, id)
+      // Retrieve revision history
+      db
+        .select({
+          revisionNumber: schema.contentRevisions.revisionNumber,
+          changeSummary: schema.contentRevisions.changeSummary,
+          createdAt: schema.contentRevisions.createdAt,
+        })
+        .from(schema.contentRevisions)
+        .where(
+          and(
+            eq(schema.contentRevisions.entityType, "case_study"),
+            eq(schema.contentRevisions.entityId, id)
+          )
         )
-      )
-      .orderBy(desc(schema.contentRevisions.revisionNumber))
-      .limit(10),
+        .orderBy(desc(schema.contentRevisions.revisionNumber))
+        .limit(10),
 
-    // Retrieve available media assets for picker
-    db
-      .select({
-        id: schema.mediaAssets.id,
-        publicId: schema.mediaAssets.publicId,
-        secureUrl: schema.mediaAssets.secureUrl,
-        format: schema.mediaAssets.format,
-        width: schema.mediaAssets.width,
-        height: schema.mediaAssets.height,
-        bytes: schema.mediaAssets.bytes,
-        altText: schema.mediaAssets.altText,
-      })
-      .from(schema.mediaAssets)
-      .orderBy(desc(schema.mediaAssets.createdAt)),
-  ]);
+      // Retrieve available media assets for picker
+      db
+        .select({
+          id: schema.mediaAssets.id,
+          publicId: schema.mediaAssets.publicId,
+          secureUrl: schema.mediaAssets.secureUrl,
+          format: schema.mediaAssets.format,
+          width: schema.mediaAssets.width,
+          height: schema.mediaAssets.height,
+          bytes: schema.mediaAssets.bytes,
+          altText: schema.mediaAssets.altText,
+        })
+        .from(schema.mediaAssets)
+        .orderBy(desc(schema.mediaAssets.createdAt)),
+    ]);
 
   if (!study) {
     notFound();

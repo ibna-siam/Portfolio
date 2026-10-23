@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
+import { FiPlus, FiEdit3, FiTrash2, FiSearch } from "react-icons/fi";
 import {
-  FiPlus,
-  FiEdit3,
-  FiTrash2,
-  FiSearch,
-} from "react-icons/fi";
-import { upsertCompetencyAction, deleteCompetencyAction, CompetencyFormData } from "./actions";
+  upsertCompetencyAction,
+  deleteCompetencyAction,
+  CompetencyFormData,
+} from "./actions";
 import { Modal } from "@/components/admin/modal";
 
 export interface CompetencyItem {
@@ -32,7 +31,10 @@ export function CompetenciesClient({ initialCompetencies }: CompetenciesClientPr
   const [selectedDomain, setSelectedDomain] = useState<string>("all");
   const [search, setSearch] = useState("");
   const [isPending, startTransition] = useTransition();
-  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [feedback, setFeedback] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   // Edit / Add Modal state
   const [editingItem, setEditingItem] = useState<Partial<CompetencyItem> | null>(null);
@@ -86,7 +88,10 @@ export function CompetenciesClient({ initialCompetencies }: CompetenciesClientPr
         category: current.category || current.domain || domains[0],
         evidenceLabel: current.evidenceLabel || "Case Study",
         description: current.description || "",
-        frameworkTags: tagsInput.split(",").map((t) => t.trim()).filter(Boolean),
+        frameworkTags: tagsInput
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
         relatedProject: current.relatedProject || "",
         sortOrder: current.sortOrder ?? 0,
         status: current.status || "published",
@@ -97,14 +102,19 @@ export function CompetenciesClient({ initialCompetencies }: CompetenciesClientPr
         setFeedback({ type: "success", message: res.message || "Competency saved." });
         setCompetencies((prev) => {
           if (current.id) {
-            return prev.map((c) => (c.id === current.id ? ({ ...c, ...payload } as CompetencyItem) : c));
+            return prev.map((c) =>
+              c.id === current.id ? ({ ...c, ...payload } as CompetencyItem) : c
+            );
           } else {
             return [...prev, { ...payload, id: res.competencyId! } as CompetencyItem];
           }
         });
         setEditingItem(null);
       } else {
-        setFeedback({ type: "error", message: res.error || "Failed to save competency." });
+        setFeedback({
+          type: "error",
+          message: res.error || "Failed to save competency.",
+        });
       }
     });
   };
@@ -117,15 +127,16 @@ export function CompetenciesClient({ initialCompetencies }: CompetenciesClientPr
         setCompetencies((prev) => prev.filter((c) => c.id !== id));
         setFeedback({ type: "success", message: res.message || "Competency deleted." });
       } else {
-        setFeedback({ type: "error", message: res.error || "Failed to delete competency." });
+        setFeedback({
+          type: "error",
+          message: res.error || "Failed to delete competency.",
+        });
       }
     });
   };
 
   return (
     <div className="space-y-6">
-
-
       {/* Feedback Banner */}
       {feedback && (
         <div
@@ -137,7 +148,10 @@ export function CompetenciesClient({ initialCompetencies }: CompetenciesClientPr
           }`}
         >
           <span>{feedback.message}</span>
-          <button onClick={() => setFeedback(null)} className="underline text-xs ml-4 cursor-pointer">
+          <button
+            onClick={() => setFeedback(null)}
+            className="underline text-xs ml-4 cursor-pointer"
+          >
             Dismiss
           </button>
         </div>
@@ -235,8 +249,12 @@ export function CompetenciesClient({ initialCompetencies }: CompetenciesClientPr
               </div>
 
               <div>
-                <h3 className="font-display font-bold text-ink-900 dark:text-ink-100 text-sm">{item.name}</h3>
-                <p className="text-xs text-ink-600 dark:text-ink-400 mt-1 leading-relaxed">{item.description}</p>
+                <h3 className="font-display font-bold text-ink-900 dark:text-ink-100 text-sm">
+                  {item.name}
+                </h3>
+                <p className="text-xs text-ink-600 dark:text-ink-400 mt-1 leading-relaxed">
+                  {item.description}
+                </p>
               </div>
 
               {item.frameworkTags && item.frameworkTags.length > 0 && (
@@ -289,9 +307,15 @@ export function CompetenciesClient({ initialCompetencies }: CompetenciesClientPr
         }
       >
         {editingItem && (
-          <form id="competency-form" onSubmit={handleSaveModal} className="space-y-4 text-xs font-mono">
+          <form
+            id="competency-form"
+            onSubmit={handleSaveModal}
+            className="space-y-4 text-xs font-mono"
+          >
             <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Competency Name *</label>
+              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                Competency Name *
+              </label>
               <input
                 type="text"
                 required
@@ -304,10 +328,14 @@ export function CompetenciesClient({ initialCompetencies }: CompetenciesClientPr
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Domain</label>
+                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                  Domain
+                </label>
                 <select
                   value={editingItem.domain || domains[0]}
-                  onChange={(e) => setEditingItem({ ...editingItem, domain: e.target.value })}
+                  onChange={(e) =>
+                    setEditingItem({ ...editingItem, domain: e.target.value })
+                  }
                   className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors cursor-pointer"
                 >
                   {domains.map((d) => (
@@ -319,11 +347,15 @@ export function CompetenciesClient({ initialCompetencies }: CompetenciesClientPr
               </div>
 
               <div>
-                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Evidence Label</label>
+                <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                  Evidence Label
+                </label>
                 <input
                   type="text"
                   value={editingItem.evidenceLabel || ""}
-                  onChange={(e) => setEditingItem({ ...editingItem, evidenceLabel: e.target.value })}
+                  onChange={(e) =>
+                    setEditingItem({ ...editingItem, evidenceLabel: e.target.value })
+                  }
                   placeholder="Case Study / Coursework"
                   className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
                 />
@@ -331,11 +363,15 @@ export function CompetenciesClient({ initialCompetencies }: CompetenciesClientPr
             </div>
 
             <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Description</label>
+              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                Description
+              </label>
               <textarea
                 rows={3}
                 value={editingItem.description || ""}
-                onChange={(e) => setEditingItem({ ...editingItem, description: e.target.value })}
+                onChange={(e) =>
+                  setEditingItem({ ...editingItem, description: e.target.value })
+                }
                 placeholder="Core accounting discipline and methodological mastery..."
                 className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl p-3 text-ink-900 dark:text-ink-100 font-sans focus:outline-none focus:border-emerald-500/60 transition-colors"
               />
@@ -355,11 +391,15 @@ export function CompetenciesClient({ initialCompetencies }: CompetenciesClientPr
             </div>
 
             <div>
-              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">Related Coursework Anchor</label>
+              <label className="block text-ink-700 dark:text-ink-300 mb-1 font-sans">
+                Related Coursework Anchor
+              </label>
               <input
                 type="text"
                 value={editingItem.relatedProject || ""}
-                onChange={(e) => setEditingItem({ ...editingItem, relatedProject: e.target.value })}
+                onChange={(e) =>
+                  setEditingItem({ ...editingItem, relatedProject: e.target.value })
+                }
                 placeholder="Square Pharmaceuticals Annual Report Analysis"
                 className="w-full bg-white dark:bg-ink-950 border border-ink-200 dark:border-ink-800 rounded-xl px-3.5 py-2 text-ink-900 dark:text-ink-100 focus:outline-none focus:border-emerald-500/60 transition-colors"
               />

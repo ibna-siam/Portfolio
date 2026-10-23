@@ -13,7 +13,10 @@ export default function ErrorBoundary({
 }) {
   useEffect(() => {
     // Log sanitized error digest to client console for diagnostics without exposing sensitive data
-    console.error("[APP_ERROR] Handled runtime error boundary:", error.digest || "No digest");
+    console.error(
+      "[APP_ERROR] Handled runtime error boundary:",
+      error.digest || "No digest"
+    );
   }, [error]);
 
   return (
@@ -26,7 +29,8 @@ export default function ErrorBoundary({
           Temporary Service Disruption
         </h1>
         <p className="text-sm text-ink-400 mb-6 leading-relaxed">
-          The requested portfolio service encountered a momentary operational issue. No data has been compromised. Please retry or return to the main portfolio.
+          The requested portfolio service encountered a momentary operational issue. No
+          data has been compromised. Please retry or return to the main portfolio.
         </p>
 
         <div className="flex items-center justify-center gap-3">
